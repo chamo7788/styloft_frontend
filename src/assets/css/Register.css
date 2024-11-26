@@ -1,0 +1,135 @@
+.register {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 45%;
+    margin-top: -45%;
+}
+
+.image-box {
+    margin: 0;
+    background-image: url('../images/register-img.jpg'); /* Ensure the path is correct */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    width: 50%;
+}
+
+.register .logincover {
+    width: 450px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    color: #003366;
+    border-radius: 0.5rem;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.304);
+    z-index: 2;
+}
+
+.register .logincover .heading {
+    font-size: 2rem;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
+
+.register .logincover .form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    
+}
+
+.register .logincover .form .error-msg {
+    color: orangered;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.register .logincover .form input {
+    padding: 0.8rem;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    outline: none;
+    color: #000000;
+    margin-bottom: 1rem;
+}
+
+.register .logincover .form input::placeholder {
+    color: #000000;
+}
+
+.register .logincover .form button {
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: rgb(13, 13, 13);
+    background-color: #87c5f5; /* Bright blue for button */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.register .logincover .form button:hover {
+    opacity: 1;
+    background-color: #65a3e6; /* Darker blue on hover */
+}
+
+.register .logincover .form .link {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 14px;
+    color: #003366;
+}
+
+.register .logincover .form .link a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.register .logincover .form .link a:hover {
+    text-decoration: underline;
+    transition: text-decoration 0.1s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .image-section {
+        display: none;
+    }
+
+    .register {
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 2rem;
+    }
+
+    .register .logincover {
+        width: 100%;
+        max-width: 400px;
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .register .logincover {
+        padding: 1.5rem;
+    }
+
+    .register .logincover .heading {
+        font-size: 1.5rem;
+    }
+
+    .register .logincover .form button {
+        font-size: 0.9rem;
+    }
+}
