@@ -4,12 +4,15 @@ import StyleSociety from "./pages/stylesociety";
 import Navbar from "./components/home/Navbar/Navbar";
 import Footer from "./components/home/Footer/Footer";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+
 
 function App() {
   const location = useLocation();
 
   // List of paths where the Navbar should be hidden
-  const hideNavbarPaths = ["/login"];
+  const hideNavbarPaths = ["/login", "/register"];
+  const hideFooterPaths = ["/login", "/register"];
   
 
   return (
@@ -18,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/stylesociety" element={<StyleSociety />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
