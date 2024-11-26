@@ -1,0 +1,67 @@
+/* Navbar Styles */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-logo {
+    width: auto; /* Ensure the container doesn't constrain the logo's size */
+    height: auto;
+    position: absolute;
+  }
+  
+  .navbar-logo img {
+    margin-top: 40px;
+    width: 200px; /* Adjust the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    max-height: 150px; /* Optionally limit the maximum height */
+  }
+  
+  .logo-accent {
+    color: #000;
+  }
+  
+  .navbar-links {
+    display: flex;
+    list-style: none;
+    margin-left: 20%;
+    padding: 0;
+  }
+  
+  .navbar-links li {
+    margin: 0 15px;
+  }
+  
+  .navbar-links a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar-links a:hover {
+    color: #007BFF; /* Change to any highlight color */
+  }
+  
+  .navbar-login {
+    margin-left: auto;
+  }
+  
+  .navbar-login button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .navbar-login button:hover {
+    background-color: #333;
+  }
+  
