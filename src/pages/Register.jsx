@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "../assets/css/register.css";
 
 export default function Register() {
-    const nameRef = useRef();
-    const emailRef = useRef();
-    const passRef = useRef();
-    const confirmPassRef = useRef();
+    const nameRef = useRef(null);
+    const emailRef = useRef(null);
+    const passRef = useRef(null);
+    const confirmPassRef = useRef(null);
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ export default function Register() {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/user/register", {
+            const response = await fetch("http://localhost:5000/user/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -49,7 +49,7 @@ export default function Register() {
             if (response.ok) {
                 console.log("Registration successful", data);
                 clearInputs();
-                navigate("/login"); // Redirect to Login page
+                navigate("/"); // Redirect to Home page
             } else {
                 setError(data.message || "Registration failed");
             }
@@ -61,6 +61,10 @@ export default function Register() {
         }
     };
 
+    const handleGoogleSignIn = () => {
+        window.location.href = "http://localhost:5000/auth/google";
+    };
+
     return (
         <>
             <div className="image-box"></div>
@@ -70,7 +74,7 @@ export default function Register() {
                     <form onSubmit={handleSubmit} className="form">
                         {error && <span className="error-msg">{error}</span>}
 
-                        <button className="social-btn google">
+                        <button type="button" className="social-btn google" onClick={handleGoogleSignIn}>
                             <img src="https://img.icons8.com/color/48/000000/google-logo.png" className="google-logo" alt="Google" />
                             <span>Sign in with Google</span>
                         </button>

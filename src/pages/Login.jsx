@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../assets/css/login.css";
 
 export default function Login() {
-    const emailRef = useRef();
-    const passRef = useRef();
+    const emailRef = useRef(null);
+    const passRef = useRef(null);
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ export default function Login() {
         };
 
         try {
-            const response = await fetch("http://localhost:3000/user/login", {
+            const response = await fetch("http://localhost:5000/user/login", { // Ensure the URL matches your backend
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export default function Login() {
                 console.log("Login successful", data);
                 // Store token or session (if needed)
                 clearInputs();
-                navigate("/home");  // Redirect to Home page
+                navigate("/");  // Redirect to Home page
             } else {
                 setError(data.message || "Login failed");
             }
@@ -50,6 +50,10 @@ export default function Login() {
         }
     };
 
+    const handleGoogleSignIn = () => {
+        window.location.href = "http://localhost:5000/auth/google"; // Ensure the URL matches your backend
+    };
+
     return (
         <>
             <div className="image-section"></div>
@@ -59,7 +63,7 @@ export default function Login() {
                     <form onSubmit={handleSubmit} className="form">
                         {error && <span className="error-msg">{error}</span>}
 
-                        <button className="social-btn google">
+                        <button type="button" className="social-btn google" onClick={handleGoogleSignIn}>
                             <img src="https://img.icons8.com/color/48/000000/google-logo.png" className="google-logo" alt="Google" />
                             <span>Sign in with Google</span>
                         </button>
