@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../assets/css/register.css";
 
 export default function Register() {
-    const nameRef = useRef(null);
+    const firstName = useRef(null);
+    const lastName = useRef(null);
     const emailRef = useRef(null);
     const passRef = useRef(null);
     const confirmPassRef = useRef(null);
@@ -13,7 +14,8 @@ export default function Register() {
     const navigate = useNavigate();
 
     const clearInputs = () => {
-        if (nameRef?.current) nameRef.current.value = "";
+        if (firstName?.current) firstName.current.value = "";
+        if (lastName?.current) lastName.current.value = "";
         if (emailRef?.current) emailRef.current.value = "";
         if (passRef?.current) passRef.current.value = "";
         if (confirmPassRef?.current) confirmPassRef.current.value = "";
@@ -24,7 +26,8 @@ export default function Register() {
         setLoading(true);
 
         const creds = {
-            name: nameRef.current.value,
+            firstName: firstName.current.value,
+            lastName: lastName.current.value,
             email: emailRef.current.value,
             password: passRef.current.value,
             confirmPassword: confirmPassRef.current.value,
@@ -49,7 +52,7 @@ export default function Register() {
             if (response.ok) {
                 console.log("Registration successful", data);
                 clearInputs();
-                navigate("/"); // Redirect to Home page
+                navigate("/login"); // Redirect to login page
             } else {
                 setError(data.message || "Registration failed");
             }
@@ -81,8 +84,11 @@ export default function Register() {
 
                         <div className="role-selection"></div>
 
-                        <p>Full Name</p>
-                        <input required ref={nameRef} type="text" placeholder="Full Name" />
+                        <p>First Name</p>
+                        <input required ref={firstName} type="text" placeholder="First Name" />
+
+                        <p>Last Name</p>
+                        <input required ref={lastName} type="text" placeholder="Last Name" />
 
                         <p>Email</p>
                         <input required ref={emailRef} type="email" placeholder="Email" />
