@@ -5,6 +5,7 @@ import Navbar from "./components/home/Navbar/Navbar";
 import Footer from "./components/home/Footer/Footer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import StyleStudio from "./pages/StyleStudio";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/stylesociety" element={<StyleSociety />} />
+        <Route path="/stylestudio" element={<StyleStudio />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
