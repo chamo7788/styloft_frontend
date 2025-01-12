@@ -1,0 +1,35 @@
+.canvas-container {
+    width: 50%;
+    height: 600px;
+    margin-top: 50px;
+    margin-left: 100px;
+    transition: all 0.3s ease-in;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: -600px;
+}
+
+@media (max-width: 1200px) {
+    .canvas-container {
+        width: 70%;
+        margin-left: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .canvas-container {
+        width: 90%;
+        margin-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .canvas-container {
+        width: 100%;
+        margin-left: 0;
+        height: 400px;
+    }
+}
