@@ -12,11 +12,11 @@ const Navbar = () => {
                 </NavLink>
             </div>
             <ul className="navbar-links">
-                <li><a href="#homepage">HOMEPAGE</a></li>
-                <li><a href="#style-studio">STYLE STUDIO</a></li>
+                <li><a href="homepage">HOMEPAGE</a></li>
+                <li><a href="stylestudio">STYLE STUDIO</a></li>
                 <li><a href="#contest">CONTEST</a></li>
                 <li><a href="#inspire-zone">INSPIRE ZONE</a></li>
-                <li><a href="#style-society">STYLE SOCIETY</a></li>
+                <li><a href="stylesociety">STYLE SOCIETY</a></li>
                 <li><a href="#style-market">STYLE MARKET</a></li>
             </ul>
             <div className="navbar-login">

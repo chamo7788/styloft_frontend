@@ -1,11 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Home from "./pages/Home";
-import StyleSociety from "./pages/stylesociety";
-import Navbar from "./components/home/Navbar/Navbar";
-import Footer from "./components/home/Footer/Footer";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import StyleStudio from "./pages/StyleStudio";
+import { Home, StyleSociety, Login, Register, StyleStudio } from "./pages";
+import { Navbar, Footer } from "./components";
+
+// import Home from "./pages/Home";
+// import StyleSociety from "./pages/Stylesociety";
+// import Navbar from "./components/home/Navbar/Navbar";
+// import Footer from "./components/home/Footer/Footer";
+// import Login from "./pages/Login";
+// import Register from "./pages/Register";
+// import StyleStudio from "./pages/StyleStudio";
 
 
 function App() {
