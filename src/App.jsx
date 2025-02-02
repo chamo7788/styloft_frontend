@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Home, StyleSociety, Login, Register, StyleStudio } from "./pages";
+import { Home, StyleSociety, Login, Register, StyleStudio, Contest } from "./pages";
 import { Navbar, Footer } from "./components";
+import ContestContent from "./components/contest/ContestContent";
 
 // import Home from "./pages/Home";
 // import StyleSociety from "./pages/Stylesociety";
@@ -28,6 +29,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/stylesociety" element={<StyleSociety />} />
         <Route path="/stylestudio" element={<StyleStudio />} />
+        <Route path="/contest" element={<Contest />} />
+        <Route path="/contest/:id" element={<ContestContent />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
