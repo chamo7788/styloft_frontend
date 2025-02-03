@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { Home, StyleSociety, Login, Register, StyleStudio, Contest } from "./pages";
 import { Navbar, Footer } from "./components";
 import ContestContent from "./components/contest/ContestContent";
+import { AddContestForm } from "./components/contest/AddContest";
 
 // import Home from "./pages/Home";
 // import StyleSociety from "./pages/Stylesociety";
@@ -30,6 +31,7 @@ function App() {
         <Route path="/stylesociety" element={<StyleSociety />} />
         <Route path="/stylestudio" element={<StyleStudio />} />
         <Route path="/contest" element={<Contest />} />
+        <Route path="/contest/add-contest" element={<AddContestForm />} />
         <Route path="/contest/:id" element={<ContestContent />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

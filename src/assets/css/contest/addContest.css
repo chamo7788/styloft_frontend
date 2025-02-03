@@ -1,0 +1,79 @@
+.add-contest-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-contest-title {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .add-contest-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-label {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-input,
+  .form-textarea {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .submit-button {
+    background-color: #7fe6ff;
+    color: #2d3748;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #6cd9ff;
+  }
+
+.add-contest-link {
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    padding: 0.5rem 1rem;
+    background-color: #7fe6ff;
+    color: #2d3748;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+  
+  .add-contest-link:hover {
+    background-color: #6cd9ff;
+  }
+  
+  
+  
