@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Home, StyleSociety, Login, Register, StyleStudio, Contest } from "./pages";
+import { Home, StyleSociety, Login, Register, StyleStudio, Contest, Stylemarket } from "./pages";
 import { Navbar, Footer } from "./components";
 import ContestContent from "./components/contest/ContestContent";
 import { AddContestForm } from "./components/contest/AddContest";
+import { Provider } from "react-redux";  
+import { store } from "./redux/store";  
 
 // import Home from "./pages/Home";
 // import StyleSociety from "./pages/Stylesociety";
@@ -12,14 +14,12 @@ import { AddContestForm } from "./components/contest/AddContest";
 // import Register from "./pages/Register";
 // import StyleStudio from "./pages/StyleStudio";
 
-
 function App() {
   const location = useLocation();
 
   // List of paths where the Navbar should be hidden
   const hideNavbarPaths = ["/login", "/register"];
   const hideFooterPaths = ["/login", "/register"];
-  
 
   return (
     <>
@@ -30,6 +30,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/stylesociety" element={<StyleSociety />} />
         <Route path="/stylestudio" element={<StyleStudio />} />
+        <Route path="/styleMarket" element={<Stylemarket />} />
         <Route path="/contest" element={<Contest />} />
         <Route path="/contest/add-contest" element={<AddContestForm />} />
         <Route path="/contest/:id" element={<ContestContent />} />
@@ -43,7 +44,9 @@ function App() {
 export default function MainApp() {
   return (
     <BrowserRouter>
-      <App />
+      <Provider store={store}>  
+        <App />
+      </Provider>
     </BrowserRouter>
   );
 }

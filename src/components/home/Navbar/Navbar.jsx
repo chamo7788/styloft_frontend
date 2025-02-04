@@ -17,7 +17,7 @@ const Navbar = () => {
                 <li><a href="contest">CONTEST</a></li>
                 <li><a href="#inspire-zone">INSPIRE ZONE</a></li>
                 <li><a href="stylesociety">STYLE SOCIETY</a></li>
-                <li><a href="#style-market">STYLE MARKET</a></li>
+                <li><a href="styleMarket">STYLE MARKET</a></li>
             </ul>
             <div className="navbar-login">
                 <button>Login</button>
