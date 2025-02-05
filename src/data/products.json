@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Red Dress",
+    "price": 79.99,
+    "image": "/assets/images/red-dress.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Denim Jacket",
+    "price": 59.99,
+    "image": "/assets/images/denim-jacket.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Evening Gown",
+    "price": 129.99,
+    "image": "/assets/images/red-dress.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Beige Sweater",
+    "price": 49.99,
+    "image": "/assets/images/beige-sweater.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Red Dress",
+    "price": 79.99,
+    "image": "/assets/images/red-dress.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Denim Jacket",
+    "price": 59.99,
+    "image": "/assets/images/denim-jacket.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Evening Gown",
+    "price": 129.99,
+    "image": "/assets/images/evening-gown.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Beige Sweater",
+    "price": 49.99,
+    "image": "/assets/images/beige-sweater.jpg"
+  },
+  {
+    "id": 9,
+    "name": "Red Dress",
+    "price": 79.99,
+    "image": "/assets/images/red-dress.jpg"
+  },
+  {
+    "id": 10,
+    "name": "Denim Jacket",
+    "price": 59.99,
+    "image": "/assets/images/denim-jacket.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Evening Gown",
+    "price": 129.99,
+    "image": "/assets/images/evening-gown.jpg"
+  },
+  {
+    "id": 12,
+    "name": "Beige Sweater",
+    "price": 49.99,
+    "image": "/assets/images/beige-sweater.jpg"
+  }
+]
