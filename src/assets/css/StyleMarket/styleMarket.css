@@ -1,24 +1,20 @@
-/* General Styles */
-body {
+.style-market-page {
   font-family: 'Poppins', sans-serif;
   background-color: #dfc9ab;
   margin: 0;
   padding: 0;
-}
-
-.app {
   padding: 20px;
 }
 
 /* Container */
-.container {
+.style-market-page .container {
   max-width: 1300px;
   margin: auto;
   padding: 20px;
 }
 
 /* Headings */
-h2 {
+.style-market-page h2 {
   font-size: 28px;
   font-weight: bold;
   text-align: left;
@@ -27,14 +23,14 @@ h2 {
 }
 
 /* Sorting Section */
-.sort-section {
+.style-market-page .sort-section {
   display: flex;
   align-items: center;
   gap: 15px;
   margin-bottom: 20px;
 }
 
-.sort-label {
+.style-market-page .sort-label {
   display: flex;
   align-items: center;
   font-size: 18px;
@@ -42,18 +38,18 @@ h2 {
   color: #5a3e2b;
 }
 
-.filter-icon {
+.style-market-page .filter-icon {
   font-size: 22px;
   margin-right: 5px;
 }
 
 /* Sort Buttons */
-.sort-buttons {
+.style-market-page .sort-buttons {
   display: flex;
   gap: 12px;
 }
 
-.sort-btn {
+.style-market-page .sort-btn {
   background: #8a5a44;
   color: white;
   border: none;
@@ -66,23 +62,17 @@ h2 {
   outline: none;
 }
 
-.sort-btn:hover {
+.style-market-page .sort-btn:hover {
   background: #a06a54;
   transform: scale(1.05);
 }
 
-.sort-btn.active {
+.style-market-page .sort-btn.active {
   background: #5a3e2b;
 }
 
 /* Product Grid */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-}
-
-.product-grid {
+.style-market-page .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
   gap: 20px;
@@ -90,7 +80,7 @@ h2 {
   justify-content: center;
 }
 
-.product-card {
+.style-market-page .product-card {
   background: white;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -99,11 +89,12 @@ h2 {
   transition: transform 0.3s ease-in-out;
 }
 
-.product-card:hover {
+.style-market-page .product-card:hover {
   transform: scale(1.05);
 }
 
-.product-image {
+/* Ensure Images Fit Properly */
+.style-market-page .product-image {
   width: 100%;
   height: auto;
   max-height: 250px;
@@ -112,38 +103,37 @@ h2 {
 }
 
 @media (max-width: 768px) {
-  .product-grid {
+  .style-market-page .product-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
-  .product-card {
+  .style-market-page .product-card {
     padding: 10px;
   }
 
-  .product-image {
+  .style-market-page .product-image {
     max-height: 200px;
   }
 }
 
 @media (max-width: 480px) {
-  .product-grid {
+  .style-market-page .product-grid {
     grid-template-columns: 1fr;
     padding: 10px;
   }
 
-  .product-card {
+  .style-market-page .product-card {
     padding: 8px;
   }
 
-  .quick-view {
+  .style-market-page .quick-view {
     font-size: 0.9rem;
     padding: 8px 12px;
   }
 }
 
-
 /* Quick View Button */
-.quick-view {
+.style-market-page .quick-view {
   margin-top: 8px;
   padding: 10px;
   width: 90%;
@@ -157,13 +147,13 @@ h2 {
   font-size: 16px;
 }
 
-.quick-view:hover {
+.style-market-page .quick-view:hover {
   background-color: #f0eb96;
   transform: scale(1.05);
 }
 
 /* Pagination */
-.pagination {
+.style-market-page .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -171,7 +161,7 @@ h2 {
   margin-top: 25px;
 }
 
-.pagination-btn {
+.style-market-page .pagination-btn {
   background-color: #8a5a44;
   color: white;
   padding: 12px 20px;
@@ -184,13 +174,12 @@ h2 {
   outline: none;
 }
 
-.pagination-btn:hover {
+.style-market-page .pagination-btn:hover {
   background-color: #5a3e2b;
   transform: scale(1.05);
 }
 
-.pagination-btn:disabled {
+.style-market-page .pagination-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
 }
-
