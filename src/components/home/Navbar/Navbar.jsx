@@ -1,9 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import logoLight from '../../../assets/images/styloft-logo.png';
 import '../../../assets/css/Home/navbar.css';
 
 const Navbar = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [profilePicture, setProfilePicture] = useState('');
+    const [showLogout, setShowLogout] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        const profilePic = localStorage.getItem('profilePicture');
+        if (token && profilePic) {
+            setIsLoggedIn(true);
+            setProfilePicture(profilePic);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('profilePicture');
+        setIsLoggedIn(false);
+        setProfilePicture('');
+        setShowLogout(false);
+    };
+
+    const toggleLogout = () => {
+        setShowLogout(!showLogout);
+    };
+
+    const handleImageError = () => {
+        if (retryCount < 3) {
+            setRetryCount(retryCount + 1);
+            setTimeout(() => {
+                setProfilePicture(profilePicture + `?retry=${retryCount}`);
+            }, 1000);
+        } else {
+            setProfilePicture('/path/to/fallback-image.png'); // Use a fallback image
+        }
+    };
+
     return (
         <nav className="navbar">
             <div className="navbar-logo">
@@ -20,7 +57,20 @@ const Navbar = () => {
                 <li><a href="styleMarket">STYLE MARKET</a></li>
             </ul>
             <div className="navbar-login">
-                <button>Login</button>
+                {isLoggedIn ? (
+                    <div className="profile-section">
+                        <img 
+                            src={profilePicture} 
+                            alt="Profile" 
+                            className="profile-picture" 
+                            onClick={toggleLogout} 
+                            onError={handleImageError} 
+                        />
+                        {showLogout && <button className='logout' onClick={handleLogout}>Logout</button>}
+                    </div>
+                ) : (
+                    <button onClick={() => window.location.href = '/login'}>Login</button>
+                )}
             </div>
         </nav>
     );
