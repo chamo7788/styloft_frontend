@@ -43,4 +43,3 @@ const ContestCards = ({ contests }) => {
 };
 
 export default ContestCards;
-

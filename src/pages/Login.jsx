@@ -40,6 +40,8 @@ export default function Login() {
             const data = await response.json();
             localStorage.setItem("authToken", data.token);
             localStorage.setItem("profilePicture", data.userProfile.profilePicture); // Assuming userProfile contains profilePicture URL
+            localStorage.setItem("currentUser", JSON.stringify(data.userProfile)); // Save the entire user profile in localStorage
+            localStorage.setItem("userId", data.userProfile._id); // Save the user ID in localStorage
 
             console.log("Login successful", data.userProfile);
             clearInputs();
@@ -71,6 +73,8 @@ export default function Login() {
             const data = await response.json();
             localStorage.setItem("authToken", data.token);
             localStorage.setItem("profilePicture", user.photoURL);
+            localStorage.setItem("currentUser", JSON.stringify(data.userProfile)); // Save the entire user profile in localStorage
+            localStorage.setItem("userId", data.userProfile._id); // Save the user ID in localStorage
     
             console.log("Google login successful", data.userProfile);
             console.log("Profile Picture URL:", user.photoURL); // Add this line to verify the URL
