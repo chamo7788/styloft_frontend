@@ -19,7 +19,7 @@ export default function Login() {
     const clearInputs = () => {
         if (emailRef?.current) emailRef.current.value = "";
         if (passRef?.current) passRef.current.value = "";
-    };    
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -59,23 +59,23 @@ export default function Login() {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
             const idToken = await user.getIdToken();
-    
+
             const response = await fetch("http://localhost:3000/user/google-login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ idToken })
             });
-    
+
             if (!response.ok) {
                 throw new Error("Google login failed");
             }
-    
+
             const data = await response.json();
             localStorage.setItem("authToken", data.token);
             localStorage.setItem("profilePicture", user.photoURL);
             localStorage.setItem("currentUser", JSON.stringify(data.userProfile)); // Save the entire user profile in localStorage
             localStorage.setItem("userId", data.userProfile._id); // Save the user ID in localStorage
-    
+
             console.log("Google login successful", data.userProfile);
             console.log("Profile Picture URL:", user.photoURL); // Add this line to verify the URL
             navigate("/");
@@ -84,7 +84,7 @@ export default function Login() {
             setError("Google login failed");
         }
     };
-    
+
 
     return (
         <>
@@ -94,14 +94,6 @@ export default function Login() {
                     <h2 className="heading">Sign in to Styloft</h2>
                     <form onSubmit={handleSubmit} className="form">
                         {error && <span className="error-msg">{error}</span>}
-
-                        <button type="button" onClick={handleGoogleSignIn} className="google-sign-in-button">
-                            Sign in with Google
-                        </button>
-
-                        <div className="divider">
-                            <span>or sign in with email</span>
-                        </div>
 
                         <p>Username or Email</p>
                         <input required ref={emailRef} type="email" placeholder="Email" />
@@ -113,6 +105,19 @@ export default function Login() {
 
                         <button disabled={loading} type="submit" className="sign-in-button">
                             {loading ? "Loading..." : "Sign in"}
+                        </button>
+
+                        <div className="divider">
+                            <span>or sign in with email</span>
+                        </div>
+
+                        <button type="button" onClick={handleGoogleSignIn} className="google-sign-in-button">
+                            <img
+                                src="https://img.icons8.com/color/48/000000/google-logo.png"
+                                className="google-logo"
+                                alt="Google"
+                            />
+                            <span>Sign in with Google</span>
                         </button>
 
                         <span className="link">
