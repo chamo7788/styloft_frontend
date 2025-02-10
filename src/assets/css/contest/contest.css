@@ -67,6 +67,22 @@
     margin: 1rem auto;
     padding: 1rem;
   }
+
+  .add-contest-link {
+    position: absolute;
+    right: 1.8rem;
+    top: 340px;
+    padding: 0.5rem 1rem;
+    background-color: #7fe6ff;
+    color: #2d3748;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+  
+  .add-contest-link:hover {
+    background-color: #6cd9ff;
+  }
   
   @media (min-width: 768px) {
     .contest-cards {
@@ -99,7 +115,7 @@
   
   .contest-image {
     width: 100%;
-    height: 10rem;
+    height: 200px;
     object-fit: cover;
   }
   

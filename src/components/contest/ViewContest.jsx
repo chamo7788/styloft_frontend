@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import "../../assets/css/contest/contest.css";
@@ -10,31 +10,33 @@ const Button = ({ children, className, onClick }) => (
 );
 
 const DesignContestPage = () => {
-    const contests = [
-        {
-            id: 1,
-            image: "src/assets/images/Contest-2.jpg",
-            description: "Calling all creative minds! Showcase your talent, redefine fashion, and let your designs steal the spotlight in our ultimate clothing design contest. The runway is yours—will you take it?",
-            designers: 36,
-            designs: 63,
-            prize: "$120",
-        },
-        {
-            id: 2,
-            image: "src/assets/images/Contest-1.jpg",
-            description: "Calling all creative minds! Showcase your talent, redefine fashion, and let your designs steal the spotlight in our ultimate clothing design contest. The runway is yours—will you take it?",
-            designers: 36,
-            designs: 63,
-            prize: "$120",
-        },
-    ];
+    const [contests, setContests] = useState([]);
+
+    useEffect(() => {
+        const fetchContests = async () => {
+            try {
+                const response = await fetch("http://localhost:3000/contest");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch contests");
+                }
+                const data = await response.json();
+                setContests(data);
+            } catch (error) {
+                console.error("Error fetching contests:", error);
+            }
+        };
+
+        fetchContests();
+    }, []);
 
     return (
         <div className="page">
             <header className="banner">
                 <h1 className="banner-title">DESIGN CONTEST</h1>
                 <p className="banner-subtitle">"Unleash your creativity, design your legacy!"</p>
-                <Button className="button-signup" onClick={() => window.location.href = '/register'}>SIGN UP</Button>
+                {!localStorage.getItem('authToken') && (
+                    <Button className="button-signup" onClick={() => window.location.href = '/register'}>SIGN UP</Button>
+                )}
             </header>
 
             <div className="search-bar-container">
