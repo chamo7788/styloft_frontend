@@ -1,135 +1,163 @@
 .register {
-    margin: 0;
     display: flex;
+    justify-content: right;
     align-items: center;
-    justify-content: center;
-    margin-left: 45%;
-    margin-top: -45%;
+    min-height: 100vh;
+    background: #f9f9f9;
+    margin-right: 100px;
 }
 
 .image-box {
-    margin: 0;
-    background-image: url('../images/register-img.jpg'); /* Ensure the path is correct */
+    background-image: url('../images/login-img.jpg');
     background-size: cover;
     background-position: center;
     height: 100vh;
     width: 50%;
 }
 
-.register .logincover {
-    width: 450px;
-    padding: 2rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    color: #003366;
-    border-radius: 0.5rem;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.304);
-    z-index: 2;
+.logincover {
+    position: absolute;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 100%;
+    margin-left: 500px;
+    margin-bottom: 1450px;
 }
 
-.register .logincover .heading {
-    font-size: 2rem;
+.heading {
     text-align: center;
-    font-weight: bold;
     color: #333;
-}
-
-.register .logincover .form {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1rem;
-    
-}
-
-.register .logincover .form .error-msg {
-    color: orangered;
-    text-align: center;
-    padding: 0.5rem 0;
-}
-
-.register .logincover .form input {
-    padding: 0.8rem;
-    border-radius: 0.3rem;
-    font-size: 1rem;
-    border: 1px solid #000000;
-    background-color: #ffffff;
-    outline: none;
-    color: #000000;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
 }
 
-.register .logincover .form input::placeholder {
-    color: #000000;
+.sub-heading {
+    text-align: center;
+    color: #333;
+    font-size: 1rem;
+    margin-bottom: 1rem;
 }
 
-.register .logincover .form button {
-    padding: 0.8rem;
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form p {
+    font-size: 0.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 11px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.8rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #7f56d9;
+    box-shadow: 0 0 3px rgba(127, 86, 217, 0.3);
+}
+
+.name-inputs {
+    display: flex;
+    gap: 60px;
+
+}
+
+.name-title {
+    display: flex;
+    gap: 180px;
+}
+
+.register-button {
+    background-color: #7f56d9;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
     font-size: 1rem;
-    font-weight: bold;
-    color: rgb(13, 13, 13);
-    background-color: #87c5f5; /* Bright blue for button */
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.register-button:hover {
+    background-color: #6b4acb;
+}
+
+.divider {
+    text-align: center;
+    color: #aaa;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    background: #ddd;
+    width: 40%;
+    top: 50%;
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.social-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    border-radius: 0.3rem;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    gap: 10px;
 }
 
-.register .logincover .form button:hover {
-    opacity: 1;
-    background-color: #65a3e6; /* Darker blue on hover */
+.social-btn img {
+    width: 20px;
+    height: 20px;
 }
 
-.register .logincover .form .link {
-    margin-top: 1rem;
+.social-btn:hover {
+    background: #f3f3f3;
+}
+
+.google-logo {
+    width: 20px;
+}
+
+.link {
     text-align: center;
-    font-size: 14px;
-    color: #003366;
+    margin-top: 1rem;
 }
 
-.register .logincover .form .link a {
-    color: #0066cc;
+.link a {
+    color: #7f56d9;
     text-decoration: none;
-}
-
-.register .logincover .form .link a:hover {
-    text-decoration: underline;
-    transition: text-decoration 0.1s ease-in-out;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .image-section {
-        display: none;
-    }
-
-    .register {
-        flex-direction: column;
-        justify-content: flex-start;
-        padding: 2rem;
-    }
-
-    .register .logincover {
-        width: 100%;
-        max-width: 400px;
-        box-shadow: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .register .logincover {
-        padding: 1.5rem;
-    }
-
-    .register .logincover .heading {
-        font-size: 1.5rem;
-    }
-
-    .register .logincover .form button {
-        font-size: 0.9rem;
-    }
+    font-weight: bold;
 }
