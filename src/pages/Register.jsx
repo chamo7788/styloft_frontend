@@ -69,32 +69,34 @@ export default function Register() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const token = await user.getIdToken();
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        const idToken = await user.getIdToken();
 
-      const [firstName = "", lastName = ""] = user?.displayName?.split(" ") || [];
+        const response = await fetch("http://localhost:3000/user/google-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken })
+        });
 
-      const response = await fetch("http://localhost:3000/user/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ firstName, lastName, email: user.email }),
-      });
+        if (!response.ok) {
+            throw new Error("Google login failed");
+        }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to register with Google");
-      }
+        const data = await response.json();
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("profilePicture", user.photoURL);
+        localStorage.setItem("currentUser", JSON.stringify(data.userProfile)); // Save the entire user profile in localStorage
+        localStorage.setItem("userId", data.userProfile._id); // Save the user ID in localStorage
 
-      console.log("Google Sign-In successful");
-      navigate("/");
+        console.log("Google login successful", data.userProfile);
+        console.log("Profile Picture URL:", user.photoURL); // Add this line to verify the URL
+        navigate("/");
     } catch (error) {
-      setError(error.message || "Google Sign-In failed");
+        console.error("Google login failed", error);
+        setError("Google login failed");
     }
-  };
+};
 
   return (
     <>
