@@ -68,11 +68,9 @@ function Section({ className, title, imgClass, children, link }) {
   return (
     <div className={`section ${className}`}>
       {imgClass && <div className={imgClass}></div>}
-      <div>
-        <h2>{title}</h2>
-        <p>{children}</p>
-        <a href={link} className="explore-button">Explore</a>
-      </div>
+      <h2>{title}</h2>
+      <p>{children}</p>
+      <a href={link} className="explore-button">Explore</a>
     </div>
   );
 }
