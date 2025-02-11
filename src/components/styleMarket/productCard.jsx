@@ -15,17 +15,28 @@ const imageMap = {
   "Beige Sweater": beigeSweater,
 };
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onExplore }) => {
   return (
     <div className="product-card">
+      {/* Product Image */}
       <img
-        src={imageMap[product.name] || product.image} 
-        alt={product.name}
+        src={imageMap[product.name] || product.image}
+        alt={`Image of ${product.name}`}
         className="product-image"
       />
-      <h3>{product.name}</h3>
-      <p>Price: ${product.price}</p>
-      <button className="quick-view">Quick View</button>
+
+      {/* Product Details */}
+      <div className="product-details">
+        <h3 className="product-name">{product.name}</h3>
+        <p className="product-price">Price: ${product.price.toFixed(2)}</p>
+      </div>
+
+      {/* Actions */}
+      <div className="button-group">
+        <button className="quick-view" onClick={() => onExplore(product)}>
+          Quick View
+        </button>
+      </div>
     </div>
   );
 };

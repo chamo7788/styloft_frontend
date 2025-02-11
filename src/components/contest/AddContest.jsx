@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from 'react';
 import "../../assets/css/contest/addContest.css"
+import "firebase/auth";
 
 export function AddContestForm() {
   const [formData, setFormData] = useState({
@@ -18,28 +19,38 @@ export function AddContestForm() {
     }))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted:", formData)
-    // Reset form after submission
-    setFormData({
-      title: "",
-      description: "",
-      prize: "",
-      deadline: "",
-      image: "",
-    })
-  }
-
-  const previewContest = {
-    id: 1,
-    image: formData.image || "/placeholder.svg",
-    description: formData.description || "Contest description will appear here",
-    designers: 0,
-    designs: 0,
-    prize: Number(formData.prize) || 0,
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    console.log("Current User:", user); // Add this line to log the current user
+  
+    if (user && user.uid) {
+      const contestData = {
+        ...formData,
+        createdBy: user.uid, // Add UID from localStorage to the form data
+      };
+      // Send the form data to your backend
+      const response = await fetch("http://localhost:3000/contest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(contestData),
+      });
+      const result = await response.json();
+      console.log("Form submitted:", result);
+      // Reset form after submission
+      setFormData({
+        title: "",
+        description: "",
+        prize: "",
+        deadline: "",
+        image: "",
+      });
+    } else {
+      console.log("User not authenticated");
+    }
+  };
 
   return (
     <div className="add-contest-container">
