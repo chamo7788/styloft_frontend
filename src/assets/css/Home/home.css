@@ -27,6 +27,7 @@ body {
     background-size: cover;
     background-position: center;
     position: relative;
+    transition: background 0.3s ease;
 }
 
 .hero-section::before {
@@ -64,12 +65,13 @@ body {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     height: 300px;
 }
 
 .feature-item:hover {
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .feature-style-market {
@@ -115,6 +117,12 @@ body {
     margin-bottom: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .section h2 {
@@ -210,6 +218,7 @@ body {
     margin-right: 50%;
     text-align: center;
 }
+
 .inspire-zone {
     background-image: url("../../images/InspireZone.webp");
     background-size: 50%;
@@ -229,8 +238,6 @@ body {
     margin-left: 50%;
     text-align: center;
 }
-
-
 
 /* Responsive Layout */
 @media (max-width: 768px) {

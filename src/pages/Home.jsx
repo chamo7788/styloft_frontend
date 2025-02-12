@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../assets/css/Home/home.css";
+import "../assets/js/scroll";
 
 export default function Home() {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "../assets/js/scroll.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <>
       <div className="home-container">
@@ -18,7 +29,7 @@ export default function Home() {
 
 function HeroSection() {
   return (
-    <div className="hero-section">
+    <div className="hero-section" id="hero-section">
       <div className="hero-image"></div>
     </div>
   );
@@ -26,7 +37,7 @@ function HeroSection() {
 
 function FeaturesSection() {
   return (
-    <div className="features-grid">
+    <div className="features-grid" id="features-section">
       <FeatureItem className="feature-style-market" title="STYLE Market" />
       <FeatureItem className="feature-style-studio" title="STYLE Studio" />
       <FeatureItem className="feature-inspire-zone" title="INSPIRE Zone" />

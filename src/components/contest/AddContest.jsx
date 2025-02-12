@@ -52,6 +52,37 @@ export function AddContestForm() {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return; // Ensure a file is selected
+  
+    const imageData = new FormData();
+    imageData.append('file', file);
+    imageData.append('upload_preset', 'Styloft'); // Replace with your actual upload preset
+  
+    try {
+      const response = await fetch('https://api.cloudinary.com/v1_1/dkonpzste/image/upload', {
+        method: 'POST',
+        body: imageData,
+      });
+  
+      const data = await response.json();
+      
+      if (data.secure_url) {
+        setFormData((prevData) => ({
+          ...prevData,
+          image: data.secure_url, // Save direct hosted URL
+        }));
+        console.log("Uploaded Image URL:", data.secure_url);
+      } else {
+        console.error("Image upload failed:", data);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
+  
+
   return (
     <div className="add-contest-container">
       <h2 className="add-contest-title">Add New Contest</h2>
@@ -94,6 +125,7 @@ export function AddContestForm() {
             value={formData.prize}
             onChange={handleChange}
             className="form-input"
+            min="0"
             required
           />
         </div>
@@ -113,14 +145,13 @@ export function AddContestForm() {
         </div>
         <div className="form-group">
           <label htmlFor="image" className="form-label">
-            Contest Image URL
+            Contest Image
           </label>
           <input
-            type="url"
+            type="file"
             id="image"
             name="image"
-            value={formData.image}
-            onChange={handleChange}
+            onChange={handleImageUpload}
             className="form-input"
             required
           />
