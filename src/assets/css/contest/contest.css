@@ -1,139 +1,140 @@
 .page {
-    background-color: #f9fafb;
-    min-height: 100vh;
-  }
-  
-  .banner {
-    background-color: #93c5fd;
-    padding: 2.5rem 0;
-    text-align: center;
-  }
-  
-  .banner-title {
-    font-size: 2.25rem;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .banner-subtitle {
-    font-size: 1.25rem;
-    margin-top: 0.5rem;
-    color: white;
-  }
-  
-  .button-signup {
-    margin-top: 1rem;
-    background-color: white;
-    color: #2563eb;
-  }
-  
-  .search-bar-container {
-    max-width: 64rem;
-    margin: 1.5rem auto;
-    padding: 1.5rem;
-  }
-  
-  .search-bar {
-    position: relative;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 1rem;
-    padding-left: 2.5rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    outline: none;
-    transition: box-shadow 0.2s;
-  }
-  
-  .search-input:focus {
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
-  }
-  
-  .search-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 0.75rem;
-    color: #6b7280;
-  }
-  
-  .contest-cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    max-width: 96rem;
-    margin: 1rem auto;
-    padding: 1rem;
-  }
-
-  .add-contest-link {
-    position: absolute;
-    right: 1.8rem;
-    top: 340px;
-    padding: 0.5rem 1rem;
-    background-color: #7fe6ff;
-    color: #2d3748;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+  background-color: #f9fafb;
+  min-height: 100vh;
 }
-  
-  .add-contest-link:hover {
-    background-color: #6cd9ff;
+
+.banner {
+  background-color: #93c5fd;
+  padding: 2.5rem 0;
+  text-align: center;
+}
+
+.banner-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: white;
+}
+
+.banner-subtitle {
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
+  color: white;
+}
+
+.button-signup {
+  margin-top: 1rem;
+  background-color: white;
+  color: #2563eb;
+}
+
+.search-bar-container {
+  max-width: 64rem;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+}
+
+.search-bar {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem;
+  padding-left: 2.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.search-icon {
+  position: absolute;
+  justify-content: right;
+  right: 1rem;
+  top: 0.55rem;
+  color: #6b7280;
+}
+
+.contest-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 96rem;
+  margin: 1rem auto;
+  padding: 1rem;
+}
+
+.add-contest-link {
+  position: absolute;
+  right: 1.8rem;
+  top: 295px;
+  padding: 0.5rem 1rem;
+  background-color: #7fe6ff;
+  color: #2d3748;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.add-contest-link:hover {
+  background-color: #6cd9ff;
+}
+
+@media (min-width: 768px) {
+  .contest-cards {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  @media (min-width: 768px) {
-    .contest-cards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  .card {
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border-radius: 0.75rem;
-    overflow: hidden;
-  }
-  
-  .card-content {
-    padding: 1rem;
-  }
-  
-  .button {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-  }
-  
-  .button-enter {
-    margin-top: 1rem;
-    width: 100%;
-    background-color: #2563eb;
-    color: white;
-  }
-  
-  .contest-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-  
-  .contest-description {
-    color: #4b5563;
-    margin-bottom: 1rem;
-  }
-  
-  .contest-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.875rem;
-    color: #6b7280;
-  }
-  
-  .contest-designers,
-  .contest-designs,
-  .contest-prize {
-    display: flex;
-    align-items: center;
-  }
+}
+
+.card {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.button-enter {
+  margin-top: 1rem;
+  width: 100%;
+  background-color: #2563eb;
+  color: white;
+}
+
+.contest-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.contest-description {
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.contest-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.contest-designers,
+.contest-designs,
+.contest-prize {
+  display: flex;
+  align-items: center;
+}

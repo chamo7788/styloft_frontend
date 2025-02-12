@@ -105,8 +105,21 @@ export default function Register() {
       <div className="register">
         <div className="logincover">
           <h2 className="heading">Create a Styloft Account</h2>
-          <p className="sub-heading">Sign up to get started!</p>
           <form onSubmit={handleSubmit} className="form">
+            <div className="position-radio-group">
+              <label>
+                <input type="radio" name="position" value="Designer" required />
+                Designer
+              </label>
+              <label>
+                <input type="radio" name="position" value="Student" required />
+                Student
+              </label>
+              <label>
+                <input type="radio" name="position" value="Enthusiast" required />
+                Enthusiast
+              </label>
+            </div>
             {error && <span className="error-msg">{error}</span>}
             <div className="name-title">
               <p>First Name</p>
