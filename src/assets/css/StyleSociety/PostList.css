@@ -1,0 +1,40 @@
+/* Post List */
+.post-list {
+    position:absolute;
+    width: 400px;
+    top: 550px;
+    left: 2%;
+}
+
+.post {
+    background: rgb(13, 199, 156);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 15px;
+}
+
+.post p {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.post small {
+    color: rgb(18, 16, 183);
+    font-size: 12px;
+}
+
+.deletePostButton {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+  
+  .deletePostButton:hover {
+    background-color: darkred;
+  }
+  
