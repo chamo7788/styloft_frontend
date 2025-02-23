@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CreatePost from "../components/stylesociety/CreatePost";
 import PostList from "../components/stylesociety/PostList";
 import AddPost from "../components/stylesociety/AddPost";
-import Feed from "../components/stylesociety/ShowPost";
+import Feed from "../components/stylesociety/Feed";
 import SearchBar from "../components/stylesociety/SearchBar";
 import ShowPost from "../components/stylesociety/ShowPost";
 
@@ -21,6 +21,7 @@ function StyleSociety() {
     <div>
       <SearchBar />
       <ShowPost />
+      <Feed />
       {/* Pass the user ID to AddPost if needed */}
       <AddPost userId={user ? user.uid : null} />
       
