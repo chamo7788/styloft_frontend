@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faImage, faSmile, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import "../../assets/css/StyleSociety/CreatePost.css";
+import Dp from "../../assets/images/s-societybackground.jpg";
 
 function CreatePost({ onClose, setPosts }) {
   const [postContent, setPostContent] = useState('');
@@ -72,7 +73,7 @@ function CreatePost({ onClose, setPosts }) {
       </div>
 
       <div className="createTop">
-        <img src="/dp.jpg" alt="User Profile" className="createImage" />
+        <img src={Dp}alt="User Profile" className="createImage" />
         <span className="createUserName">Styloft</span>
       </div>
 
