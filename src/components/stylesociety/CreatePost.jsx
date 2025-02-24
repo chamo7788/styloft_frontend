@@ -86,6 +86,40 @@ function CreatePost({ onClose, setPosts }) {
           onChange={(e) => setPostContent(e.target.value)} 
         />
       </div>
+
+      <div className="uploadedFilesContainer">
+        <div className="uploadedFiles">
+          {fileUrls.map((fileUrl, index) => (
+            <div key={index} className="filePreview1">
+              {fileUrl.endsWith('.mp4') ? (
+                <video controls className="fileVideo">
+                  <source src={fileUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img src={fileUrl} alt={`Uploaded file ${index}`} className="fileImage" />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="createBottom">
+        <label htmlFor="file-input" className="uploadButton">
+          <FontAwesomeIcon icon={faImage} className="PIcon" />
+        </label>
+        <input type="file" id="file-input" style={{ display: 'none' }} accept="image/*,video/*" multiple onChange={handleFileChange} />
+
+        <label>
+          <FontAwesomeIcon icon={faSmile} className="emojiIcon" />
+        </label>
+
+        <label>
+          <FontAwesomeIcon icon={faMapMarkerAlt} className="locationIcon" />
+        </label>
+      </div>
+
+
     </div>
   );
 }
