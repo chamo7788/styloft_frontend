@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faCalendarAlt, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import CreatePost from "./CreatePost"; 
 import "../../assets/css/StyleSociety/AddPost.css";
+import Dp from "../../assets/images/s-societybackground.jpg";
 
 const AddPost = ({ setPosts }) => {
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
@@ -21,7 +22,7 @@ const AddPost = ({ setPosts }) => {
   return (
     <div className="add-post-container">
       <div className="add-post">
-        <img src="/dp.jpg" alt="User Profile" className="createImage" />
+        <img src={Dp} alt="user" className="createImage" />
         <span 
           className={`post-input ${isActive ? "active" : ""}`} 
           onClick={handleOpenCreatePost}
