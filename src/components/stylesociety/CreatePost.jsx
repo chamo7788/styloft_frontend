@@ -3,6 +3,7 @@ import { db } from "../../firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faImage, faSmile, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import EmojiPicker from "emoji-picker-react"; // Import Emoji Picker
 import "../../assets/css/StyleSociety/CreatePost.css";
 import Dp from "../../assets/images/s-societybackground.jpg";
 
@@ -12,6 +13,7 @@ function CreatePost({ onClose, setPosts }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileUrls, setFileUrls] = useState([]);
   const [selectedPrivacy, setSelectedPrivacy] = useState('Friend');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // Emoji Picker State
 
   const handlePostClick = async () => {
     if (!postContent) return;
@@ -27,9 +29,8 @@ function CreatePost({ onClose, setPosts }) {
 
       const docRef = await addDoc(collection(db, "posts"), newPost);
 
-      // Update UI immediately
       setPosts(prevPosts => [
-        { id: docRef.id, ...newPost, createdAt: new Date() }, // Fake timestamp for instant UI update
+        { id: docRef.id, ...newPost, createdAt: new Date() },
         ...prevPosts
       ]);
 
@@ -40,7 +41,7 @@ function CreatePost({ onClose, setPosts }) {
       console.error("Error adding post: ", error);
     } finally {
       setIsPosting(false);
-      onClose(); // Close modal after posting
+      onClose();
     }
   };
 
@@ -59,6 +60,10 @@ function CreatePost({ onClose, setPosts }) {
     return () => fileUrls.forEach(url => URL.revokeObjectURL(url));
   }, [fileUrls]);
 
+  const handleEmojiClick = (emojiData) => {
+    setPostContent((prev) => prev + emojiData.emoji);
+  };
+
   return (
     <div className="createPost">
       <div className="create-background-blur"></div>
@@ -73,7 +78,7 @@ function CreatePost({ onClose, setPosts }) {
       </div>
 
       <div className="createTop">
-        <img src={Dp}alt="User Profile" className="createImage" />
+        <img src={Dp} alt="User Profile" className="createImage" />
         <span className="createUserName">Styloft</span>
       </div>
 
@@ -111,7 +116,7 @@ function CreatePost({ onClose, setPosts }) {
         </label>
         <input type="file" id="file-input" style={{ display: 'none' }} accept="image/*,video/*" multiple onChange={handleFileChange} />
 
-        <label>
+        <label onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
           <FontAwesomeIcon icon={faSmile} className="emojiIcon" />
         </label>
 
@@ -120,9 +125,14 @@ function CreatePost({ onClose, setPosts }) {
         </label>
       </div>
 
-
+      {showEmojiPicker && (
+        <div className="emojiPickerContainer">
+          <EmojiPicker onEmojiClick={handleEmojiClick} />
+        </div>
+      )}
     </div>
   );
 }
 
 export default CreatePost;
+
