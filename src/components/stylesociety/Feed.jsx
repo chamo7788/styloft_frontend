@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "../../firebaseConfig";
 import { collection, onSnapshot, addDoc } from "firebase/firestore";
 import "../../assets/css/StyleSociety/Feed.css";
+import Dp from "../../assets/images/s-societybackground.jpg";
 
 const Feed = () => {
   const [notifications, setNotifications] = useState([]);
@@ -78,7 +79,7 @@ const Feed = () => {
       {/* Displaying the feed list */}
       {notifications.map((item) => (
         <div key={item.id} className="Feed-item">
-          <img src={item.avatar} alt="avatar" className="Feed-avatar" />
+          <img src={Dp} alt="avatar" className="Feed-avatar" />
           <div className="Feed-info">
             <p className="Feed-title">{item.name}</p>
             <p className="Feed-category">
