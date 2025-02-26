@@ -1,9 +1,26 @@
 /* Post List */
+.apple{
+    display: flex;
+    flex-direction: column;
+    background-color: #E6E0EC; 
+    min-height:200px; 
+    height: auto;
+    overflow: hidden;
+    padding: 9px;
+    box-sizing: border-box;
+}
 .post-list {
-    position:absolute;
+    /*position: relative;
     width: 400px;
-    top: 550px;
-    left: 2%;
+    top: 720px;
+    left: 2%;*/
+    right: 30%;
+    position: relative; /* Keeps elements stacked properly */
+    top: 750px;
+    width: 150%;
+    max-width: 400px;
+    margin: 0 auto; /* Centers it */
+    padding-top: 10px; /* Adds space from top */
 }
 
 .post {

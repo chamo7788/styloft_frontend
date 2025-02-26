@@ -4,7 +4,7 @@ import CreatePost from "../components/stylesociety/CreatePost";
 import PostList from "../components/stylesociety/PostList";
 import AddPost from "../components/stylesociety/AddPost";
 import Feed from "../components/stylesociety/Feed";
-import SearchBar from "../components/stylesociety/SearchBar";
+import StyleSearchBar from "../components/stylesociety/StyleSearchBar";
 import ShowPost from "../components/stylesociety/ShowPost";
 
 function StyleSociety() {
@@ -19,7 +19,7 @@ function StyleSociety() {
 
   return (
     <div>
-      <SearchBar />
+      <StyleSearchBar />
       <ShowPost />
       <Feed />
       {/* Pass the user ID to AddPost if needed */}

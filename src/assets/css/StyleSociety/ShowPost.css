@@ -1,0 +1,15 @@
+/*.showpost-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #E6E0EC; 
+    min-height:200px; 
+    max-height: none;
+    overflow: auto;
+    flex-grow: 1;
+    padding: 9px;
+    
+    box-sizing: border-box; 
+}
+    
+    
+  
