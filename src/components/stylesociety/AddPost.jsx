@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faCalendarAlt, faFileAlt } from "@fortawesome/free-solid-svg-icons";
-import CreatePost from "./CreatePost"; 
+import CreatePost from "./CreatePost";
 import "../../assets/css/StyleSociety/AddPost.css";
 import Dp from "../../assets/images/s-societybackground.jpg";
 
