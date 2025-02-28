@@ -65,8 +65,9 @@ function CreatePost({ onClose, setPosts }) {
   };
 
   return (
+    <>
+    <div className="create-background-blur"></div>
     <div className="createPost">
-      <div className="create-background-blur"></div>
       <div className="topic">
         <button className="clossicon1" onClick={onClose}>
           <span className="clossicon">Close</span>
@@ -131,6 +132,7 @@ function CreatePost({ onClose, setPosts }) {
         </div>
       )}
     </div>
+    </>
   );
 }
 
