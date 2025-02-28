@@ -6,18 +6,17 @@ import Dp from "../../assets/images/s-societybackground.jpg";
 
 const Feed = () => {
   const [notifications, setNotifications] = useState([]);
+  const [showForm, setShowForm] = useState(false); // State to control form visibility
   const [newFeed, setNewFeed] = useState({
     name: "",
     category: "",
     type: "",
-    avatar: "/dp.jpg", // Default avatar, update if needed
+    avatar: "/dp.jpg", // Default avatar
   });
 
   useEffect(() => {
-    // Reference to the "feed" collection in Firestore
     const feedRef = collection(db, "feed");
 
-    // Listen for real-time updates
     const unsubscribe = onSnapshot(feedRef, (snapshot) => {
       const feedData = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -26,10 +25,9 @@ const Feed = () => {
       setNotifications(feedData);
     });
 
-    return () => unsubscribe(); // Cleanup on unmount
+    return () => unsubscribe();
   }, []);
 
-  // Function to add a new feed item
   const handleAddFeed = async (e) => {
     e.preventDefault();
     if (!newFeed.name || !newFeed.category || !newFeed.type) {
@@ -38,9 +36,10 @@ const Feed = () => {
     }
 
     try {
-      const feedRef = collection(db, "feed"); // Reference to Firestore collection
-      await addDoc(feedRef, newFeed); // Add document to Firestore
+      const feedRef = collection(db, "feed");
+      await addDoc(feedRef, newFeed);
       setNewFeed({ name: "", category: "", type: "", avatar: "/dp.jpg" }); // Reset form
+      setShowForm(false); // Hide form after submission
     } catch (error) {
       console.error("Error adding feed:", error);
     }
@@ -50,31 +49,35 @@ const Feed = () => {
     <div className="Feed-container">
       <div className="Feed-header">
         <p>Add to your feed</p>
-        <button className="add-btn">+</button>
+        <button className="add-btn" onClick={() => setShowForm(!showForm)}>
+          {showForm ? "✖" : "+"} {/* Toggle button text */}
+        </button>
       </div>
 
-      {/* Form to add new feed */}
-      <form onSubmit={handleAddFeed} className="add-feed-form">
-        <input
-          type="text"
-          placeholder="Name"
-          value={newFeed.name}
-          onChange={(e) => setNewFeed({ ...newFeed, name: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Category"
-          value={newFeed.category}
-          onChange={(e) => setNewFeed({ ...newFeed, category: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Type"
-          value={newFeed.type}
-          onChange={(e) => setNewFeed({ ...newFeed, type: e.target.value })}
-        />
-        <button type="submit" className="submitbtn">Add Feed</button>
-      </form>
+      {/* Conditionally show the form when showForm is true */}
+      {showForm && (
+        <form onSubmit={handleAddFeed} className="add-feed-form">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newFeed.name}
+            onChange={(e) => setNewFeed({ ...newFeed, name: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Category"
+            value={newFeed.category}
+            onChange={(e) => setNewFeed({ ...newFeed, category: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Type"
+            value={newFeed.type}
+            onChange={(e) => setNewFeed({ ...newFeed, type: e.target.value })}
+          />
+          <button type="submit" className="submitbtn">Add Feed</button>
+        </form>
+      )}
 
       {/* Displaying the feed list */}
       {notifications.map((item) => (
@@ -93,6 +96,4 @@ const Feed = () => {
   );
 };
 
-export default Feed ;
-
-
+export default Feed;
