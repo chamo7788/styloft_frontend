@@ -32,6 +32,7 @@ function PostList() {
   };
 
   return (
+    <div className="apple">
     <div className="post-list"> 
       {posts.map((post) => (
         <div key={post.id} className="post">
@@ -53,6 +54,7 @@ function PostList() {
           </button>
         </div>
       ))}
+    </div>
     </div>
   );
 }

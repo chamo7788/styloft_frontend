@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import "../../assets/css/StyleSociety/ShowPost.css";
 import AddPost from "./AddPost";
 import PostList from "./PostList";
+import CreatePost from "./CreatePost";
 
 const ShowPost = () => {
   const [posts, setPosts] = useState([]);
@@ -21,9 +23,15 @@ const ShowPost = () => {
   }, []);
 
   return (
-    <div>
+    <div className="showpost-container" >
       <AddPost setPosts={setPosts} />
-      <PostList posts={posts} setPosts={setPosts} />
+      <div>
+        {posts.length > 0 ? (
+          <PostList posts={posts} setPosts={setPosts} />
+        ) : (
+          <p >No posts available</p>
+        )}
+    </div>
     </div>
   );
 };
