@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setProducts, sortProducts } from "../../redux/productSlice.js";
+import { setProducts } from "../../redux/productSlice.js";
 import ProductCard from "./productCard.jsx";
 import BuyNow from "./buyNow.jsx";
-import productsData from "../../data/products.json";
 import "../../assets/css/StyleMarket/styleMarket.css";
 
 const ITEMS_PER_PAGE = 8;
@@ -12,49 +11,40 @@ const StyleMarket = () => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products.filteredProducts);
   
-  
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // ✅ Fetch products from the backend when the component loads
   useEffect(() => {
-    dispatch(setProducts(productsData));
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/shop"); // Replace with actual backend URL
+        const data = await response.json();
+        dispatch(setProducts(data)); // Store fetched data in Redux
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
   }, [dispatch]);
 
   const indexOfLastProduct = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstProduct = indexOfLastProduct - ITEMS_PER_PAGE;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  
   const handleExplore = (product) => {
     setSelectedProduct(product);
-  };
-
-  // Go back to product list
-  const handleBack = () => {
-    setSelectedProduct(null);
   };
 
   return (
     <div className="style-market-page">
       <div className="container">
         {selectedProduct ? (
-          // Show BuyNow page when a product is selected
-          <BuyNow product={selectedProduct} onBack={handleBack} />
+          <BuyNow product={selectedProduct} onBack={() => setSelectedProduct(null)} />
         ) : (
-          // Show Product List when no product is selected
           <>
             <h2>New Arrivals</h2>
-
-            {/* Sorting Section */}
-            <div className="sort-section">
-              <span className="sort-label">
-                <span className="filter-icon">⚙</span> Sort By:
-              </span>
-              <div className="sort-buttons">
-                <button className="sort-btn" onClick={() => dispatch(sortProducts("top"))}>Top</button>
-                <button className="sort-btn" onClick={() => dispatch(sortProducts("low_price"))}>Low Price</button>
-              </div>
-            </div>
 
             {/* Product Grid */}
             <div className="product-grid">
@@ -62,7 +52,7 @@ const StyleMarket = () => {
                 <ProductCard 
                   key={product.id} 
                   product={product} 
-                  onExplore={() => handleExplore(product)} // Pass handleExplore to ProductCard
+                  onExplore={() => handleExplore(product)} 
                 />
               ))}
             </div>

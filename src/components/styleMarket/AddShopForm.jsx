@@ -6,7 +6,7 @@ export function AddShopForm() {
     name: "",
     description: "",
     price: "",
-    image: "",
+    image: "", // Image URL from ImgHippo
   });
 
   const [imagePreview, setImagePreview] = useState(null); // For displaying selected image
@@ -17,53 +17,28 @@ export function AddShopForm() {
       ...prevData,
       [name]: value,
     }));
-  };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setImagePreview(URL.createObjectURL(file)); // Show image preview
-
-    const imageData = new FormData();
-    imageData.append("file", file);
-    imageData.append("upload_preset", "Styloft"); // Change to your actual Cloudinary preset
-
-    try {
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dkonpzste/image/upload",
-        {
-          method: "POST",
-          body: imageData,
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.secure_url) {
-        setFormData((prevData) => ({
-          ...prevData,
-          image: data.secure_url, // Save the hosted image URL
-        }));
-        console.log("Uploaded Image URL:", data.secure_url);
-      } else {
-        console.error("Image upload failed:", data);
-      }
-    } catch (error) {
-      console.error("Error uploading image:", error);
+    // If updating image field, update preview
+    if (name === "image") {
+      setImagePreview(value);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ✅ Check if all fields are filled
+    if (!formData.name || !formData.description || !formData.price || !formData.image) {
+      alert("Please fill all fields before submitting.");
+      return;
+    }
+
     console.log("Submitting Form Data:", formData); // Debugging
 
     try {
       const response = await fetch("http://localhost:3000/shop", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -72,13 +47,10 @@ export function AddShopForm() {
 
       if (response.ok) {
         alert("Shop Created Successfully!");
-        setFormData({
-          name: "",
-          description: "",
-          price: "",
-          image: "",
-        });
-        setImagePreview(null); // Reset image preview
+
+        // ✅ Reset the form
+        setFormData({ name: "", description: "", price: "", image: "" });
+        setImagePreview(null);
       } else {
         alert("Failed to create shop: " + result.message);
       }
@@ -139,18 +111,21 @@ export function AddShopForm() {
 
         <div className="form-group">
           <label htmlFor="image" className="form-label">
-            Shop Image
+            Image URL (Upload to ImgHippo)
           </label>
           <input
-            type="file"
+            type="text"
             id="image"
             name="image"
-            onChange={handleImageUpload}
+            placeholder="Paste ImgHippo image link here"
+            value={formData.image}
+            onChange={handleChange}
             className="form-input"
             required
           />
         </div>
 
+        {/* Image Preview */}
         {imagePreview && (
           <div className="image-preview">
             <img src={imagePreview} alt="Preview" className="preview-img" />
