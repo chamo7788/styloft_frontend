@@ -11,6 +11,8 @@ export function AddContestForm() {
     image: "",
   })
 
+  const [imagePreview, setImagePreview] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prevData) => ({
@@ -55,6 +57,8 @@ export function AddContestForm() {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return; // Ensure a file is selected
+
+    setImagePreview(URL.createObjectURL(file)); // Show image preview
   
     const imageData = new FormData();
     imageData.append('file', file);
@@ -156,6 +160,13 @@ export function AddContestForm() {
             required
           />
         </div>
+
+        {imagePreview && (
+          <div className="image-preview">
+            <img src={imagePreview} alt="Preview" className="preview-img" />
+          </div>
+        )}
+
         <button type="submit" className="submit-button">
           Create Contest
         </button>

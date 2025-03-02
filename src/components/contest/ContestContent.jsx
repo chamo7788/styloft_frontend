@@ -1,83 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "../../assets/css/contest/contestContent.css";
-import contestImg1 from "../../assets/images/Contest-2.jpg";
-import contestImg2 from "../../assets/images/Contest-1.jpg";
-
-// Sample Contest Data (Replace with actual API fetch later)
-const contestData = [
-    {
-        id: 1,
-        title: "Ultimate Fashion Design Challenge",
-        creator: "John Doe",
-        image: contestImg1,
-        description: "Calling all creative minds! Showcase your talent, redefine fashion, and let your designs steal the spotlight.",
-    },
-    {
-        id: 2,
-        title: "Winter Fashion Contest",
-        creator: "Jane Smith",
-        image: contestImg2,
-        description: "Design the ultimate winter outfit that blends fashion and comfort. Do you have what it takes to win?",
-    },
-];
 
 export default function ContestContent() {
-    const { id } = useParams(); // Get contest ID from URL
-    const contest = contestData.find((c) => c.id === parseInt(id)); // Find contest by ID
-
-    // File Upload State
+    const { id } = useParams();
+    const [contest, setContest] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
 
-    if (!contest) {
-        return <p>Contest not found.</p>; // Handle invalid contest ID
-    }
+    useEffect(() => {
+        const fetchContest = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/contest/${id}`);
+                if (!response.ok) throw new Error("Failed to fetch contest");
+                const data = await response.json();
+                setContest(data);
+            } catch (error) {
+                console.error("Error fetching contest:", error);
+            }
+        };
+        fetchContest();
+    }, [id]);
 
-    // Handle file upload
     const handleFileChange = (event) => {
         setUploadedFile(event.target.files[0]);
     };
 
-    // Handle form submission
-    const handleSubmit = () => {
-        if (uploadedFile) {
-            alert(`File "${uploadedFile.name}" submitted for Contest ${contest.id}!`);
-            setUploadedFile(null); // Reset file after submission
-        } else {
+    const handleSubmit = async () => {
+        if (!uploadedFile) {
             alert("Please upload a file before submitting.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", uploadedFile);
+        formData.append("contestId", id);
+        formData.append("userId", localStorage.getItem("userId")); // Assuming user ID is stored
+
+        try {
+            const response = await fetch("http://localhost:3000/contest/submit", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) throw new Error("Failed to submit design");
+            alert("Design submitted successfully!");
+            setUploadedFile(null);
+        } catch (error) {
+            console.error("Error submitting design:", error);
         }
     };
 
-    // Clear uploaded file
-    const handleClear = () => {
-        setUploadedFile(null);
-    };
+    if (!contest) return <p>Loading...</p>;
 
     return (
         <div className="contest-content">
-            {/* Contest Banner */}
             <div className="contest-banner" style={{ backgroundImage: `url(${contest.image})` }}>
                 <h1 className="contest-title">{contest.title}</h1>
-                <p className="contest-creator">Created by: {contest.creator}</p>
+                <p className="contest-creator">Created by: {contest.createdBy}</p>
             </div>
 
-            {/* Contest Description */}
             <div className="contest-description">
                 <p>{contest.description}</p>
             </div>
 
-            {/* File Upload Section */}
             <div className="file-upload-section">
                 <label className="file-label">Upload Your Design:</label>
                 <input type="file" onChange={handleFileChange} className="file-input" />
                 {uploadedFile && <p className="uploaded-file">Selected: {uploadedFile.name}</p>}
             </div>
 
-            {/* Action Buttons */}
             <div className="button-container">
-                <button className="btn create-btn">Create</button>
                 <button className="btn submit-btn" onClick={handleSubmit}>Submit</button>
-                <button className="btn clear-btn" onClick={handleClear}>Clear</button>
             </div>
         </div>
     );

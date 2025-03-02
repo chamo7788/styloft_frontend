@@ -1,0 +1,91 @@
+/* AddPost.css */
+.add-post-container {
+  position: absolute;
+  top: 115%;
+  width: 50%;
+  left: 1.5%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 19px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  gap: 8px;
+}
+
+.post-input.active {
+  color: blue; /* Change color when clicked */
+  font-weight: bold;
+}
+
+
+.add-post {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.createImage {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #101010;
+}
+
+.post-input {
+  flex-grow: 1;
+  background-color: #e2bae4;;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.post-options {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 8px;
+}
+
+.post-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color:  #070707;
+  font-size: 14px;
+}
+
+.post-option:hover {
+  color: #333;
+}
+
+.Camicon {
+  width: 20px;
+  height: 20px;
+  color: blue;
+}
+
+.Calicon {
+  width: 20px;
+  height: 20px;
+  color: green;
+}
+
+.Filicon {
+  width: 20px;
+  height: 20px;
+  color: red;
+}
+
+/* Hover Effects */
+.Camicon:hover,
+.Calicon:hover,
+.Filicon:hover {
+opacity: 0.8;
+}

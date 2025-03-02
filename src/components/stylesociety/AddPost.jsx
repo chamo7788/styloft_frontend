@@ -1,10 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera, faCalendarAlt, faFileAlt } from "@fortawesome/free-solid-svg-icons";
+import CreatePost from "./CreatePost";
+import "../../assets/css/StyleSociety/AddPost.css";
+import Dp from "../../assets/images/s-societybackground.jpg";
 
-export function AddPost() {
-    return (
-        <div>
-            <h1>Add Post</h1>
-            <p>Welcome to the Add Post page!</p>
+const AddPost = ({ setPosts }) => {
+  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+
+  const handleOpenCreatePost = () => {
+    setIsCreatePostOpen(true);
+    setIsActive(true);
+  };
+
+  const handleCloseCreatePost = () => {
+    setIsCreatePostOpen(false);
+    setIsActive(false);
+  };
+
+  return (
+    <div className="add-post-container">
+      <div className="add-post">
+        <img src={Dp} alt="user" className="createImage" />
+        <span 
+          className={`post-input ${isActive ? "active" : ""}`} 
+          onClick={handleOpenCreatePost}
+        >
+          What's on your mind?
+        </span>
+      </div>
+
+      <div className="post-options">
+        <div className="post-option">
+          <FontAwesomeIcon icon={faCamera} className="Camicon" />
+          <span>Media</span>
         </div>
-    );
-}
+        <div className="post-option">
+          <FontAwesomeIcon icon={faCalendarAlt} className="Calicon" />
+          <span>Event</span>
+        </div>
+        <div className="post-option">
+          <FontAwesomeIcon icon={faFileAlt} className="Filicon" />
+          <span>Write article</span>
+        </div>
+      </div>
+
+      {/* Show CreatePost when clicked */}
+      {isCreatePostOpen && <CreatePost onClose={handleCloseCreatePost} setPosts={setPosts} />}
+    </div>
+  );
+};
+
+export default AddPost;

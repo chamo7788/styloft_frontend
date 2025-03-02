@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Home, StyleSociety, Login, Register, StyleStudio, Contest, Stylemarket } from "./pages";
+import { Home, StyleSociety, Login, Register, StyleStudio, Contest, Stylemarket, Stylesociety } from "./pages";
 import { Navbar, Footer } from "./components";
 import ContestContent from "./components/contest/ContestContent";
 import { AddContestForm } from "./components/contest/AddContest";
 import { Provider } from "react-redux";  
 import { store } from "./redux/store";  
 import Profile  from "./components/Profile/Profile";
+import { AddShopForm } from "./components/styleMarket/AddShopForm";
 
 // import Home from "./pages/Home";
 // import StyleSociety from "./pages/Stylesociety";
@@ -34,8 +35,10 @@ function App() {
         <Route path="/styleMarket" element={<Stylemarket />} />
         <Route path="/contest" element={<Contest />} />
         <Route path="/contest/add-contest" element={<AddContestForm />} />
+        <Route path="/styleMarket/add-shop" element={<AddShopForm />} />
         <Route path="/contest/:id" element={<ContestContent />} />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/StyleSociety" element= {<StyleSociety />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

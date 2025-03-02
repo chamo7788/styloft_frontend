@@ -1,20 +1,34 @@
-import React from "react";
-import { AddPost } from "../components/stylesociety/AddPost";
-import { CreatePost } from "../components/stylesociety/CreatePost";
-import { Post } from "../components/stylesociety/Post";
-import { SearchBar } from "../components/stylesociety/SearchBar";
-import { TrendingCard } from "../components/stylesociety/TrendingCard";
+import { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import CreatePost from "../components/stylesociety/CreatePost";
+import PostList from "../components/stylesociety/PostList";
+import AddPost from "../components/stylesociety/AddPost";
+import Feed from "../components/stylesociety/Feed";
+import StyleSearchBar from "../components/stylesociety/StyleSearchBar";
+import ShowPost from "../components/stylesociety/ShowPost";
 
-export default function StyleSociety() {
-    return (
-        <div>
-            <AddPost />
-            <CreatePost />
-            <Post />
-            <SearchBar />
-            <TrendingCard />
-            <h1>Style Society</h1>
-            <p>Welcome to the Style Society page!</p>
-        </div>
-    );
+function StyleSociety() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+  }, []);
+
+  return (
+    <div>
+      <StyleSearchBar />
+      <ShowPost />
+      <Feed />
+      {/* Pass the user ID to AddPost if needed */}
+      <AddPost userId={user ? user.uid : null} />
+      
+      {/* Show PostList only when the user is authenticated */}
+      {user && <PostList userId={user.uid} />}
+    </div>
+  );
 }
+
+export default StyleSociety;

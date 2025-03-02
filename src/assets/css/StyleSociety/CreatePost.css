@@ -1,0 +1,218 @@
+/* Main Post Container */
+.createPost {
+  position: absolute;
+  top: 270%;
+  left: 95%;
+  transform: translate(-50%, -50%);
+  max-width: 900px;
+  width: 900%;
+  background-color: rgb(244, 244, 244);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  color: rgb(1, 1, 1);
+  z-index: 1000;
+}
+
+/* Background Overlay */
+.createPostBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 999; /* Behind the modal */
+}
+
+
+/* Header Section */
+.topic {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #a1a7b7;
+  padding: 12px;
+  border-radius: 8px 8px 0 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.header{
+  color: black;
+}
+
+/* Close Button */
+.clossicon1 {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.clossicon1:hover {
+  background-color: darkred;
+}
+
+/* Post Button */
+.PostButton {
+  background-color: blue;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.PostButton:hover {
+  background-color: darkblue;
+}
+
+/* User Profile Section */
+.createTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.createImage {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+.createUserName {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Post Input Section */
+.createCenter {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.addPostInput {
+  width: 95%;
+  min-height: 70px;
+  background:  #e2bae4;
+  color: #333;
+  border: 1px solid #bbb;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  outline: none;
+  resize: none;
+}
+
+.addPostInput::placeholder {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Uploaded Files Section */
+.uploadedFilesContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.filePreview1 {
+  max-width: 100px;
+  max-height: 100px;
+  margin: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.fileImage, .fileVideo {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+/* Bottom Section with Icons */
+.createBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 12px;
+  border-top: 1px solid #555;
+  margin-top: 12px;
+}
+
+/* Icon Styles */
+.PIcon, .emojiIcon, .locationIcon {
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.PIcon {
+  color: #28a745;
+}
+
+.emojiIcon {
+  color: #f1c40f;
+}
+
+.locationIcon {
+  color: #e74c3c;
+}
+
+/* Hover Effects */
+.PIcon:hover,
+.emojiIcon:hover,
+.locationIcon:hover {
+  transform: scale(1.1);
+  opacity: 0.85;
+}
+
+/* File Upload Button */
+.fileUploadButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.emojiPickerContainer {
+  position: absolute;
+  bottom: 70px;
+  top: -10%;
+  left: 80%;
+  z-index: 1000;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Background Overlay */
+.create-background-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 999; /* Behind the modal */
+}
+
+
+
+
+ 
+ 

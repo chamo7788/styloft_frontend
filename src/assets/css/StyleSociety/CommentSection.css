@@ -1,0 +1,19 @@
+.comment-container {
+    margin-top: 10px;
+  }
+  .comment-container input {
+    padding: 5px;
+    margin-right: 5px;
+  }
+  .comment-button {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .comment-button:hover {
+    background-color: #0073e6;
+  }
+  
