@@ -24,14 +24,24 @@ export function AddContestForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = JSON.parse(localStorage.getItem('currentUser'));
-    console.log("Current User:", user); // Add this line to log the current user
   
-    if (user && user.uid) {
-      const contestData = {
-        ...formData,
-        createdBy: user.uid, // Add UID from localStorage to the form data
-      };
-      // Send the form data to your backend
+    if (!user || !user.uid) {
+      console.log("User not authenticated");
+      return;
+    }
+  
+    if (!formData.image) {
+      console.log("Image upload is not completed!");
+      alert("Please wait for the image to finish uploading before submitting.");
+      return;
+    }
+  
+    const contestData = {
+      ...formData,
+      createdBy: user.uid, // Add UID from localStorage to the form data
+    };
+  
+    try {
       const response = await fetch("http://localhost:3000/contest", {
         method: "POST",
         headers: {
@@ -39,8 +49,10 @@ export function AddContestForm() {
         },
         body: JSON.stringify(contestData),
       });
+  
       const result = await response.json();
       console.log("Form submitted:", result);
+  
       // Reset form after submission
       setFormData({
         title: "",
@@ -49,20 +61,23 @@ export function AddContestForm() {
         deadline: "",
         image: "",
       });
-    } else {
-      console.log("User not authenticated");
+  
+      setImagePreview(null);
+    } catch (error) {
+      console.error("Error submitting contest:", error);
     }
   };
+  
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file) return; // Ensure a file is selected
-
-    setImagePreview(URL.createObjectURL(file)); // Show image preview
+    if (!file) return; 
+  
+    setImagePreview(URL.createObjectURL(file)); 
   
     const imageData = new FormData();
     imageData.append('file', file);
-    imageData.append('upload_preset', 'Styloft'); // Replace with your actual upload preset
+    imageData.append('upload_preset', 'Styloft'); 
   
     try {
       const response = await fetch('https://api.cloudinary.com/v1_1/dkonpzste/image/upload', {
@@ -71,20 +86,23 @@ export function AddContestForm() {
       });
   
       const data = await response.json();
-      
+      console.log("Upload response:", data); // Debugging line
+  
       if (data.secure_url) {
         setFormData((prevData) => ({
           ...prevData,
-          image: data.secure_url, // Save direct hosted URL
+          image: data.secure_url, 
         }));
         console.log("Uploaded Image URL:", data.secure_url);
       } else {
-        console.error("Image upload failed:", data);
+        console.error("Image upload failed. Response:", data);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
     }
   };
+  
+  
   
 
   return (
