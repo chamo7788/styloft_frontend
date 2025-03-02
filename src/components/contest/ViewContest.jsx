@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import "../../assets/css/contest/contest.css";
 import ContestCards from "./ContestCard";
 
-// Button Component
 const Button = ({ children, className, onClick }) => (
     <button className={`button ${className}`} onClick={onClick}>{children}</button>
 );
 
 const DesignContestPage = () => {
     const [contests, setContests] = useState([]);
+    const [isBannerFixed, setIsBannerFixed] = useState(false);
+    const contestCardsRef = useRef(null);
 
     useEffect(() => {
         const fetchContests = async () => {
@@ -29,15 +30,35 @@ const DesignContestPage = () => {
         fetchContests();
     }, []);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (contestCardsRef.current) {
+                const rect = contestCardsRef.current.getBoundingClientRect();
+                if (rect.top <= 0) {
+                    setIsBannerFixed(true);
+                } else {
+                    setIsBannerFixed(false);
+                }
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
         <div className="page">
-            <header className="banner">
-                <h1 className="banner-title">DESIGN CONTEST</h1>
-                <p className="banner-subtitle">"Unleash your creativity, design your legacy!"</p>
-                {!localStorage.getItem('authToken') && (
-                    <Button className="button-signup" onClick={() => window.location.href = '/register'}>SIGN UP</Button>
-                )}
-            </header>
+            <div className={`banner-container ${isBannerFixed ? "fixed" : ""}`}>
+                <header className="banner">
+                    <h1 className="banner-title">DESIGN CONTEST</h1>
+                    <p className="banner-subtitle">"Unleash your creativity, design your legacy!"</p>
+                    {!localStorage.getItem("authToken") && (
+                        <Button className="button-signup" onClick={() => window.location.href = "/register"}>
+                            SIGN UP
+                        </Button>
+                    )}
+                </header>
+            </div>
 
             <div className="search-bar-container">
                 <div className="search-bar">
@@ -52,8 +73,9 @@ const DesignContestPage = () => {
                 </Link>
             </div>
 
-            {/* Pass contests as a prop */}
-            <ContestCards contests={contests} />
+            <div className="scrollable-content" ref={contestCardsRef}>
+                <ContestCards contests={contests} />
+            </div>
         </div>
     );
 };
