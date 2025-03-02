@@ -5,6 +5,7 @@ import ContestContent from "./components/contest/ContestContent";
 import { AddContestForm } from "./components/contest/AddContest";
 import { Provider } from "react-redux";  
 import { store } from "./redux/store";  
+import Profile  from "./components/Profile/Profile";
 
 // import Home from "./pages/Home";
 // import StyleSociety from "./pages/Stylesociety";
@@ -34,6 +35,7 @@ function App() {
         <Route path="/contest" element={<Contest />} />
         <Route path="/contest/add-contest" element={<AddContestForm />} />
         <Route path="/contest/:id" element={<ContestContent />} />
+        <Route path="/Profile" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
