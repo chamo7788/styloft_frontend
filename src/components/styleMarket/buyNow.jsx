@@ -1,28 +1,24 @@
 import React, { useState } from "react";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import "../../assets/css/StyleMarket/buyNow.css";
-
-import redDress from "../../assets/images/red-dress.jpg";
-import denimJacket from "../../assets/images/denim-jacket.jpg";
-import eveningGown from "../../assets/images/evening-gown.jpg";
-import beigeSweater from "../../assets/images/beige-sweater.jpg";
-import defaultImage from "../../assets/images/default-placeholder.png"; 
-
-// Map product names to imported images
-const imageMap = {
-  "Red Dress": redDress,
-  "Denim Jacket": denimJacket,
-  "Evening Gown": eveningGown,
-  "Beige Sweater": beigeSweater,
-};
+import defaultImage from "../../assets/images/default-placeholder.png"; // Ensure you have a fallback image
 
 const BuyNow = ({ product, onBack }) => {
   const [selectedSize, setSelectedSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
   const sizes = ["XS", "S", "M", "L", "XL"];
 
-  
-  const productImage = imageMap[product.name] || product.image || defaultImage;
+  const productImage = product.image || defaultImage; // Use product image or default fallback
+
+  const handleBuyNow = () => {
+    console.log("Buying Now:", {
+      product: product.name,
+      size: selectedSize,
+      quantity: quantity,
+    });
+
+    // Here, you can add checkout functionality or API call
+  };
 
   return (
     <div className="buynow">
@@ -70,19 +66,23 @@ const BuyNow = ({ product, onBack }) => {
             <div className="quantity-selection">
               <h3>Quantity</h3>
               <div className="quantity-controls">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                <button
+                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                >
+                  -
+                </button>
                 <input
                   type="number"
                   min="1"
                   value={quantity}
                   onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                 />
-                <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                <button onClick={() => setQuantity((prev) => prev + 1)}>+</button>
               </div>
             </div>
 
             {/* Buy Now Button */}
-            <button className="buy-now-button">
+            <button className="buy-now-button" onClick={handleBuyNow}>
               <ShoppingBag className="icon" /> Buy Now
             </button>
           </div>
