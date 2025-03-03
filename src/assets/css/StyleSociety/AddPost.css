@@ -13,10 +13,9 @@
 }
 
 .post-input.active {
-  color: blue; /* Change color when clicked */
+  color: blue;
   font-weight: bold;
 }
-
 
 .add-post {
   display: flex;
@@ -35,7 +34,7 @@
 
 .post-input {
   flex-grow: 1;
-  background-color: #e2bae4;;
+  background-color: #e2bae4;
   border: none;
   border-radius: 20px;
   padding: 8px 16px;
@@ -87,5 +86,51 @@
 .Camicon:hover,
 .Calicon:hover,
 .Filicon:hover {
-opacity: 0.8;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .add-post-container {
+    width: 80%;
+    left: 10%;
+    top: 110%;
+    padding: 15px;
+  }
+  
+  .post-input {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .post-options {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .add-post-container {
+    width: 90%;
+    left: 5%;
+    top: 105%;
+    padding: 12px;
+  }
+  
+  .add-post {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .post-input {
+    font-size: 12px;
+    width: 100%;
+  }
+  
+  .post-options {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
 }
