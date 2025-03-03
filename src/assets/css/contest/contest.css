@@ -1,11 +1,22 @@
 .page {
   background-color: #f9fafb;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-container {
+  position: sticky;
+  top: -200%;
+  width: 100%;
+  z-index: 2;
+  background-color: #93c5fd;
+  transition: transform 0.3s ease-in-out;
 }
 
 .banner {
-  background-color: #93c5fd;
-  padding: 2.5rem 0;
+  height: 250px;
+  padding: 6rem 0;
   text-align: center;
 }
 
@@ -60,6 +71,13 @@
   color: #6b7280;
 }
 
+.scrollable-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  height: calc(100vh - 160px); /* Full height minus the banner height */
+  padding: 1rem;
+}
+
 .contest-cards {
   display: grid;
   grid-template-columns: 1fr;
@@ -67,6 +85,8 @@
   max-width: 96rem;
   margin: 1rem auto;
   padding: 1rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px); /* Allow scrolling only within this section */
 }
 
 .add-contest-link {

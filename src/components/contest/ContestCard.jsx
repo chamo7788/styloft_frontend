@@ -32,9 +32,13 @@ const ContestCards = ({ contests }) => {
                             <span className="contest-designs">🌟 {contest.designs} Designs</span>
                             <span className="contest-prize">{contest.prize}</span>
                         </div>
-                        <Button className="button-enter" onClick={() => navigate(`/contest/${contest.id}`)}>
+                        <Button
+                        className="button-enter"
+                        onClick={() => window.open(`/contest/${contest.id}`, "_blank", "noopener,noreferrer")}
+                        >
                             Enter Contest
                         </Button>
+
                     </CardContent>
                 </Card>
             ))}

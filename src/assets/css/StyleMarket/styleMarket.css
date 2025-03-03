@@ -2,8 +2,9 @@
   font-family: 'Poppins', sans-serif;
   background-color: #dfc9ab;
   margin: 0;
-  padding: 0;
   padding: 20px;
+  padding-top: 60px;
+  min-height: 100vh;
 }
 
 /* Container */
