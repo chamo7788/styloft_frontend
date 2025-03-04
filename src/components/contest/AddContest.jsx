@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import "../../assets/css/contest/addContest.css"
-import "firebase/auth";
+import React, { useState } from 'react';
+import "../../assets/css/contest/addContest.css";
+import { Cloudinary } from '@cloudinary/url-gen';
+import { AdvancedImage } from '@cloudinary/react';
 
 export function AddContestForm() {
   const [formData, setFormData] = useState({
@@ -9,83 +10,105 @@ export function AddContestForm() {
     prize: "",
     deadline: "",
     image: "",
-  })
+  });
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const cld = new Cloudinary({ cloud: { cloudName: 'ds0xdh85j' } });
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-    }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    console.log("Current User:", user); // Add this line to log the current user
-  
-    if (user && user.uid) {
-      const contestData = {
-        ...formData,
-        createdBy: user.uid, // Add UID from localStorage to the form data
-      };
-      // Send the form data to your backend
-      const response = await fetch("http://localhost:3000/contest", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(contestData),
-      });
-      const result = await response.json();
-      console.log("Form submitted:", result);
-      // Reset form after submission
-      setFormData({
-        title: "",
-        description: "",
-        prize: "",
-        deadline: "",
-        image: "",
-      });
-    } else {
-      console.log("User not authenticated");
-    }
+    }));
   };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file) return; // Ensure a file is selected
+    if (!file) return;
 
-    setImagePreview(URL.createObjectURL(file)); // Show image preview
-  
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!validTypes.includes(file.type)) {
+      setErrorMessage("Invalid file type. Please upload a JPG or PNG image.");
+      return;
+    }
+
+    // Show preview
+    setImagePreview(URL.createObjectURL(file));
+    setUploading(true);
+
     const imageData = new FormData();
-    imageData.append('file', file);
-    imageData.append('upload_preset', 'Styloft'); // Replace with your actual upload preset
-  
+    imageData.append("file", file);
+    imageData.append("upload_preset", "Styloft"); // Replace with your actual preset
+
     try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dkonpzste/image/upload', {
-        method: 'POST',
+      const response = await fetch("https://api.cloudinary.com/v1_1/ds0xdh85j/image/upload", {
+        method: "POST",
         body: imageData,
       });
-  
+
       const data = await response.json();
-      
+
       if (data.secure_url) {
         setFormData((prevData) => ({
           ...prevData,
-          image: data.secure_url, // Save direct hosted URL
+          image: data.secure_url, // Save image URL
         }));
         console.log("Uploaded Image URL:", data.secure_url);
+        setErrorMessage("");
       } else {
-        console.error("Image upload failed:", data);
+        setErrorMessage("Image upload failed. Try again.");
       }
     } catch (error) {
-      console.error("Error uploading image:", error);
+      setErrorMessage("Error uploading image. Check your network.");
+    } finally {
+      setUploading(false);
     }
   };
-  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user || !user.uid) {
+      console.log("User not authenticated");
+      return;
+    }
+
+    if (!formData.image) {
+      setErrorMessage("Please upload an image before submitting.");
+      return;
+    }
+
+    const contestData = {
+      ...formData,
+      createdBy: user.uid,
+    };
+
+    const response = await fetch("http://localhost:3000/contest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(contestData),
+    });
+
+    const result = await response.json();
+    console.log("Form submitted:", result);
+
+    // Reset form after submission
+    setFormData({
+      title: "",
+      description: "",
+      prize: "",
+      deadline: "",
+      image: "",
+    });
+    setImagePreview(null);
+  };
 
   return (
     <div className="add-contest-container">
@@ -105,6 +128,7 @@ export function AddContestForm() {
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="description" className="form-label">
             Description
@@ -118,6 +142,7 @@ export function AddContestForm() {
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="prize" className="form-label">
             Prize Amount ($)
@@ -133,6 +158,7 @@ export function AddContestForm() {
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="deadline" className="form-label">
             Submission Deadline
@@ -147,6 +173,7 @@ export function AddContestForm() {
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="image" className="form-label">
             Contest Image
@@ -157,9 +184,12 @@ export function AddContestForm() {
             name="image"
             onChange={handleImageUpload}
             className="form-input"
+            accept="image/png, image/jpeg"
             required
           />
         </div>
+
+        {uploading && <p className="uploading-text">Uploading image...</p>}
 
         {imagePreview && (
           <div className="image-preview">
@@ -167,11 +197,12 @@ export function AddContestForm() {
           </div>
         )}
 
-        <button type="submit" className="submit-button">
-          Create Contest
+        {errorMessage && <p className="error-text">{errorMessage}</p>}
+
+        <button type="submit" className="submit-button" disabled={uploading}>
+          {uploading ? "Uploading..." : "Create Contest"}
         </button>
       </form>
     </div>
-  )
+  );
 }
-
