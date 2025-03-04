@@ -60,9 +60,9 @@ const DesignContestPage = () => {
                 </header>
             </div>
 
-            <div className="search-bar-container">
-                <div className="search-bar">
-                    <input type="text" placeholder="Search Contests" className="search-input" />
+            <div className="search-bar-contest">
+                <div className="search">
+                    <input type="text" placeholder="Search Contests" className="search-input-contest" />
                     <Search className="search-icon" />
                 </div>
             </div>

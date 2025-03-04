@@ -38,17 +38,17 @@
   color: #2563eb;
 }
 
-.search-bar-container {
-  max-width: 64rem;
+.search-bar-contest {
   margin: 1.5rem auto;
   padding: 1.5rem;
+  width: 60%;
 }
 
-.search-bar {
+.search {
   position: relative;
 }
 
-.search-input {
+.search-input-contest {
   width: 100%;
   padding: 1rem;
   padding-left: 2.5rem;
@@ -59,7 +59,7 @@
   transition: box-shadow 0.2s;
 }
 
-.search-input:focus {
+.search-input-contest:focus {
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
 }
 
