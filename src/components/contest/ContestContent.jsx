@@ -6,11 +6,12 @@ export default function ContestContent() {
     const { id } = useParams();
     const [contest, setContest] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
-    const [fileUrl, setFileUrl] = useState(""); // Store uploaded file URL
+    const [fileUrl, setFileUrl] = useState("");
     const [newMessage, setNewMessage] = useState("");
     const [timeLeft, setTimeLeft] = useState(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isUploading, setIsUploading] = useState(false); // To track upload progress
+    const [isUploading, setIsUploading] = useState(false);
+    const [submissions, setSubmissions] = useState([]);
 
     useEffect(() => {
         const fetchContest = async () => {
@@ -35,6 +36,20 @@ export default function ContestContent() {
         return () => clearInterval(timer);
     }, [timeLeft, contest]);
 
+    useEffect(() => {
+        const fetchSubmissions = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/submission/contest/${id}`);
+                if (!response.ok) throw new Error("Failed to fetch submissions");
+                const data = await response.json();
+                setSubmissions(data);
+            } catch (error) {
+                console.error("Error fetching submissions:", error);
+            }
+        };
+        fetchSubmissions();
+    }, [id]);
+
     const calculateTimeLeft = (deadline) => {
         const now = new Date();
         const difference = deadline - now;
@@ -56,7 +71,7 @@ export default function ContestContent() {
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", "Styloft"); // Cloudinary upload preset
+        formData.append("upload_preset", "Styloft");
 
         try {
             const response = await fetch("https://api.cloudinary.com/v1_1/dkonpzste/image/upload", {
@@ -65,17 +80,12 @@ export default function ContestContent() {
             });
 
             const data = await response.json();
-            console.log("Cloudinary response:", data); // Debugging
-
             if (data.secure_url) {
                 setFileUrl(data.secure_url);
-                console.log("Uploaded File URL:", data.secure_url);
             } else {
-                console.error("File upload failed:", data);
                 alert("File upload failed. Please try again.");
             }
         } catch (error) {
-            console.error("Error uploading file:", error);
             alert("Error uploading file. Please try again.");
         } finally {
             setIsUploading(false);
@@ -87,8 +97,6 @@ export default function ContestContent() {
             alert(isUploading ? "File is still uploading. Please wait." : "Please upload a file before submitting.");
             return;
         }
-
-        console.log("Submitting with file URL:", fileUrl);
 
         const submissionData = {
             fileUrl,
@@ -117,55 +125,43 @@ export default function ContestContent() {
 
     if (!contest) return <p>Loading...</p>;
 
-    if (isSubmitted) {
-        return (
-            <div className="submission-success">
-                <h2>🎉 Submission Completed! 🎉</h2>
-                <p>Thank you for your participation! Your design has been successfully submitted.</p>
-            </div>
-        );
-    }
-
     return (
-        <div className="contest-content-container">
-            <div className="contest-left">
-                <img src={contest.image} alt="Contest Banner" className="contest-image" />
-                <h2 className="contest-title">{contest.title}</h2>
-                <p className="contest-description">{contest.description}</p>
-                <p className="contest-price">Price Pool: ${contest.prize}</p>
+        <div className="contest-content-page">
+            <div className="contest-content-container">
+                <div className="contest-left">
+                    <img src={contest.image} alt="Contest Banner" className="contest-image" />
+                    <h2 className="contest-title">{contest.title}</h2>
+                    <p className="contest-description">{contest.description}</p>
+                    <p className="contest-price">Price Pool: ${contest.prize}</p>
+                </div>
+                <div className="contest-right">
+                    <div className="upload-box">
+                        <label htmlFor="file-upload" className="file-label">Upload File</label>
+                        <input id="file-upload" type="file" onChange={handleFileChange} className="file-input" />
+                        {uploadedFile && <p className="file-name">{uploadedFile.name}</p>}
+                        {isUploading && <p className="uploading-text">Uploading...</p>}
+                    </div>
+                    <textarea className="message-input" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Write your message..." />
+                    <button className="submit-btn" onClick={handleSubmit} disabled={isUploading}>Submit</button>
+                    <div className="countdown">
+                        <span>{String(timeLeft?.days).padStart(2, "0")} : </span>
+                        <span>{String(timeLeft?.hours).padStart(2, "0")} : </span>
+                        <span>{String(timeLeft?.minutes).padStart(2, "0")} : </span>
+                        <span>{String(timeLeft?.seconds).padStart(2, "0")}</span>
+                    </div>
+                </div>
             </div>
-            <div className="contest-right">
-                <div className="upload-box">
-                    <label htmlFor="file-upload" className="file-label">Upload File</label>
-                    <input
-                        id="file-upload"
-                        type="file"
-                        onChange={handleFileChange}
-                        className="file-input"
-                    />
-                    {uploadedFile && <p className="file-name">{uploadedFile.name}</p>}
-                    {isUploading && <p className="uploading-text">Uploading...</p>}
-                </div>
-                <textarea
-                    className="message-input"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Write your message..."
-                />
-                <div className="button-group">
-                    <button className="submit-btn" onClick={handleSubmit} disabled={isUploading}>
-                        {isUploading ? "Uploading..." : "Submit"}
-                    </button>
-                    <button className="cancel-btn" onClick={() => setUploadedFile(null)}>Cancel</button>
-                </div>
-                <div className="countdown">
-                    <span>{String(timeLeft?.days).padStart(2, "0")} : </span>
-                    <span>{String(timeLeft?.hours).padStart(2, "0")} : </span>
-                    <span>{String(timeLeft?.minutes).padStart(2, "0")} : </span>
-                    <span>{String(timeLeft?.seconds).padStart(2, "0")}</span>
+            <div className="submission-gallery">
+                <h3>Submissions</h3>
+                <div className="submission-cards">
+                    {submissions.map((submission) => (
+                        <div key={submission.id} className="submission-card">
+                            <img src={submission.fileUrl} alt="Submission" className="submission-image" />
+                            <p>Submitted by: {submission.userId}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
     );
 }
-
