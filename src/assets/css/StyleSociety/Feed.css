@@ -1,11 +1,11 @@
-.Feed-container { 
+/* Feed Container */
+.Feed-container {
   position: absolute;
-  top: 40%;
-  left: 75%;
-  transform: translateX(-50%);
-  width: 600px;
+  top: 800px;
+  left: 58%;
+  width: 500px;
   max-width: 90%;
-  height: auto;
+  height: 550px;
   background-color: #e6c9e7;
   padding: 16px;
   border-radius: 12px;
@@ -30,7 +30,7 @@
   font-size: 23px;
   cursor: pointer;
   color: #333;
-  transition: color 0.3s;
+  transition: color 0.3s ease-in-out;
 }
 
 .add-btn:hover {
@@ -58,7 +58,6 @@
 }
 
 .submitbtn {
-  position: relative;
   background-color: #5f1865;
   color: white;
   border: none;
@@ -67,6 +66,7 @@
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.3s ease-in-out;
 }
 
 .submitbtn:hover {
@@ -87,10 +87,8 @@
 }
 
 .Feed-avatar {
-  position: relative;
   width: 45px;
   height: 45px;
-  top: -11px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -114,6 +112,7 @@
 
 /* Follow Button */
 .followbtn {
+  position: relative;
   background-color: white;
   color: #0073b1;
   border: 1px solid #0073b1;
@@ -122,11 +121,123 @@
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease-in-out;
+  left: 58%;
+  top:-60px;
 }
 
 .followbtn:hover {
   background-color: #b365c3;
   color: white;
+  border: 1px solid #b365c3;
 }
 
+.followbtn.following {
+  background-color: #5f1865;
+  color: white;
+  border: 1px solid #5f1865;
+}
+
+.deletebtn {
+  position: relative;
+  background-color: rgb(199, 174, 215);
+  color: #480667;
+  border: 1px solid  #480667;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  left: 60%;
+  top:-60px;
+}
+
+.deletebtn:hover {
+  background-color:  #310645;
+  color: white;
+  border: 1px solid  #480667;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+  .Feed-container {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 500px;
+    top: 650px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .Feed-container {
+    width: 80%;
+    height: 500px;
+    top: 600px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .Feed-header {
+    font-size: 20px;
+  }
+
+  .add-btn {
+    font-size: 20px;
+  }
+
+  .Feed-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .Feed-title {
+    font-size: 14px;
+  }
+
+  .Feed-category {
+    font-size: 11px;
+  }
+
+  .followbtn {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .Feed-container {
+    width: 90%;
+    height: auto;
+    top: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px;
+  }
+
+  .Feed-header {
+    font-size: 18px;
+  }
+
+  .add-btn {
+    font-size: 18px;
+  }
+
+  .Feed-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .Feed-title {
+    font-size: 13px;
+  }
+
+  .Feed-category {
+    font-size: 10px;
+  }
+
+  .followbtn {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}
