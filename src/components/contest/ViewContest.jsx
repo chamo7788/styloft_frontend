@@ -11,22 +11,24 @@ const Button = ({ children, className, onClick }) => (
 const DesignContestPage = () => {
     const [contests, setContests] = useState([]);
     const [isBannerFixed, setIsBannerFixed] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const contestCardsRef = useRef(null);
 
-    useEffect(() => {
-        const fetchContests = async () => {
-            try {
-                const response = await fetch("http://localhost:3000/contest");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch contests");
-                }
-                const data = await response.json();
-                setContests(data);
-            } catch (error) {
-                console.error("Error fetching contests:", error);
+    const fetchContests = async (query = "") => {
+        try {
+            const url = query ? `http://localhost:3000/contest/search?query=${query}` : "http://localhost:3000/contest";
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("Failed to fetch contests");
             }
-        };
+            const data = await response.json();
+            setContests(data);
+        } catch (error) {
+            console.error("Error fetching contests:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchContests();
     }, []);
 
@@ -46,6 +48,12 @@ const DesignContestPage = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+        fetchContests(query);
+    };
+
     return (
         <div className="page">
             <div className={`banner-container ${isBannerFixed ? "fixed" : ""}`}>
@@ -62,7 +70,13 @@ const DesignContestPage = () => {
 
             <div className="search-bar-contest">
                 <div className="search">
-                    <input type="text" placeholder="Search Contests" className="search-input-contest" />
+                    <input
+                        type="text"
+                        placeholder="Search Contests"
+                        className="search-input-contest"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
                     <Search className="search-icon" />
                 </div>
             </div>
