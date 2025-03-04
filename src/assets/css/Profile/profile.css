@@ -142,6 +142,48 @@ html, body {
   border-radius: 10px;
 }
 
+.edit-button {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1600px;
+  margin-top: 110px;
+  width: 40px;
+  height: 40px;
+}
+.edit-button_profile-edit{
+  position: absolute;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 100px;
+  margin-top: 100px;
+  width: 40px;
+  height: 40px;
+}
+.cover-edit {
+  top: 10px;
+  right: 10px;
+}
+
+.profile-edit {
+  bottom: 0;
+  right: 0;
+}
+
 /* Responsive Styles */
 @media (max-width: 1200px) {
   .profile-container {

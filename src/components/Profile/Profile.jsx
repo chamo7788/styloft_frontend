@@ -1,19 +1,46 @@
 import React, { useState } from "react";
 import "../../assets/css/Profile/profile.css";
-import profilePic from "../../assets/images/user-profile.png";
-import coverPhoto from "../../assets/images/profile-background.jpg";
+import defaultProfilePic from "../../assets/images/user-profile.png";
+import defaultCoverPhoto from "../../assets/images/profile-background.jpg";
 
 const Profile = () => {
+  const [profilePic, setProfilePic] = useState(defaultProfilePic);
+  const [coverPhoto, setCoverPhoto] = useState(defaultCoverPhoto);
   const [selectedImage, setSelectedImage] = useState(null);
   const images = [profilePic, profilePic, profilePic, profilePic];
+
+  const handleImageChange = (event, type) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (type === "profile") {
+          setProfilePic(reader.result);
+        } else {
+          setCoverPhoto(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <div className="cover-photo" style={{ backgroundImage: `url(${coverPhoto})` }}></div>
+        <div className="cover-photo" style={{ backgroundImage: `url(${coverPhoto})` }}>
+          <label className="edit-button">
+            ✎
+            <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, "cover")} hidden />
+          </label>
+        </div>
         <div className="profile-content">
           <div className="profile-main">
-            <div className="profile-pic" style={{ backgroundImage: `url(${profilePic})` }}></div>
+            <div className="profile-pic" style={{ backgroundImage: `url(${profilePic})` }}>
+              <label className="edit-button_profile-edit">
+                ✎
+                <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, "profile")} hidden />
+              </label>
+            </div>
             <div className="profile-name-title">
               <h2>Kevin Smith</h2>
               <p>Advisor and Consultant at Stripe Inc.</p>
@@ -26,7 +53,6 @@ const Profile = () => {
             <p>✉️ kevin.smith@stripe.com</p>
             <p>⭐ 4.5 (180 reviews)</p>
             <button className="chat-button">Chat</button>
-           
           </div>
         </div>
       </div>
