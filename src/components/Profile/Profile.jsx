@@ -47,12 +47,11 @@ const Profile = () => {
             </div>
           </div>
           <div className="profile-info">
-            <p>📍 Saint-Petersburg, Russia</p>
+            <p>✉️ kevin.smith@stripe.com</p>
             <p>📞 +1 711 018830 (Office)</p>
             <p>📱 +1 746 1741777 (Mobile)</p>
             <p>✉️ kevin.smith@stripe.com</p>
             <p>⭐ 4.5 (180 reviews)</p>
-            <button className="chat-button">Chat</button>
           </div>
         </div>
       </div>
