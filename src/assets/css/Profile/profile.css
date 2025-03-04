@@ -1,276 +1,202 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+.profile-container {
+  width: 60%;
+  margin: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   font-family: Arial, sans-serif;
 }
 
-.profile-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(235, 232, 229);
-}
-
 .profile-header {
-  width: 100%;
-  background: white;
-  padding-bottom: 50px;
-  border-radius: 10px;
+  position: relative;
 }
 
 .cover-photo {
   width: 100%;
-  height: 150px;
-  background: url("./cover.jpg") no-repeat center center;
-  background-size: cover;
-  border-radius: 10px 10px 0 0;
+  height: 250px;
+  overflow: hidden;
 }
 
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
-.profile-main {
-  display: flex;
-  align-items: center;
+.cover-img {
   width: 100%;
-  justify-content: center;
-  margin-bottom: 20px;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-pic-container {
+  position: absolute;
+  bottom: 170px;
+  left: 20px;
 }
 
 .profile-pic {
   width: 150px;
   height: 150px;
-  background: gray;
   border-radius: 50%;
-  border: 5px solid white;
-  background-size: cover;
-  margin-left: -600px;
-  margin-top: -60px;
+  border: 4px solid white;
+  object-fit: cover;
 }
 
-.profile-name-title {
-  margin-left: 20px;
+.profile-details {
+  padding: 60px 20px 20px;
   text-align: left;
 }
 
-.profile-name-title h2 {
+.user-info h2 {
   margin: 0;
-  font-size: 1.5em;
+  font-size: 24px;
 }
 
-.profile-name-title p {
+.user-info p {
   margin: 5px 0;
   color: #555;
 }
 
-.profile-info {
-  width: 20%;
-  margin-left: -900px;
-  text-align: center;
-}
-
-.chat-button {
-  height: 50px;
-  width: 150px;
-  background: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
+.profile-actions {
   margin-top: 10px;
 }
 
-.image-gallery {
-  display: flex;
-  width: 50%;
-  height: 220px;
-  padding-top: 30px;
-  border-radius: 10px;
-  gap: 10px;
-  justify-content: center;
-  margin-top: -250px;
-  margin-left: 350px;
-  background-color: #dfe6ee;
-}
-
-.image-card {
-  width: 150px;
-  height: 150px;
-  background: white;
-  padding: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
+.profile-actions button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 25px;
   cursor: pointer;
+  width: 100px;
 }
 
-.image-card img {
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
+.connect-btn {
+  background: #0a66c2;
+  color: white;
 }
 
-.image-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.image-modal-content {
-  background: white;
+.profile-sections {
   padding: 20px;
-  border-radius: 10px;
 }
 
-.image-modal-content img {
-  width: 300px;
-  height: 300px;
-  border-radius: 10px;
+.about-section, .experience-section {
+  margin-bottom: 20px;
+}
+
+.about-section textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none;
+}
+
+h3 {
+  border-bottom: 2px solid #e4e6eb;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .edit-button {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.5);
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #0a66c2;
   color: white;
-  border-radius: 50%;
-  padding: 5px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 1600px;
-  margin-top: 110px;
-  width: 40px;
-  height: 40px;
 }
-.edit-button_profile-edit{
+
+.edit-button_cover-edit{
   position: absolute;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border-radius: 50%;
-  padding: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 100px;
-  margin-top: 100px;
-  width: 40px;
-  height: 40px;
-}
-.cover-edit {
-  top: 10px;
+  bottom: 225px;
   right: 10px;
+  background:#5555555f;
+  color: black;
+  padding: 5px 10px;;
+  border-radius: 25px;
+  cursor: pointer;
 }
 
-.profile-edit {
-  bottom: 0;
-  right: 0;
+.Designs{
+  background-color: white;
+  padding: 10px;
+  width: 60%;
+  margin-top: 10px;
+  margin-left: 20%;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
-/* Responsive Styles */
-@media (max-width: 1200px) {
-  .profile-container {
-    width: 90%;
-  }
-
-  .profile-pic {
-    margin-left: -300px;
-  }
-
-  .profile-info {
-    margin-left: -450px;
-  }
-
-  .image-gallery {
-    margin-top: -150px;
-    margin-left: 0;
-  }
+.DesignCard{
+  background-color: rgb(240, 239, 239);
+  width: 45%;
+  height: 400px;
+  margin: 10px;
+  border-radius: 10px;
+  display: inline-block;
 }
 
-@media (max-width: 768px) {
-  .profile-main {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .profile-pic {
-    margin-left: 0;
-    margin-top: 0;
-  }
-
-  .profile-name-title {
-    margin-left: 0;
-    text-align: center;
-  }
-
-  .profile-info {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .image-gallery {
-    width: 80%;
-    margin-top: 20px;
-    margin-left: 0;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .image-card {
-    width: 100px;
-    height: 100px;
-  }
+.design-img{
+  width: 100%;
+  height: 75%;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+  object-fit: fill;
 }
 
-@media (max-width: 480px) {
-  .profile-container {
-    width: 100%;
-  }
+.DesignName{
+  padding-left: 10px;
+  font-size: 18px;
+}
 
-  .cover-photo {
-    height: 100px;
-  }
+.DesignReview{
+  padding-left: 10px;
+  font-size: 14px;
+}
 
-  .profile-pic {
-    width: 100px;
-    height: 100px;
-  }
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
 
-  .chat-button {
-    width: 100px;
-    height: 40px;
-  }
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+}
 
-  .image-gallery {
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-  }
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-  .image-card {
-    width: 80px;
-    height: 80px;
-  }
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 
-  .image-modal-content img {
-    width: 200px;
-    height: 200px;
-  }
+.modal-img {
+  width: 100%;
+  height: auto;
 }
