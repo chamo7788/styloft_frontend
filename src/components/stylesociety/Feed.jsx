@@ -6,12 +6,12 @@ import Dp from "../../assets/images/s-societybackground.jpg";
 
 const Feed = () => {
   const [notifications, setNotifications] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(false); // State to control form visibility
   const [newFeed, setNewFeed] = useState({
     name: "",
     category: "",
     type: "",
-    avatar: "/dp.jpg",
+    avatar: "/dp.jpg", // Default avatar
   });
 
   const [followed, setFollowed] = useState({});
@@ -41,8 +41,9 @@ const Feed = () => {
     try {
       const feedRef = collection(db, "feed");
       await addDoc(feedRef, newFeed);
-      setNewFeed({ name: "", category: "", type: "", avatar: "/dp.jpg" });
-      setShowForm(false);
+
+      setNewFeed({ name: "", category: "", type: "", avatar: "/dp.jpg" }); // Reset form
+      setShowForm(false); // Hide form after submission
     } catch (error) {
       console.error("Error adding feed:", error);
     }
@@ -79,10 +80,9 @@ const Feed = () => {
       <div className="Feed-header">
         <p>Add to your feed</p>
         <button className="add-btn" onClick={() => setShowForm(!showForm)}>
-          {showForm ? "✖" : "+"}
+          {showForm ? "✖" : "+"} {/* Toggle button text */}
         </button>
       </div>
-
       {showForm && (
         <form onSubmit={handleAddFeed} className="add-feed-form">
           <input
@@ -95,9 +95,7 @@ const Feed = () => {
             type="text"
             placeholder="Company or Institute"
             value={newFeed.category}
-            onChange={(e) =>
-              setNewFeed({ ...newFeed, category: e.target.value })
-            }
+            onChange={(e) => setNewFeed({ ...newFeed, category: e.target.value })}
           />
           <input
             type="text"
