@@ -93,7 +93,7 @@ const Feed = () => {
           />
           <input
             type="text"
-            placeholder="Category"
+            placeholder="Company or Institute"
             value={newFeed.category}
             onChange={(e) =>
               setNewFeed({ ...newFeed, category: e.target.value })
@@ -101,7 +101,7 @@ const Feed = () => {
           />
           <input
             type="text"
-            placeholder="Type"
+            placeholder="Position or Course"
             value={newFeed.type}
             onChange={(e) => setNewFeed({ ...newFeed, type: e.target.value })}
           />
@@ -118,7 +118,9 @@ const Feed = () => {
             <div className="Feed-info">
               <p className="Feed-title">{item.name}</p>
               <p className="Feed-category">
-                <span>{item.category}</span> • <span>{item.type}</span>
+                <span>{item.category}</span>
+                <br></br>
+                <span>{item.type}</span>
               </p>
 
               <div className="Feed-actions">
@@ -142,5 +144,3 @@ const Feed = () => {
 };
 
 export default Feed;
-
-
