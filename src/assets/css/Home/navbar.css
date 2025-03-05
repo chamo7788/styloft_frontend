@@ -6,11 +6,24 @@
   background-color: #fff;
   padding: 10px 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.navbar.hide {
+  transform: translateY(-140%);
+}
+
+.navbar.show {
+  transform: translateY(0);
 }
 
 .navbar-logo {
   width: auto;
-  /* Ensure the container doesn't constrain the logo's size */
   height: auto;
   position: absolute;
 }
@@ -18,15 +31,13 @@
 .navbar-logo img {
   margin-top: 40px;
   width: 200px;
-  /* Adjust the width of the logo */
   height: auto;
-  /* Maintain the aspect ratio */
   max-height: 150px;
-  /* Optionally limit the maximum height */
+  transition: transform 0.3s ease;
 }
 
-.logo-accent {
-  color: #000;
+.navbar-logo img:hover {
+  transform: scale(1.1);
 }
 
 .navbar-links {
@@ -42,18 +53,21 @@
 
 .navbar-links a {
   text-decoration: none;
-  color: black;
+  color: #333;
   font-weight: bold;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  padding-bottom: 5px;
 }
 
 .navbar-links a:hover {
   color: #007BFF;
-  /* Change to any highlight color */
+  border-bottom: 2px solid #007BFF;
 }
 
 .navbar-login {
   margin-left: auto;
+  display: flex;
+  align-items: center;
 }
 
 .navbar-login button {
@@ -81,7 +95,17 @@
 
 .logout {
   position: absolute;
-  display: block;
-  margin-top: 10px;
-  margin-left: -15px;
+  top: 50px;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+
+.logout:hover {
+  background-color: #f8f9fa;
+} 
