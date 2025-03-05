@@ -1,27 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit";
-import productsData from "../data/products.json";
+
+const initialState = {
+  allProducts: [],
+  filteredProducts: [],
+  selectedProduct: null,
+};
 
 const productSlice = createSlice({
   name: "products",
-  initialState: {
-    allProducts: [],
-    filteredProducts: [],
-  },
+  initialState,
   reducers: {
     setProducts: (state, action) => {
       state.allProducts = action.payload;
       state.filteredProducts = action.payload;
     },
+    addProduct: (state, action) => {
+      state.allProducts.push(action.payload);
+      state.filteredProducts.push(action.payload);
+    },
     sortProducts: (state, action) => {
-      const order = action.payload;
-      if (order === "low_price") {
-        state.filteredProducts = [...state.filteredProducts].sort((a, b) => a.price - b.price);
-      } else if (order === "top") {
-        state.filteredProducts = [...state.filteredProducts].sort((a, b) => b.price - a.price);
+      if (action.payload === "top") {
+        state.filteredProducts.sort((a, b) => b.rating - a.rating);
+      } else if (action.payload === "low_price") {
+        state.filteredProducts.sort((a, b) => a.price - b.price);
       }
+    },
+    selectProduct: (state, action) => {
+      state.selectedProduct = action.payload;
     },
   },
 });
 
-export const { setProducts, sortProducts } = productSlice.actions;
+// ✅ Export all actions, including `addProduct`
+export const { setProducts, addProduct, sortProducts, selectProduct } = productSlice.actions;
 export default productSlice.reducer;

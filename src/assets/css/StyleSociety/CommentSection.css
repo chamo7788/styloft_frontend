@@ -1,19 +1,132 @@
+/* Comment Section - Responsive CSS */
 .comment-container {
-    margin-top: 10px;
-  }
-  .comment-container input {
-    padding: 5px;
-    margin-right: 5px;
-  }
-  .comment-button {
-    background-color: #1e90ff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  .comment-button:hover {
-    background-color: #0073e6;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.comment-icon {
+  font-size: 22px;
+  cursor: pointer;
+  color: #1e90ff;
+  transition: transform 0.2s ease-in-out;
+}
+
+.comment-icon:hover {
+  transform: scale(1.2);
+  color: #0073e6;
+}
+
+.comment-section {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.comment-input-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.comment-input-container input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  min-width: 60%;
+}
+
+.comment-button {
+  background-color: #1e90ff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.comment-button:hover {
+  background-color: #0073e6;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f1f1f1;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 5px;
+  flex-wrap: wrap;
+}
+
+.delete-icon {
+  font-size: 16px;
+  cursor: pointer;
+  color: red;
+  transition: transform 0.2s ease-in-out;
+}
+
+.delete-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .comment-container {
+    font-size: 16px;
   }
   
+  .comment-input-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .comment-input-container input {
+    width: 100%;
+  }
+  
+  .comment-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .comment-container {
+    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .comment-input-container {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .comment-button {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+  
+  .comment-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}

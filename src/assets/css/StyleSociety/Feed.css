@@ -87,8 +87,10 @@
 }
 
 .Feed-avatar {
+  position: relative;
   width: 45px;
   height: 45px;
+  top: -11px;
   border-radius: 50%;
   object-fit: cover;
 }

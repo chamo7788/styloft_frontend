@@ -8,6 +8,8 @@ const Navbar = () => {
   const [profilePicture, setProfilePicture] = useState('');
   const [showLogout, setShowLogout] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(window.scrollY);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -15,13 +17,26 @@ const Navbar = () => {
 
     if (token) {
       setIsLoggedIn(true);
-
-      // Set profile picture or fallback to an auto-generated one
-      setProfilePicture(
-        profilePic || `https://robohash.org/${token}.png?set=set5`
-      );
+      setProfilePicture(profilePic || `https://robohash.org/${token}.png?set=set5`);
     }
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) {
+        setIsVisible(false); // Hide navbar when scrolling down
+      } else {
+        setIsVisible(true); // Show navbar when scrolling up
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
@@ -47,7 +62,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isVisible ? 'show' : 'hide'}`}>
       <div className="navbar-logo">
         <NavLink to="/home">
           <img src={logoLight} alt="Logo" className="logo" />
