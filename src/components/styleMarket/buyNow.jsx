@@ -2,11 +2,23 @@ import React, { useState } from "react";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import "../../assets/css/StyleMarket/buyNow.css";
 import defaultImage from "../../assets/images/default-placeholder.png"; // Ensure you have a fallback image
+import Buy from "./buy";
 
 const BuyNow = ({ product, onBack }) => {
   const [selectedSize, setSelectedSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
   const sizes = ["XS", "S", "M", "L", "XL"];
+
+  const [showOrderForm, setShowOrderForm] = useState(false); // Track visibility of order form
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    phone: "",
+  });
 
   const productImage = product.image || defaultImage; // Use product image or default fallback
 
@@ -16,9 +28,21 @@ const BuyNow = ({ product, onBack }) => {
       size: selectedSize,
       quantity: quantity,
     });
-
-    // Here, you can add checkout functionality or API call
+    setShowOrderForm(true); // Show order form when "Buy Now" is clicked
   };
+
+  if (showOrderForm) {
+    return (
+      <Buy
+        product={product}
+        selectedSize={selectedSize}
+        quantity={quantity}
+        formData={formData}
+        setFormData={setFormData}
+        setShowOrderForm={setShowOrderForm}
+      />
+    );
+  }
 
   return (
     <div className="buynow">
