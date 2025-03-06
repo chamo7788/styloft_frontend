@@ -1,97 +1,137 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Search } from "lucide-react";
-import { Link } from "react-router-dom";
-import "../../assets/css/contest/contest.css";
-import ContestCards from "./ContestCard";
+"use client"
 
-const Button = ({ children, className, onClick }) => (
-    <button className={`button ${className}`} onClick={onClick}>{children}</button>
-);
+import { useEffect, useRef, useState } from "react"
+import { Search, Plus, Award, Loader } from "lucide-react"
+import { Link } from "react-router-dom"
+import "../../assets/css/contest/contest.css"
+import ContestCards from "./ContestCard"
+
+const Button = ({ children, className, onClick, icon: Icon }) => (
+  <button className={`contest-button ${className}`} onClick={onClick}>
+    {Icon && <Icon className="button-icon" size={18} />}
+    <span>{children}</span>
+  </button>
+)
 
 const DesignContestPage = () => {
-    const [contests, setContests] = useState([]);
-    const [isBannerFixed, setIsBannerFixed] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const contestCardsRef = useRef(null);
+  const [contests, setContests] = useState([])
+  const [isBannerFixed, setIsBannerFixed] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
+  const contestCardsRef = useRef(null)
+  const searchInputRef = useRef(null)
 
-    const fetchContests = async (query = "") => {
-        try {
-            const url = query ? `http://localhost:3000/contest/search?query=${query}` : "http://localhost:3000/contest";
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error("Failed to fetch contests");
-            }
-            const data = await response.json();
-            setContests(data);
-        } catch (error) {
-            console.error("Error fetching contests:", error);
+  const fetchContests = async (query = "") => {
+    setIsLoading(true)
+    try {
+      const url = query ? `http://localhost:3000/contest/search?query=${query}` : "http://localhost:3000/contest"
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error("Failed to fetch contests")
+      }
+      const data = await response.json()
+      setContests(data)
+    } catch (error) {
+      console.error("Error fetching contests:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchContests()
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (contestCardsRef.current) {
+        const rect = contestCardsRef.current.getBoundingClientRect()
+        if (rect.top <= 0) {
+          setIsBannerFixed(true)
+        } else {
+          setIsBannerFixed(false)
         }
-    };
+      }
+    }
 
-    useEffect(() => {
-        fetchContests();
-    }, []);
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (contestCardsRef.current) {
-                const rect = contestCardsRef.current.getBoundingClientRect();
-                if (rect.top <= 0) {
-                    setIsBannerFixed(true);
-                } else {
-                    setIsBannerFixed(false);
-                }
-            }
-        };
+  const handleSearchChange = (event) => {
+    const query = event.target.value
+    setSearchQuery(query)
+    fetchContests(query)
+  }
 
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+  const focusSearch = () => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }
 
-    const handleSearchChange = (event) => {
-        const query = event.target.value;
-        setSearchQuery(query);
-        fetchContests(query);
-    };
+  return (
+    <div className="contest-page">
+      <div className={`contest-banner-container ${isBannerFixed ? "fixed" : ""}`}>
+        <header className="contest-banner">
+          <div className="contest-banner-content">
+            <h1 className="contest-banner-title">DESIGN CONTEST</h1>
+            <p className="contest-banner-subtitle">Unleash your creativity, design your legacy!</p>
+            {!localStorage.getItem("authToken") && (
+              <Button className="contest-signup-button" onClick={() => (window.location.href = "/register")}>
+                SIGN UP
+              </Button>
+            )}
+          </div>
+          <div className="contest-banner-decoration">
+            <Award size={120} className="contest-banner-icon" />
+          </div>
+        </header>
+      </div>
 
-    return (
-        <div className="page">
-            <div className={`banner-container ${isBannerFixed ? "fixed" : ""}`}>
-                <header className="banner">
-                    <h1 className="banner-title">DESIGN CONTEST</h1>
-                    <p className="banner-subtitle">"Unleash your creativity, design your legacy!"</p>
-                    {!localStorage.getItem("authToken") && (
-                        <Button className="button-signup" onClick={() => window.location.href = "/register"}>
-                            SIGN UP
-                        </Button>
-                    )}
-                </header>
-            </div>
-
-            <div className="search-bar-contest">
-                <div className="search">
-                    <input
-                        type="text"
-                        placeholder="Search Contests"
-                        className="search-input-contest"
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                    />
-                    <Search className="search-icon" />
-                </div>
-            </div>
-
-            <div>
-                <Link to="/contest/add-contest" className="add-contest-link">
-                    Add New Contest
-                </Link>
-            </div>
-
-            <div className="scrollable-content" ref={contestCardsRef}>
-                <ContestCards contests={contests} />
-            </div>
+      <div className="contest-controls">
+        <div className="contest-search-container" onClick={focusSearch}>
+          <Search className="contest-search-icon" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Search for contests..."
+            className="contest-search-input"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          {searchQuery && (
+            <button
+              className="contest-search-clear"
+              onClick={() => {
+                setSearchQuery("")
+                fetchContests("")
+              }}
+            >
+              ×
+            </button>
+          )}
         </div>
-    );
-};
 
-export default DesignContestPage;
+        <Link to="/contest/add-contest" className="contest-add-button">
+          <Plus size={18} />
+          <span>Create Contest</span>
+        </Link>
+      </div>
+
+      <div className="contest-content" ref={contestCardsRef}>
+        {isLoading ? (
+          <div className="contest-loading">
+            <Loader className="contest-loading-icon" />
+            <p>Loading contests...</p>
+          </div>
+        ) : (
+          <ContestCards contests={contests} />
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default DesignContestPage
+

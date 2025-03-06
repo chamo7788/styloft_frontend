@@ -1,36 +1,217 @@
-.canvas-container {
-    width: 50%;
-    height: 600px;
-    margin-top: 50px;
-    margin-left: 100px;
-    transition: all 0.3s ease-in;
-    background-color: black;
-}
-
-.controls {
+/* Main container */
+.model-editor-container {
     display: flex;
-    justify-content: space-between;
-    margin-top: -600px;
-}
-
-@media (max-width: 1200px) {
-    .canvas-container {
-        width: 70%;
-        margin-left: 50px;
+    flex-direction: column;
+    width: 100%;
+    gap: 24px;
+    padding: 16px;
+  }
+  
+  /* Canvas card */
+  .canvas-card {
+    flex: 1;
+    min-height: 600px;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    overflow: hidden;
+  }
+  
+  .canvas-content {
+    padding: 0;
+    height: 100%;
+  }
+  
+  .canvas {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Controls card */
+  .controls-card {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
+  }
+  
+  .controls-content {
+    padding: 24px;
+  }
+  
+  /* Tabs */
+  .tabs {
+    width: 100%;
+  }
+  
+  .tabs-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .tab-button {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6b7280;
+    transition: color 0.3s;
+  }
+  
+  .tab-button:hover {
+    color: #111827;
+  }
+  
+  .tab-active {
+    color: #111827;
+    border-bottom: 2px solid #111827;
+  }
+  
+  .tab-content {
+    display: none;
+    margin-top: 16px;
+  }
+  
+  .tab-content-active {
+    display: block;
+  }
+  
+  /* Model grid */
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .model-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    height: auto;
+    transition: all 0.2s;
+  }
+  
+  .model-button:hover {
+    background-color: #f9fafb;
+  }
+  
+  .model-button-selected {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+  }
+  
+  .model-icon {
+    height: 32px;
+    width: 32px;
+  }
+  
+  /* Color picker */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  
+  .color-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #e5e7eb;
+    cursor: pointer;
+  }
+  
+  .color-button-selected {
+    border-color: #111827;
+  }
+  
+  .custom-color-container {
+    grid-column: span 5;
+    margin-top: 8px;
+  }
+  
+  .color-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+  
+  .custom-color-input {
+    width: 100%;
+    height: 40px;
+    margin-top: 4px;
+  }
+  
+  /* File uploader */
+  .file-uploader {
+    margin-bottom: 16px;
+  }
+  
+  .file-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  
+  .file-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .file-button {
+    width: 100%;
+    padding: 8px 16px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .file-button:hover {
+    background-color: #f9fafb;
+  }
+  
+  .hidden-input {
+    display: none;
+  }
+  
+  .file-preview {
+    margin-top: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 8px;
+  }
+  
+  .preview-image {
+    max-height: 96px;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  /* Responsive styles */
+  @media (min-width: 1024px) {
+    .model-editor-container {
+      flex-direction: row;
     }
-}
-
-@media (max-width: 768px) {
-    .canvas-container {
-        width: 90%;
-        margin-left: 20px;
+  
+    .canvas-card {
+      min-height: 700px;
     }
-}
-
-@media (max-width: 480px) {
-    .canvas-container {
-        width: 100%;
-        margin-left: 0;
-        height: 400px;
+  
+    .controls-card {
+      width: 320px;
     }
-}
+  }
+  
+  
