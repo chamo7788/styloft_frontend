@@ -1,9 +1,9 @@
 /* Feed Container */
 .Feed-container {
   position: absolute;
-  top: 800px;
-  left: 58%;
-  width: 500px;
+  top: 755px;
+  left: 61%;
+  width: 550px;
   max-width: 90%;
   height: 550px;
   background-color: #e6c9e7;
@@ -90,7 +90,7 @@
   position: relative;
   width: 45px;
   height: 45px;
-  top: -11px;
+  top: -25px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -107,6 +107,8 @@
 }
 
 .Feed-category {
+  position: relative;
+  top: -6px;
   font-size: 12px;
   color: #666;
   margin: 4px 0;
@@ -116,15 +118,15 @@
 .followbtn {
   position: relative;
   background-color: white;
-  color: #0073b1;
-  border: 1px solid #0073b1;
+  color:#5f1865;
+  border: 1px solid #5f1865;
   padding: 5px 10px;
   font-size: 13px;
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  left: 58%;
+  left: 64%;
   top:-60px;
 }
 
@@ -146,12 +148,14 @@
   color: #480667;
   border: 1px solid  #480667;
   padding: 5px 10px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
-  left: 60%;
+  transition: all 0.3s ease-in-out;
+  left: 66%;
   top:-60px;
+  width: 70px;
 }
 
 .deletebtn:hover {
