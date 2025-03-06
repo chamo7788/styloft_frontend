@@ -3,11 +3,11 @@ import { db } from "../../firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faImage, faSmile, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-import EmojiPicker from "emoji-picker-react"; // Import Emoji Picker
+import EmojiPicker from "emoji-picker-react";
 import "../../assets/css/StyleSociety/CreatePost.css";
-import Dp from "../../assets/images/s-societybackground.jpg";
+import Dp from "../../assets/images/s-societybackground.jpg"; // Default profile image (can be updated from user data)
 
-function CreatePost({ onClose, setPosts }) {
+function CreatePost({ onClose, setPosts, user }) {
   const [postContent, setPostContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -25,6 +25,8 @@ function CreatePost({ onClose, setPosts }) {
         files: fileUrls,
         privacy: selectedPrivacy,
         createdAt: serverTimestamp(),
+        userName: user?.displayName || "Anonymous",  // Use user name from auth
+        userProfile: user?.photoURL || Dp,  // Use user profile photo or default image
       };
 
       const docRef = await addDoc(collection(db, "posts"), newPost);
@@ -79,8 +81,8 @@ function CreatePost({ onClose, setPosts }) {
       </div>
 
       <div className="createTop">
-        <img src={Dp} alt="User Profile" className="createImage" />
-        <span className="createUserName">Styloft</span>
+        <img src={user?.photoURL || Dp} alt="User Profile" className="createImage" />
+        <span className="createUserName">{user?.displayName || "Anonymous"}</span>
       </div>
 
       <div className="createCenter">
@@ -137,4 +139,3 @@ function CreatePost({ onClose, setPosts }) {
 }
 
 export default CreatePost;
-
