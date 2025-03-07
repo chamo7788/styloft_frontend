@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 import "../../assets/css/contest/contestContent.css";
+import { User } from "lucide-react";
 
 export default function ContestContent() {
     const { id } = useParams();
     const [contest, setContest] = useState(null);
-    const [uploadedFile, setUploadedFile] = useState(null);
-    const [fileUrl, setFileUrl] = useState("");
+    const [imagePreview, setImagePreview] = useState(null);
+    const [formData, setFormData] = useState({ image: "" });
     const [newMessage, setNewMessage] = useState("");
     const [timeLeft, setTimeLeft] = useState(null);
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isUploading, setIsUploading] = useState(false);
+    const [isUploading, setUploading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [submissions, setSubmissions] = useState([]);
 
+    // Fetch contest details
     useEffect(() => {
         const fetchContest = async () => {
             try {
@@ -28,27 +32,48 @@ export default function ContestContent() {
         fetchContest();
     }, [id]);
 
+    // Countdown timer
     useEffect(() => {
         if (!timeLeft) return;
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft(new Date(contest?.deadline)));
         }, 1000);
         return () => clearInterval(timer);
-    }, [timeLeft, contest]);
+    }, [timeLeft, contest?.deadline]);
 
+    // Fetch submissions
     useEffect(() => {
-        const fetchSubmissions = async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/submission/contest/${id}`);
-                if (!response.ok) throw new Error("Failed to fetch submissions");
-                const data = await response.json();
-                setSubmissions(data);
-            } catch (error) {
-                console.error("Error fetching submissions:", error);
-            }
-        };
-        fetchSubmissions();
-    }, [id]);
+    const fetchSubmissions = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/submission/contest/${id}`);
+            if (!response.ok) throw new Error("Failed to fetch submissions");
+            const data = await response.json();
+
+            // Fetch user details for each submission
+            const submissionsWithUserDetails = await Promise.all(
+                data.map(async (submission) => {
+                    try {
+                        const userDoc = await getDoc(doc(db, "users", submission.userId));
+                        return {
+                            ...submission,
+                            userName: userDoc.exists() ? userDoc.data().displayName : "Unknown User",
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching user ${submission.userId}:`, error);
+                        return { ...submission, userName: "Unknown User" };
+                    }
+                })
+            );
+
+            setSubmissions(submissionsWithUserDetails);
+        } catch (error) {
+            console.error("Error fetching submissions:", error);
+        }
+    };
+
+    fetchSubmissions();
+}, [id]);
+
 
     const calculateTimeLeft = (deadline) => {
         const now = new Date();
@@ -62,65 +87,99 @@ export default function ContestContent() {
         };
     };
 
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
+    // Handle image upload
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
         if (!file) return;
 
-        setUploadedFile(file);
-        setIsUploading(true);
+        const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (!validTypes.includes(file.type)) {
+            setErrorMessage("Invalid file type. Please upload a JPG or PNG image.");
+            return;
+        }
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "Styloft");
+        setImagePreview(URL.createObjectURL(file));
+        setUploading(true);
+
+        const imageData = new FormData();
+        imageData.append("file", file);
+        imageData.append("upload_preset", "Styloft");
 
         try {
-            const response = await fetch("https://api.cloudinary.com/v1_1/dkonpzste/image/upload", {
+            const response = await fetch("https://api.cloudinary.com/v1_1/ds0xdh85j/image/upload", {
                 method: "POST",
-                body: formData,
+                body: imageData,
             });
 
             const data = await response.json();
+
             if (data.secure_url) {
-                setFileUrl(data.secure_url);
+                setFormData((prevData) => ({
+                    ...prevData,
+                    image: data.secure_url,
+                }));
+                setErrorMessage("");
             } else {
-                alert("File upload failed. Please try again.");
+                setErrorMessage("Image upload failed. Try again.");
             }
         } catch (error) {
-            alert("Error uploading file. Please try again.");
+            setErrorMessage("Error uploading image. Check your network.");
         } finally {
-            setIsUploading(false);
+            setUploading(false);
         }
     };
 
+    // Handle form submission
     const handleSubmit = async () => {
-        if (!fileUrl) {
+        if (!formData.image) {
             alert(isUploading ? "File is still uploading. Please wait." : "Please upload a file before submitting.");
             return;
         }
 
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        if (!user) {
+            alert("User not logged in. Please log in before submitting.");
+            return;
+        }
+
         const submissionData = {
-            fileUrl,
+            fileUrl: formData.image,
             contestId: id,
-            userId: localStorage.getItem("userId"),
+            userId: user.uid,
+            userName: user.displayName,
             message: newMessage,
         };
+
+        console.log("Submitting:", submissionData); // Debugging: Check data before sending
 
         try {
             const response = await fetch("http://localhost:3000/submission/submit", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(submissionData),
             });
 
-            if (!response.ok) throw new Error("Failed to submit design");
+            const result = await response.json();
+            console.log("Server Response:", result); // Debugging: Log response from backend
+
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to submit design");
+            }
 
             alert("Design submitted successfully!");
-            setIsSubmitted(true);
+            handleClearForm();
         } catch (error) {
             console.error("Error submitting design:", error);
+            alert(error.message);
         }
+    };
+
+    // Clear form
+    const handleClearForm = () => {
+        setFormData({ image: "" });
+        setNewMessage("");
+        setImagePreview(null);
+        document.getElementById("file-upload").value = "";
     };
 
     if (!contest) return <p>Loading...</p>;
@@ -132,17 +191,21 @@ export default function ContestContent() {
                     <img src={contest.image} alt="Contest Banner" className="contest-image" />
                     <h2 className="contest-title">{contest.title}</h2>
                     <p className="contest-description">{contest.description}</p>
-                    <p className="contest-price">Price Pool: ${contest.prize}</p>
+                    <p className="contest-price">Prize Pool: ${contest.prize}</p>
                 </div>
                 <div className="contest-right">
                     <div className="upload-box">
                         <label htmlFor="file-upload" className="file-label">Upload File</label>
-                        <input id="file-upload" type="file" onChange={handleFileChange} className="file-input" />
-                        {uploadedFile && <p className="file-name">{uploadedFile.name}</p>}
+                        <input id="file-upload" type="file" onChange={handleImageUpload} className="file-input" />
+                        {imagePreview && <img src={imagePreview} alt="Preview" className="submission-image-preview" />}
                         {isUploading && <p className="uploading-text">Uploading...</p>}
+                        {errorMessage && <p className="error-text">{errorMessage}</p>}
                     </div>
                     <textarea className="message-input" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Write your message..." />
-                    <button className="submit-btn" onClick={handleSubmit} disabled={isUploading}>Submit</button>
+                    <div className="button-group">
+                        <button className="submit-btn" onClick={handleSubmit} disabled={isUploading}>Submit</button>
+                        <button className="clear-btn" onClick={handleClearForm}>Clear Form</button>
+                    </div>
                     <div className="countdown">
                         <span>{String(timeLeft?.days).padStart(2, "0")} : </span>
                         <span>{String(timeLeft?.hours).padStart(2, "0")} : </span>
@@ -157,7 +220,7 @@ export default function ContestContent() {
                     {submissions.map((submission) => (
                         <div key={submission.id} className="submission-card">
                             <img src={submission.fileUrl} alt="Submission" className="submission-image" />
-                            <p>Submitted by: {submission.userId}</p>
+                            <p>Submitted by: {submission.userName}</p>
                         </div>
                     ))}
                 </div>
