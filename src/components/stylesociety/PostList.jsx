@@ -74,18 +74,24 @@ function PostList() {
             </div>
 
             {/* Post Content */}
+            <div className="post-user">
+              <img src={post.userProfile} alt="User Profile" className="post-user-img" />
+              <span className="post-user-name">{post.userName}</span>
+              <small className="post-timestamp">{post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Just now"}</small>
+            </div>
             <p>{post.text}</p>
-            <small>{post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Just now"}</small>
-          <div className="p-action">
-            {/* Like Component */}
-            <LikeButton post={post} />
 
-            {/* Comment Component */}
-            <CommentSection post={post} />
 
-            {/* Share Component */}
-            <ShareButton post={post} />
-          </div>
+            <div className="p-action">
+              {/* Like Component */}
+              <LikeButton post={post} />
+
+              {/* Comment Component */}
+              <CommentSection post={post} />
+
+              {/* Share Component */}
+              <ShareButton post={post} />
+            </div>
           </div>
         ))}
       </div>
@@ -93,4 +99,4 @@ function PostList() {
   );
 }
 
-export default PostList;
+export default PostList

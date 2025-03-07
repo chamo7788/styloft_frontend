@@ -1,9 +1,9 @@
 /* PostList.css */
 .post-list {
   position: absolute;
-  top: calc(120% + 125px); /* Adjusting below the add post */
+  top: 120%;
   left: 1.5%;
-  width: 50%;
+  width: 58%;
   background-color: rgb(239, 235, 235);
   padding: 10px;
   border-radius: 12px;
@@ -26,6 +26,8 @@
 
 /* Post Content */
 .post p {
+  position: relative;
+  top: 20px;
   font-size: 16px;
   margin-bottom: 5px;
   color: #333;
@@ -97,6 +99,31 @@
 
 .menu-item.delete {
   color: red;
+}
+
+.post-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-user-img {
+  position: relative;
+  top: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-user-name {
+  font-weight: bold;
+}
+
+.post-timestamp{
+  position: absolute;
+  top: 40px;
+  left: 54px;
 }
 
 /* Responsive Design */
