@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 import "../../assets/css/contest/contestContent.css";
 import { User } from "lucide-react";
 
@@ -41,18 +43,37 @@ export default function ContestContent() {
 
     // Fetch submissions
     useEffect(() => {
-        const fetchSubmissions = async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/submission/contest/${id}`);
-                if (!response.ok) throw new Error("Failed to fetch submissions");
-                const data = await response.json();
-                setSubmissions(data);
-            } catch (error) {
-                console.error("Error fetching submissions:", error);
-            }
-        };
-        fetchSubmissions();
-    }, [id]);
+    const fetchSubmissions = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/submission/contest/${id}`);
+            if (!response.ok) throw new Error("Failed to fetch submissions");
+            const data = await response.json();
+
+            // Fetch user details for each submission
+            const submissionsWithUserDetails = await Promise.all(
+                data.map(async (submission) => {
+                    try {
+                        const userDoc = await getDoc(doc(db, "users", submission.userId));
+                        return {
+                            ...submission,
+                            userName: userDoc.exists() ? userDoc.data().displayName : "Unknown User",
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching user ${submission.userId}:`, error);
+                        return { ...submission, userName: "Unknown User" };
+                    }
+                })
+            );
+
+            setSubmissions(submissionsWithUserDetails);
+        } catch (error) {
+            console.error("Error fetching submissions:", error);
+        }
+    };
+
+    fetchSubmissions();
+}, [id]);
+
 
     const calculateTimeLeft = (deadline) => {
         const now = new Date();
@@ -199,7 +220,7 @@ export default function ContestContent() {
                     {submissions.map((submission) => (
                         <div key={submission.id} className="submission-card">
                             <img src={submission.fileUrl} alt="Submission" className="submission-image" />
-                            <p>Submitted by: {submission.userId}</p>
+                            <p>Submitted by: {submission.userName}</p>
                         </div>
                     ))}
                 </div>
