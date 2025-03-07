@@ -12,6 +12,7 @@
     gap: 2rem;
     padding: 8rem 2em;
     box-shadow: 0px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1em;
 }
 
 .contest-left {
@@ -200,4 +201,25 @@
 .submission-image {
     width: 100%;
     border-radius: 5px;
+}
+
+.clear-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #ffcc00;
+    color: #333;
+    transition: background 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: #e6b800;
+}
+
+.submission-image-preview {
+    width: 10em;
+    border-radius: 5px;
+    margin-top: 10px;
 }
