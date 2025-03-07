@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { doc, getDoc } from "firebase/firestore"
@@ -44,44 +45,27 @@ export default function ContestContent() {
   }, [timeLeft, contest?.deadline])
 
   // Fetch submissions
- // Fetch submissions
-useEffect(() => {
-  const fetchSubmissions = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/submission/contest/${id}`)
-      if (!response.ok) throw new Error("Failed to fetch submissions")
-      const data = await response.json()
-
-      // Fetch user details for each submission
-      const submissionsWithUserDetails = await Promise.all(
-        data.map(async (submission) => {
-          try {
-            const userDoc = await getDoc(doc(db, "users", submission.userId))
-            if (userDoc.exists()) {
-              console.log(`User ${submission.userId} found:`, userDoc.data())
-              return {
-                ...submission,
-                userName: userDoc.data().displayName || "Unknown User",
-              }
-            } else {
-              console.log(`User ${submission.userId} not found`)
-              return { ...submission, userName: "Unknown User" }
-            }
-          } catch (error) {
-            console.error(`Error fetching user ${submission.userId}:`, error)
-            return { ...submission, userName: "Unknown User" }
-          }
-        }),
-      )
-
-      setSubmissions(submissionsWithUserDetails)
-    } catch (error) {
-      console.error("Error fetching submissions:", error)
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/submission/contest/${id}`)
+        if (!response.ok) throw new Error("Failed to fetch submissions")
+        const data = await response.json()
+  
+        // Assuming the backend now includes the username in the submission response
+        const submissionsWithUserDetails = data.map((submission) => ({
+          ...submission,
+          userName: submission.userName || "Unknown User",
+        }))
+  
+        setSubmissions(submissionsWithUserDetails)
+      } catch (error) {
+        console.error("Error fetching submissions:", error)
+      }
     }
-  }
-
-  fetchSubmissions()
-}, [id, isSubmitted])
+  
+    fetchSubmissions()
+  }, [id, isSubmitted])
 
   const calculateTimeLeft = (deadline) => {
     const now = new Date()
