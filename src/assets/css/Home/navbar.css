@@ -286,12 +286,38 @@
   transition: background-color 0.15s ease;
 }
 
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.profile-link:hover {
+  background-color: #f3f4f6;
+  color: #2563eb;
+}
+
 .logout-button:hover {
   background-color: #f3f4f6;
   color: #2563eb;
 }
 
 .logout-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.profile-icon {
   width: 1rem;
   height: 1rem;
 }

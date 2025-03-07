@@ -1,64 +1,64 @@
-import { useEffect, useState } from "react"
-import { NavLink } from "react-router-dom"
-import "../../../assets/css/Home/navbar.css"
-import logoLight from "../../../assets/images/styloft-logo.png"
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import "../../../assets/css/Home/navbar.css";
+import logoLight from "../../../assets/images/styloft-logo.png";
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [profilePicture, setProfilePicture] = useState("")
-  const [showLogout, setShowLogout] = useState(false)
-  const [retryCount, setRetryCount] = useState(0)
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profilePicture, setProfilePicture] = useState("");
+  const [showLogout, setShowLogout] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    setLastScrollY(window.scrollY)
-    const token = localStorage.getItem("authToken")
-    const profilePic = localStorage.getItem("profilePicture")
+    setLastScrollY(window.scrollY);
+    const token = localStorage.getItem("authToken");
+    const profilePic = localStorage.getItem("profilePicture");
 
     if (token) {
-      setIsLoggedIn(true)
-      setProfilePicture(profilePic || `https://robohash.org/${token}.png?set=set5`)
+      setIsLoggedIn(true);
+      setProfilePicture(profilePic || `https://robohash.org/${token}.png?set=set5`);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > lastScrollY && window.scrollY > 100) {
-        setIsVisible(false) // Hide navbar when scrolling down
+        setIsVisible(false); // Hide navbar when scrolling down
       } else {
-        setIsVisible(true) // Show navbar when scrolling up
+        setIsVisible(true); // Show navbar when scrolling up
       }
-      setLastScrollY(window.scrollY)
-    }
+      setLastScrollY(window.scrollY);
+    };
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [lastScrollY])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken")
-    localStorage.removeItem("profilePicture")
-    setIsLoggedIn(false)
-    setProfilePicture("")
-    setShowLogout(false)
-  }
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("profilePicture");
+    setIsLoggedIn(false);
+    setProfilePicture("");
+    setShowLogout(false);
+  };
 
   const toggleLogout = () => {
-    setShowLogout(!showLogout)
-  }
+    setShowLogout(!showLogout);
+  };
 
   const handleImageError = () => {
     if (retryCount < 3) {
-      setRetryCount(retryCount + 1)
+      setRetryCount(retryCount + 1);
       setTimeout(() => {
-        setProfilePicture(profilePicture + `?retry=${retryCount}`)
-      }, 1000)
+        setProfilePicture(profilePicture + `?retry=${retryCount}`);
+      }, 1000);
     } else {
-      setProfilePicture("/path/to/fallback-image.png") // Use a fallback image
+      setProfilePicture("/path/to/fallback-image.png"); // Use a fallback image
     }
-  }
+  };
 
   const navLinks = [
     { path: "/", label: "HOMEPAGE" },
@@ -67,7 +67,7 @@ const Navbar = () => {
     { path: "/inspire-zone", label: "INSPIRE ZONE" },
     { path: "/stylesociety", label: "STYLE SOCIETY" },
     { path: "/styleMarket", label: "STYLE MARKET" },
-  ]
+  ];
 
   return (
     <nav className={`navbar ${isVisible ? "visible" : "hidden"} ${window.scrollY > 50 ? "scrolled" : ""}`}>
@@ -140,7 +140,23 @@ const Navbar = () => {
                 {showLogout && (
                   <div className="logout-dropdown">
                     <div className="dropdown-header">
-                      <p>Your Account</p>
+                      <NavLink to="/profile" className="profile-link">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="profile-icon"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                          />
+                        </svg>
+                        Your Profile
+                      </NavLink>
                     </div>
                     <button onClick={handleLogout} className="logout-button">
                       <svg
@@ -187,8 +203,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
-
+export default Navbar;
