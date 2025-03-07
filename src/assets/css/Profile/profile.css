@@ -111,7 +111,7 @@ h3 {
 }
 
 .edit-button {
-  background-color: #4CAF50;
+  background-color: #5b645c99;
   color: white;
   padding: 10px 20px;
   margin: 10px 0;
@@ -121,7 +121,7 @@ h3 {
 }
 
 .edit-button:hover {
-  background-color: #45a049;
+  background-color: #86928684;
 }
 
 .edit-button_cover-edit{

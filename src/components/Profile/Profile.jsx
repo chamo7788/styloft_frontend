@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import "../../assets/css/Profile/profile.css";
@@ -14,13 +14,22 @@ const Profile = () => {
   const [modalImage, setModalImage] = useState("");
   const [isEditingAbout, setIsEditingAbout] = useState(false);
   const [aboutText, setAboutText] = useState("Experienced consultant with expertise in fintech and business development.");
-  const [name, setName] = useState("Kevin Smith");
+  const [name, setName] = useState("");
   const [profession, setProfession] = useState("Advisor and Consultant at Stripe Inc.");
+  const [nameError, setNameError] = useState("");
+  const [professionError, setProfessionError] = useState("");
   
   const [selectedImage, setSelectedImage] = useState(null);
   const [crop, setCrop] = useState(null);
   const [imageType, setImageType] = useState(""); 
   const imgRef = useRef(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user && user.displayName) {
+      setName(user.displayName);
+    }
+  }, []);
 
   const handleImageChange = (event, type) => {
     const file = event.target.files[0];
@@ -95,6 +104,27 @@ const Profile = () => {
     setModalImage("");
   };
 
+  const handleSave = () => {
+    let valid = true;
+    if (!name.trim()) {
+      setNameError("Name cannot be empty");
+      valid = false;
+    } else {
+      setNameError("");
+    }
+
+    if (!profession.trim()) {
+      setProfessionError("Profession cannot be empty");
+      valid = false;
+    } else {
+      setProfessionError("");
+    }
+
+    if (valid) {
+      setIsEditingAbout(false);
+    }
+  };
+
   return (
     <>
       <div className="profile-container">
@@ -118,7 +148,9 @@ const Profile = () => {
               {isEditingAbout ? (
                 <>
                   <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                  {nameError && <p className="error">{nameError}</p>}
                   <input type="text" value={profession} onChange={(e) => setProfession(e.target.value)} />
+                  {professionError && <p className="error">{professionError}</p>}
                 </>
               ) : (
                 <>
@@ -141,7 +173,7 @@ const Profile = () => {
             ) : (
               <p>{aboutText}</p>
             )}
-            <button onClick={() => setIsEditingAbout(!isEditingAbout)} className="edit-button">
+            <button onClick={() => isEditingAbout ? handleSave() : setIsEditingAbout(true)} className="edit-button">
               {isEditingAbout ? "Save" : "Edit"}
             </button>
           </div>
