@@ -29,9 +29,12 @@ const Profile = () => {
     if (user && user.displayName) {
       setName(user.displayName);
     }
+    if (user.photoURL) {
+      setProfilePic(user.photoURL);
+    }
   }, []);
 
-  const handleImageChange = (event, type) => {
+  const handleImageChange = async (event, type) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -40,6 +43,28 @@ const Profile = () => {
         setImageType(type);
       };
       reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "Styloft"); // Change to your Cloudinary preset
+  
+      try {
+        const response = await fetch("https://api.cloudinary.com/v1_1/ds0xdh85j/image/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        if (data.secure_url) {
+          if (type === "profile") {
+            setProfilePic(data.secure_url);
+          } else {
+            setCoverPhoto(data.secure_url);
+          }
+          await updateProfilePicture(data.secure_url);
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
   };
 
@@ -125,6 +150,31 @@ const Profile = () => {
     }
   };
 
+  const updateProfilePicture = async (imageUrl) => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user || !user.uid) return;
+  
+    try {
+      const response = await fetch("http://localhost:3000/user/updateProfile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: user.uid, photoURL: imageUrl }),
+      });
+  
+      if (response.ok) {
+        user.photoURL = imageUrl;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating profile picture:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+    }
+  };
+
   return (
     <>
       <div className="profile-container">
@@ -138,13 +188,14 @@ const Profile = () => {
           </div>
           <div className="profile-details">
             <div className="profile-pic-container">
-              <img src={profilePic} alt="Profile" className="profile-pic" />
-              <label className="edit-button profile-edit">
-                ✎
-                <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, "profile")} hidden />
-              </label>
-            </div>
-            <div className="user-info">
+             <img src={profilePic} alt="Profile" className="profile-pic" />
+             <label className="edit-button profile-edit">
+               ✎
+             <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, "profile")} hidden />
+           </label>
+          </div>
+
+          <div className="user-info">
               {isEditingAbout ? (
                 <>
                   <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
