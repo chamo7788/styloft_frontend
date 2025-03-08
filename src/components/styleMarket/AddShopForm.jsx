@@ -1,15 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "../../assets/css/StyleMarket/addShop.css"; 
+import { Upload, AlertCircle } from "lucide-react";
 
 export function AddShopForm() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
-    image: "", // Image URL from ImgHippo
+    image: "", // Image URL from Cloudinary
   });
 
   const [imagePreview, setImagePreview] = useState(null); // For displaying selected image
+  const [uploading, setUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,11 +22,98 @@ export function AddShopForm() {
       ...prevData,
       [name]: value,
     }));
+  };
 
-    // If updating image field, update preview
-    if (name === "image") {
-      setImagePreview(value);
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
     }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleImageFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleImageFile = async (file) => {
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!validTypes.includes(file.type)) {
+      setErrorMessage("Invalid file type. Please upload a JPG or PNG image.");
+      showToast("Invalid file type", "Please upload a JPG or PNG image.", "error");
+      return;
+    }
+
+    // Show preview
+    setImagePreview(URL.createObjectURL(file));
+    setUploading(true);
+
+    const imageData = new FormData();
+    imageData.append("file", file);
+    imageData.append("upload_preset", "Styloft"); // Replace with your actual preset
+
+    try {
+      const response = await fetch("https://api.cloudinary.com/v1_1/ds0xdh85j/image/upload", {
+        method: "POST",
+        body: imageData,
+      });
+
+      const data = await response.json();
+
+      if (data.secure_url) {
+        setFormData((prevData) => ({
+          ...prevData,
+          image: data.secure_url, // Save image URL
+        }));
+        setErrorMessage("");
+        showToast("Image uploaded successfully", "Your image has been uploaded to the cloud.", "success");
+      } else {
+        setErrorMessage("Image upload failed. Try again.");
+        showToast("Upload failed", "Image upload failed. Please try again.", "error");
+      }
+    } catch (error) {
+      setErrorMessage("Error uploading image. Check your network.");
+      showToast("Upload error", "Error uploading image. Check your network connection.", "error");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const showToast = (title, message, type = "success") => {
+    // Simple toast implementation
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+      <div class="toast-header">${title}</div>
+      <div class="toast-body">${message}</div>
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }, 100);
   };
 
   const handleSubmit = async (e) => {
@@ -110,19 +202,46 @@ export function AddShopForm() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="image" className="form-label">
-            Image URL (Upload to ImgHippo)
-          </label>
-          <input
-            type="text"
-            id="image"
-            name="image"
-            placeholder="Paste ImgHippo image link here"
-            value={formData.image}
-            onChange={handleChange}
-            className="form-input"
-            required
-          />
+          <label className="form-label">Shop Image</label>
+          <div
+            className={`image-upload-area ${dragActive ? "active" : ""}`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current.click()}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              id="image"
+              name="image"
+              onChange={handleImageUpload}
+              className="hidden-input"
+              accept="image/png, image/jpeg"
+            />
+            <div className="upload-content">
+              <div className="upload-icon-container">
+                <Upload className="upload-icon" />
+              </div>
+              <p className="upload-text">{imagePreview ? "Change image" : "Upload shop image"}</p>
+              <p className="upload-subtext">Drag and drop or click to browse</p>
+            </div>
+          </div>
+
+          {uploading && (
+            <div className="upload-status">
+              <div className="spinner"></div>
+              <span className="upload-status-text">Uploading...</span>
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="error-message">
+              <AlertCircle className="error-icon" />
+              <p>{errorMessage}</p>
+            </div>
+          )}
         </div>
 
         {/* Image Preview */}
@@ -132,8 +251,8 @@ export function AddShopForm() {
           </div>
         )}
 
-        <button type="submit" className="submit-button">
-          Create Shop
+        <button type="submit" className="submit-button" disabled={uploading}>
+          {uploading ? "Uploading..." : "Create Shop"}
         </button>
       </form>
     </div>

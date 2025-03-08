@@ -7,7 +7,7 @@ const defaultImage = "https://www.imghippo.com/i/QMsd7261qms.jpg";
 const ProductCard = ({ product, onExplore }) => {
   if (!product) return null;
 
-  const imageSrc = product.imageUrl || defaultImage;
+  const imageSrc = product.image || defaultImage;
   const formattedPrice =
     product.price && !isNaN(product.price) ? `$${Number(product.price).toFixed(2)}` : "Price Not Available";
 

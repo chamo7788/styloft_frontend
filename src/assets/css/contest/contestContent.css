@@ -1,225 +1,744 @@
-.contest-content-page {
-    align-items: center;
-    gap: 2rem;
+/* Base styles and variables */
+:root {
+    --primary-color: #3b82f6;
+    --primary-light: #93c5fd;
+    --primary-dark: #1d4ed8;
+    --secondary-color: #10b981;
+    --accent-color: #f59e0b;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --background-color: #f9fafb;
+    --card-background: #ffffff;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+  }
+  
+  /* Global styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+      "Helvetica Neue", sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+  
+  /* Contest Content Page Layout */
+  .contest-content-page {
+    max-width: 1400px;
+    margin: 0 auto;
     padding: 2rem;
-}
-.contest-content-container {
+  }
+  
+  /* Contest Header */
+  .contest-header {
     display: flex;
-    flex-wrap: wrap;
-    height: 800px;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-    padding: 8rem 2em;
-    box-shadow: 0px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1em;
-}
-
-.contest-left {
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .contest-header-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
     flex: 1;
-}
-
-.contest-left, .contest-right {
-    width: 48%;
-}
-
-.contest-image {
-    width: 100%;
-    height: 400px;
-    border-radius: 10px;
-}
-
-.contest-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    font-size: 24px;
-    margin-top: 1rem;
-}
-
-.contest-description {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #555;
-}
-
-.contest-price {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-top: 0.5rem;
-}
-
-.contest-right {
-    flex: 1;
+  }
+  
+  .contest-countdown-container {
+    background-color: var(--card-background);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    box-shadow: var(--shadow-md);
+    min-width: 300px;
+    
+    margin-top: 40px;
+  }
+  
+  .contest-countdown-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .contest-countdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .countdown-item {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-}
-
-.upload-box {
-    background: white;
-    margin: 5em 0 5em;
-    margin-top: 20px;
-    border-radius: 10px;
-    border: 2px dashed #ccc;
-    text-align: center;
-    cursor: pointer;
-    transition: border 0.3s ease;
-}
-
-.upload-box:hover {
-    border-color: #007bff;
-}
-
-.file-input {
-    display: none;
-}
-
-.message-input {
-    width: 100%;
-    height: 200px;
-    padding: 0.8rem;
-    margin-bottom: 5em;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-}
-
-.button-group {
-    display: flex;
-    gap: 1rem;
-}
-
-.submit-btn, .cancel-btn {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.submit-btn {
-    background: #007bff;
-    color: white;
-}
-
-.submit-btn:hover {
-    background: #0056b3;
-}
-
-.cancel-btn {
-    background: #dc3545;
-    color: white;
-}
-
-.cancel-btn:hover {
-    background: #a71d2a;
-}
-
-.countdown {
+    align-items: center;
+    min-width: 50px;
+  }
+  
+  .countdown-value {
     font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    color: #333;
-    margin-top: 1rem;
-}
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+  
+  .countdown-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  
+  .countdown-separator {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 0 0.25rem;
+    padding-bottom: 1.25rem;
+  }
 
-.upload-box {
-    background: white;
+  .closed-contest-message {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--error-color);
+    text-align: center;
     padding: 1rem;
-    border-radius: 10px;
-    border: 2px dashed #ccc;
+  }
+  
+  /* Contest Content Container */
+  .contest-content-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .contest-content-container {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Contest Left Side */
+  .contest-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .contest-image-container {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+  
+  .contest-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--transition-normal);
+  }
+  
+  .contest-image-container:hover .contest-image {
+    transform: scale(1.02);
+  }
+  
+  .contest-prize-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+  }
+  
+  .contest-details {
+    background-color: var(--card-background);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .contest-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .contest-detail-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .contest-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  
+  .contest-detail-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  
+  .contest-deadline,
+  .contest-prize {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  
+  .contest-prize {
+    font-size: 1.125rem;
+    color: var(--accent-color);
+    font-weight: 700;
+  }
+  
+  /* Contest Right Side */
+  .contest-right {
+    background-color: var(--card-background);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .submission-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Upload Box */
+  .upload-box {
+    position: relative;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
     text-align: center;
     cursor: pointer;
-    transition: border 0.3s ease;
-    position: relative;
-}
-
-.upload-box:hover {
-    border-color: #007bff;
-}
-
-.file-label {
-    display: block;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    color: #007bff;
-}
-
-.file-input {
-    opacity: 0;
+    transition: all var(--transition-normal);
+    background-color: var(--background-color);
+    overflow: hidden;
+  }
+  
+  .upload-box:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.05);
+  }
+  
+  .upload-box.dragging {
+    border-color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+  
+  .upload-box.error {
+    border-color: var(--error-color);
+    background-color: rgba(239, 68, 68, 0.05);
+  }
+  
+  .file-input {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    opacity: 0;
     cursor: pointer;
-}
-
-.file-name {
-    margin-top: 10px;
-    font-size: 0.9rem;
-    color: #555;
-}
-.submission-success {
-    text-align: center;
-    padding: 2rem;
-    background: #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.submission-success h2 {
-    font-size: 2rem;
-    color: #007bff;
-}
-
-.submission-success p {
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.submissions-section {
-    width: 100%;
-    margin-top: 30px;
-}
-
-.submission-cards {
+  }
+  
+  .upload-placeholder {
     display: flex;
-    flex-wrap: wrap;
-    gap: 50px;
-}
-
-.submission-card {
-    width: 350px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    background-color: #b5eefc;
-}
-
-.submission-image {
-    width: 100%;
-    border-radius: 5px;
-}
-
-.clear-btn {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .upload-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background-color: rgba(59, 130, 246, 0.1);
+    border-radius: 50%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .upload-icon {
+    color: var(--primary-color);
+  }
+  
+  .upload-text {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  
+  .upload-subtext {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+  
+  .upload-formats {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  
+  .image-preview-container {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+  }
+  
+  .submission-image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .remove-image-btn {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--error-color);
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    background: #ffcc00;
-    color: #333;
-    transition: background 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+  }
+  
+  .remove-image-btn:hover {
+    background-color: #dc2626;
+    transform: scale(1.1);
+  }
+  
+  .upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .upload-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba(59, 130, 246, 0.2);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--error-color);
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-radius: var(--radius-md);
+  }
+  
+  /* Message Input */
+  .message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .message-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  
+  .message-input {
+    width: 100%;
+    height: 120px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    resize: vertical;
+    font-family: inherit;
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+  }
+  
+  .message-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+  
+  /* Button Group */
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  
+  .submit-btn,
+  .clear-btn {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex: 1;
+  }
+  
+  .submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .submit-btn:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .clear-btn {
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+  
+  .clear-btn:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-2px);
+  }
+  
+  .deadline-passed-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    background-color: #f3f4f6;
+    border-radius: var(--radius-md);
+    margin-top: 0.5rem;
+  }
+  
+  /* Submission Success */
+  .submission-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    gap: 1rem;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .success-icon {
+    color: var(--success-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .submission-success h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  
+  .submission-success p {
+    color: var(--text-secondary);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Submission Gallery */
+  .submission-gallery {
+    margin-top: 3rem;
+  }
+  
+  .gallery-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+  }
+  
+  .submission-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .submission-card {
+    background-color: var(--card-background);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+  }
+  
+  .submission-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .submission-image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+  }
+  
+  .submission-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+  
+  .submission-card:hover .submission-image {
+    transform: scale(1.05);
+  }
+  
+  .submission-info {
+    padding: 1rem;
+  }
+  
+  .submission-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .user-icon {
+    color: var(--primary-color);
+  }
+  
+  .submission-message {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .no-submissions {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    background-color: var(--card-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  /* Loading State */
+  .contest-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1.5rem;
+    color: var(--text-muted);
+  }
+  
+  .contest-loader {
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid rgba(59, 130, 246, 0.2);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.clear-btn:hover {
-    background: #e6b800;
+.modal-content {
+  background-color: var(--card-background);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
 }
 
-.submission-image-preview {
-    width: 10em;
-    border-radius: 5px;
-    margin-top: 10px;
+.modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
 }
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-info {
+  text-align: center;
+}
+
+.modal-info h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-info p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .contest-content-page {
+      padding: 1rem;
+    }
+  
+    .contest-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .contest-countdown-container {
+      width: 100%;
+    }
+  
+    .button-group {
+      flex-direction: column;
+    }
+  
+    .submission-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .countdown-item {
+      min-width: 40px;
+    }
+  
+    .countdown-value {
+      font-size: 1.25rem;
+    }
+  
+    .countdown-label {
+      font-size: 0.7rem;
+    }
+  }
+  
+  
