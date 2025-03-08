@@ -1,6 +1,6 @@
 import { useState, useRef, Suspense, useEffect } from "react"
 import { Canvas } from "@react-three/fiber"
-import { OrbitControls, useGLTF, Environment, PerspectiveCamera } from "@react-three/drei"
+import { OrbitControls, useGLTF, Environment, PerspectiveCamera, Html, TransformControls } from "@react-three/drei"
 import { TextureLoader, Vector3 } from "three"
 import { useFrame } from "@react-three/fiber"
 import {
@@ -17,6 +17,9 @@ import {
   Upload,
 } from "lucide-react"
 import "../../assets/css/StyleStudio/viewer.css"
+import LightingControls from "./LightingControls";
+import TextPlacement from "./TextPlacement";
+import ColorPicker from "./ColorPicker";
 
 // Model settings for different scale and position
 const models = {
@@ -107,46 +110,8 @@ function Model({ modelPath, colors, materials, modelType, selectedPart, setSelec
   return <primitive ref={modelRef} object={scene} onClick={handleClick} />
 }
 
-function ColorPicker({ color, onChange }) {
-  const colors = [
-    "#ffffff",
-    "#000000",
-    "#ff0000",
-    "#00ff00",
-    "#0000ff",
-    "#ffff00",
-    "#ff00ff",
-    "#00ffff",
-    "#ff9900",
-    "#9900ff",
-  ]
-
-  return (
-    <div className="color-grid">
-      {colors.map((c) => (
-        <button
-          key={c}
-          className={`color-button ${color === c ? "color-button-selected" : ""}`}
-          style={{ backgroundColor: c }}
-          onClick={() => onChange(c)}
-          aria-label={`Select color ${c}`}
-        />
-      ))}
-      <div className="custom-color-container">
-        <label htmlFor="custom-color" className="color-label">
-          Custom Color
-        </label>
-        <input
-          id="custom-color"
-          type="color"
-          value={color}
-          onChange={(e) => onChange(e.target.value)}
-          className="custom-color-input"
-        />
-      </div>
-    </div>
-  )
-}
+// Color picker component
+<ColorPicker></ColorPicker>
 
 function FileUploader({ label, accept, onChange, preview }) {
   const fileInputRef = useRef(null)
@@ -180,130 +145,10 @@ function FileUploader({ label, accept, onChange, preview }) {
   )
 }
 
-function TextPlacement({ onAddText }) {
-  const [text, setText] = useState("")
-  const [fontSize, setFontSize] = useState(24)
-  const [textColor, setTextColor] = useState("#000000")
-
-  const handleAddText = () => {
-    if (text.trim()) {
-      onAddText({
-        text,
-        fontSize,
-        color: textColor,
-      })
-      setText("")
-    }
-  }
-
-  return (
-    <div className="text-placement">
-      <label className="text-label">Add Text</label>
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Enter text"
-        className="text-input"
-      />
-
-      <div className="text-controls">
-        <div className="text-control">
-          <label className="text-control-label">Size</label>
-          <input
-            type="range"
-            min="12"
-            max="72"
-            value={fontSize}
-            onChange={(e) => setFontSize(Number(e.target.value))}
-            className="text-range"
-          />
-          <span>{fontSize}px</span>
-        </div>
-
-        <div className="text-control">
-          <label className="text-control-label">Color</label>
-          <input
-            type="color"
-            value={textColor}
-            onChange={(e) => setTextColor(e.target.value)}
-            className="text-color-input"
-          />
-        </div>
-      </div>
-
-      <button className="text-add-button" onClick={handleAddText}>
-        Add Text
-      </button>
-    </div>
-  )
-}
-
-function LightingControls({ onChange, lighting }) {
-  return (
-    <div className="lighting-controls">
-      <label className="lighting-label">Lighting</label>
-
-      <div className="lighting-control">
-        <label className="lighting-control-label">Intensity</label>
-        <input
-          type="range"
-          min="0"
-          max="2"
-          step="0.1"
-          value={lighting.intensity}
-          onChange={(e) => onChange({ ...lighting, intensity: Number(e.target.value) })}
-          className="lighting-range"
-        />
-        <span>{lighting.intensity.toFixed(1)}</span>
-      </div>
-
-      <div className="lighting-control">
-        <label className="lighting-control-label">Direction</label>
-        <div className="lighting-direction-controls">
-          <button className="lighting-direction-button" onClick={() => onChange({ ...lighting, direction: [0, 5, 5] })}>
-            Front
-          </button>
-          <button
-            className="lighting-direction-button"
-            onClick={() => onChange({ ...lighting, direction: [0, 5, -5] })}
-          >
-            Back
-          </button>
-          <button className="lighting-direction-button" onClick={() => onChange({ ...lighting, direction: [5, 5, 0] })}>
-            Right
-          </button>
-          <button
-            className="lighting-direction-button"
-            onClick={() => onChange({ ...lighting, direction: [-5, 5, 0] })}
-          >
-            Left
-          </button>
-        </div>
-      </div>
-
-      <div className="lighting-control">
-        <label className="lighting-control-label">Environment</label>
-        <select
-          className="lighting-select"
-          value={lighting.environment}
-          onChange={(e) => onChange({ ...lighting, environment: e.target.value })}
-        >
-          <option value="studio">Studio</option>
-          <option value="sunset">Sunset</option>
-          <option value="dawn">Dawn</option>
-          <option value="night">Night</option>
-          <option value="warehouse">Warehouse</option>
-          <option value="forest">Forest</option>
-          <option value="apartment">Apartment</option>
-          <option value="city">City</option>
-          <option value="park">Park</option>
-          <option value="lobby">Lobby</option>
-        </select>
-      </div>
-    </div>
-  )
-}
+<div>
+  <TextPlacement></TextPlacement>
+  <LightingControls></LightingControls>
+</div>
 
 // Main component
 export default function ModelEditor() {
