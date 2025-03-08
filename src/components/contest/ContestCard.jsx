@@ -1,13 +1,14 @@
 "use client"
-import { useNavigate } from "react-router-dom"
-import { Trophy, Users, Star, ArrowRight } from "lucide-react"
-import "../../assets/css/contest/contest.css"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Trophy, Users, Star, ArrowRight } from "lucide-react";
+import "../../assets/css/contest/contest.css";
 
 // Card Component
-const Card = ({ children }) => <div className="contest-card">{children}</div>
+const Card = ({ children }) => <div className="contest-card">{children}</div>;
 
 // Card Content Component
-const CardContent = ({ children }) => <div className="contest-card-content">{children}</div>
+const CardContent = ({ children }) => <div className="contest-card-content">{children}</div>;
 
 // Button Component
 const Button = ({ children, className, onClick }) => (
@@ -15,10 +16,48 @@ const Button = ({ children, className, onClick }) => (
     <span>{children}</span>
     <ArrowRight className="button-icon" size={16} />
   </button>
-)
+);
 
 const ContestCards = ({ contests }) => {
-  const navigate = useNavigate() // React Router Navigation Hook
+  const navigate = useNavigate(); // React Router Navigation Hook
+  const [submissionCounts, setSubmissionCounts] = useState({});
+  const [designerCounts, setDesignerCounts] = useState({});
+
+  useEffect(() => {
+    // Fetch submission counts from the backend
+    const fetchSubmissionCounts = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/submission/count-by-contest');
+        const data = await response.json();
+        const counts = data.reduce((acc, item) => {
+          acc[item.contestId] = item.count;
+          return acc;
+        }, {});
+        setSubmissionCounts(counts);
+      } catch (error) {
+        console.error('Error fetching submission counts:', error);
+      }
+    };
+
+    fetchSubmissionCounts();
+
+    // Fetch designer counts from the backend
+    const fetchDesignerCounts = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/submission/designers-by-contest');
+        const data = await response.json();
+        const counts = data.reduce((acc, item) => {
+          acc[item.contestId] = item.count;
+          return acc;
+        }, {});
+        setDesignerCounts(counts);
+      } catch (error) {
+        console.error('Error fetching designer counts:', error);
+      }
+    };
+
+    fetchDesignerCounts();
+  }, []);
 
   if (!contests || contests.length === 0) {
     return (
@@ -27,7 +66,7 @@ const ContestCards = ({ contests }) => {
         <p>No contests available at the moment.</p>
         <p className="no-contests-sub">Check back soon or create your own!</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -44,11 +83,11 @@ const ContestCards = ({ contests }) => {
             <div className="contest-card-info">
               <div className="contest-card-stat">
                 <Users size={16} className="contest-card-icon" />
-                <span>{contest.designers || 0} Designers</span>
+                <span>{designerCounts[contest.id] || 0} Designers</span>
               </div>
               <div className="contest-card-stat">
                 <Star size={16} className="contest-card-icon" />
-                <span>{contest.designs || 0} Designs</span>
+                <span>{submissionCounts[contest.id] || 0} Designs</span>
               </div>
               <div className="contest-card-stat">
                 <Trophy size={16} className="contest-card-icon trophy-icon" />
@@ -65,8 +104,7 @@ const ContestCards = ({ contests }) => {
         </Card>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default ContestCards
-
+export default ContestCards;

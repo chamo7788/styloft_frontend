@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { doc, getDoc } from "firebase/firestore"
@@ -18,6 +17,8 @@ export default function ContestContent() {
   const [submissions, setSubmissions] = useState([])
   const [isDragging, setIsDragging] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedSubmission, setSelectedSubmission] = useState(null)
 
   // Fetch contest details
   useEffect(() => {
@@ -208,6 +209,16 @@ export default function ContestContent() {
     document.getElementById("file-upload").value = ""
   }
 
+  const openModal = (submission) => {
+    setSelectedSubmission(submission)
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedSubmission(null)
+  }
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -230,25 +241,33 @@ export default function ContestContent() {
             <span>{isDeadlinePassed ? "Contest Ended" : "Time Remaining"}</span>
           </div>
           <div className="contest-countdown">
-            <div className="countdown-item">
-              <span className="countdown-value">{String(timeLeft?.days).padStart(2, "0")}</span>
-              <span className="countdown-label">Days</span>
-            </div>
-            <div className="countdown-separator">:</div>
-            <div className="countdown-item">
-              <span className="countdown-value">{String(timeLeft?.hours).padStart(2, "0")}</span>
-              <span className="countdown-label">Hours</span>
-            </div>
-            <div className="countdown-separator">:</div>
-            <div className="countdown-item">
-              <span className="countdown-value">{String(timeLeft?.minutes).padStart(2, "0")}</span>
-              <span className="countdown-label">Mins</span>
-            </div>
-            <div className="countdown-separator">:</div>
-            <div className="countdown-item">
-              <span className="countdown-value">{String(timeLeft?.seconds).padStart(2, "0")}</span>
-              <span className="countdown-label">Secs</span>
-            </div>
+            {isDeadlinePassed ? (
+              <div className="closed-contest-message">
+                <span>This contest has ended.</span>
+              </div>
+            ) : (
+              <>
+                <div className="countdown-item">
+                  <span className="countdown-value">{String(timeLeft?.days).padStart(2, "0")}</span>
+                  <span className="countdown-label">Days</span>
+                </div>
+                <div className="countdown-separator">:</div>
+                <div className="countdown-item">
+                  <span className="countdown-value">{String(timeLeft?.hours).padStart(2, "0")}</span>
+                  <span className="countdown-label">Hours</span>
+                </div>
+                <div className="countdown-separator">:</div>
+                <div className="countdown-item">
+                  <span className="countdown-value">{String(timeLeft?.minutes).padStart(2, "0")}</span>
+                  <span className="countdown-label">Mins</span>
+                </div>
+                <div className="countdown-separator">:</div>
+                <div className="countdown-item">
+                  <span className="countdown-value">{String(timeLeft?.seconds).padStart(2, "0")}</span>
+                  <span className="countdown-label">Secs</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -405,7 +424,7 @@ export default function ContestContent() {
         ) : (
           <div className="submission-cards">
             {submissions.map((submission) => (
-              <div key={submission.id} className="submission-card">
+              <div key={submission.id} className="submission-card" onClick={() => openModal(submission)}>
                 <div className="submission-image-container">
                   <img src={submission.fileUrl || "/placeholder.svg"} alt="Submission" className="submission-image" />
                 </div>
@@ -421,7 +440,23 @@ export default function ContestContent() {
           </div>
         )}
       </div>
+
+      {isModalOpen && selectedSubmission && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeModal}>
+              <X size={24} />
+            </button>
+            <div className="modal-body">
+              <img src={selectedSubmission.fileUrl || "/placeholder.svg"} alt="Submission" className="modal-image" />
+              <div className="modal-info">
+                <h3>{selectedSubmission.userName}</h3>
+                {selectedSubmission.message && <p>{selectedSubmission.message}</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

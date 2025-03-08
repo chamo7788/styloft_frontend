@@ -71,6 +71,8 @@
     padding: 1rem;
     box-shadow: var(--shadow-md);
     min-width: 300px;
+    
+    margin-top: 40px;
   }
   
   .contest-countdown-label {
@@ -114,6 +116,14 @@
     color: var(--text-muted);
     margin: 0 0.25rem;
     padding-bottom: 1.25rem;
+  }
+
+  .closed-contest-message {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--error-color);
+    text-align: center;
+    padding: 1rem;
   }
   
   /* Contest Content Container */
@@ -627,6 +637,71 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--card-background);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-info {
+  text-align: center;
+}
+
+.modal-info h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-info p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
   
   /* Responsive Adjustments */
   @media (max-width: 768px) {
