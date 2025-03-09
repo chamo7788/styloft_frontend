@@ -264,7 +264,7 @@ export default function ModelEditor() {
         />
 
         <div className="canvas-content">
-          <Canvas shadows className="canvas" ref={canvasRef}>
+          <Canvas shadows className="canvas" ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
             <PerspectiveCamera makeDefault position={[0, 0, 10]} ref={cameraRef} />
             <ambientLight intensity={lighting.intensity} />
             <directionalLight position={lighting.direction} intensity={lighting.intensity} castShadow />
