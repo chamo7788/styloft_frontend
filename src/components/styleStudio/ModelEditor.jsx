@@ -14,9 +14,11 @@ import PartSelector from "./PartSelector"
 import ColorPicker from "./ColorPicker"
 import FileUploader from "./FileUploader"
 import TextPlacement from "./TextPlacement"
+import LogoUploader from "./LogoUploader"
 import LightingControls from "./LightingControls"
 import TextPositionControls from "./TextPositionControls"
-import "../../assets/css/StyleStudio/Viewer.css"
+import LogoPositionControls from "./LogoPositionControls"
+import "../../assets/css/StyleStudio/viewer.css"
 
 // Model settings for different scale and position
 const models = {
@@ -56,6 +58,10 @@ export default function ModelEditor() {
   // Text state
   const [textElements, setTextElements] = useState([])
   const [selectedTextIndex, setSelectedTextIndex] = useState(null)
+
+  // Logo state
+  const [logoElements, setLogoElements] = useState([])
+  const [selectedLogoIndex, setSelectedLogoIndex] = useState(null)
 
   // Feature states
   const [colors, setColors] = useState({ main: "#ffffff" })
@@ -184,6 +190,7 @@ export default function ModelEditor() {
       colors,
       materials,
       textElements,
+      logoElements,
       lighting,
       backgroundColor,
     }
@@ -208,6 +215,7 @@ export default function ModelEditor() {
           setColors(design.colors)
           setMaterials(design.materials)
           setTextElements(design.textElements || [])
+          setLogoElements(design.logoElements || [])
           setLighting(design.lighting || lighting)
           setBackgroundColor(design.backgroundColor || backgroundColor)
 
@@ -229,6 +237,7 @@ export default function ModelEditor() {
   // Handle text selection
   const handleTextSelect = (index) => {
     setSelectedTextIndex(index)
+    setSelectedLogoIndex(null)
     setActiveTab("text") // Switch to text tab when text is selected
   }
 
@@ -249,6 +258,40 @@ export default function ModelEditor() {
     setTextElements(newTextElements)
   }
 
+  // Handle logo selection
+  const handleLogoSelect = (index) => {
+    setSelectedLogoIndex(index)
+    setSelectedTextIndex(null)
+    setActiveTab("logo") // Switch to logo tab when logo is selected
+  }
+
+  // Handle logo position update
+  const handleUpdateLogoPosition = (index, position) => {
+    const newLogoElements = [...logoElements]
+    newLogoElements[index] = {
+      ...newLogoElements[index],
+      position,
+    }
+    setLogoElements(newLogoElements)
+  }
+
+  // Handle logo rotation update
+  const handleUpdateLogoRotation = (index, rotation) => {
+    const newLogoElements = [...logoElements]
+    newLogoElements[index] = {
+      ...newLogoElements[index],
+      rotation,
+    }
+    setLogoElements(newLogoElements)
+  }
+
+  // Handle logo update
+  const handleUpdateLogo = (index, updatedLogo) => {
+    const newLogoElements = [...logoElements]
+    newLogoElements[index] = updatedLogo
+    setLogoElements(newLogoElements)
+  }
+
   return (
     <div className="model-editor-container">
       <div className="canvas-card" style={{ backgroundColor }}>
@@ -264,7 +307,7 @@ export default function ModelEditor() {
         />
 
         <div className="canvas-content">
-          <Canvas shadows className="canvas" ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
+          <Canvas shadows className="canvas" ref={canvasRef}>
             <PerspectiveCamera makeDefault position={[0, 0, 10]} ref={cameraRef} />
             <ambientLight intensity={lighting.intensity} />
             <directionalLight position={lighting.direction} intensity={lighting.intensity} castShadow />
@@ -284,6 +327,9 @@ export default function ModelEditor() {
                 textElements={textElements}
                 selectedTextIndex={selectedTextIndex}
                 onTextSelect={handleTextSelect}
+                logoElements={logoElements}
+                selectedLogoIndex={selectedLogoIndex}
+                onLogoSelect={handleLogoSelect}
               />
             </Suspense>
 
@@ -308,6 +354,7 @@ export default function ModelEditor() {
               { id: "color", label: "Color" },
               { id: "texture", label: "Texture" },
               { id: "text", label: "Text" },
+              { id: "logo", label: "Logo" },
               { id: "lighting", label: "Lighting" },
             ]}
           >
@@ -374,6 +421,35 @@ export default function ModelEditor() {
                 <TextPositionControls
                   textElement={textElements[selectedTextIndex]}
                   onUpdatePosition={(position) => handleUpdateTextPosition(selectedTextIndex, position)}
+                />
+              )}
+            </div>
+
+            <div id="logo">
+              <LogoUploader
+                onAddLogo={(logoElement) => {
+                  setLogoElements([...logoElements, logoElement])
+                  setSelectedLogoIndex(logoElements.length) // Select the newly added logo
+                }}
+                logoElements={logoElements}
+                onRemoveLogo={(index) => {
+                  const newElements = [...logoElements]
+                  newElements.splice(index, 1)
+                  setLogoElements(newElements)
+                  if (selectedLogoIndex === index) {
+                    setSelectedLogoIndex(null)
+                  } else if (selectedLogoIndex > index) {
+                    setSelectedLogoIndex(selectedLogoIndex - 1)
+                  }
+                }}
+                onUpdateLogo={handleUpdateLogo}
+              />
+
+              {selectedLogoIndex !== null && (
+                <LogoPositionControls
+                  logoElement={logoElements[selectedLogoIndex]}
+                  onUpdatePosition={(position) => handleUpdateLogoPosition(selectedLogoIndex, position)}
+                  onUpdateRotation={(rotation) => handleUpdateLogoRotation(selectedLogoIndex, rotation)}
                 />
               )}
             </div>

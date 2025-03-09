@@ -1,31 +1,59 @@
-"use client"
-
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react";
+import * as THREE from "three";
 
 function TextControls({ textElements, onRemoveText, onUpdateTextPosition }) {
-  const [selectedTextIndex, setSelectedTextIndex] = useState(null)
-  const [position, setPosition] = useState({ x: 0, y: 0, z: 0 })
+  const [selectedTextIndex, setSelectedTextIndex] = useState(null);
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 0 });
+  const mountRef = useRef(null);
+
+  useEffect(() => {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    mountRef.current.appendChild(renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 5;
+
+    const animate = function () {
+      requestAnimationFrame(animate);
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    return () => {
+      mountRef.current.removeChild(renderer.domElement);
+    };
+  }, []);
 
   const handleSelectText = (index) => {
-    setSelectedTextIndex(index)
-    // Set position sliders to current text position
+    setSelectedTextIndex(index);
     if (textElements[index]) {
-      const [x, y, z] = textElements[index].position || [0, 0, 0]
-      setPosition({ x, y, z })
+      const [x, y, z] = textElements[index].position || [0, 0, 0];
+      setPosition({ x, y, z });
     }
-  }
+  };
 
   const handlePositionChange = (axis, value) => {
-    const newPosition = { ...position, [axis]: Number.parseFloat(value) }
-    setPosition(newPosition)
+    const newPosition = { ...position, [axis]: Number.parseFloat(value) };
+    setPosition(newPosition);
 
     if (selectedTextIndex !== null) {
-      onUpdateTextPosition(selectedTextIndex, [newPosition.x, newPosition.y, newPosition.z])
+      onUpdateTextPosition(selectedTextIndex, [newPosition.x, newPosition.y, newPosition.z]);
     }
-  }
+  };
 
   return (
     <div className="text-controls">
+      <div ref={mountRef}></div>
       {textElements.length > 0 && (
         <div className="text-elements">
           <label className="text-elements-label">Text Elements</label>
@@ -48,10 +76,10 @@ function TextControls({ textElements, onRemoveText, onUpdateTextPosition }) {
                 <button
                   className="text-element-remove"
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onRemoveText(index)
+                    e.stopPropagation();
+                    onRemoveText(index);
                     if (selectedTextIndex === index) {
-                      setSelectedTextIndex(null)
+                      setSelectedTextIndex(null);
                     }
                   }}
                 >
@@ -108,8 +136,8 @@ function TextControls({ textElements, onRemoveText, onUpdateTextPosition }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default TextControls
+export default TextControls;
 

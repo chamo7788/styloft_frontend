@@ -1,9 +1,10 @@
 "use client"
 
 import { useRef, useState, useEffect, createRef } from "react"
-import { useGLTF, Text } from "@react-three/drei"
+import { useGLTF, Text, useTexture } from "@react-three/drei"
 import { TextureLoader } from "three"
 import { useFrame, useThree } from "@react-three/fiber"
+import * as THREE from "three"
 
 function Model({
   modelPath,
@@ -17,18 +18,22 @@ function Model({
   textElements,
   selectedTextIndex,
   onTextSelect,
-  onTextMove,
+  logoElements,
+  selectedLogoIndex,
+  onLogoSelect,
 }) {
   const { scene } = useGLTF(modelPath, true)
   const modelRef = useRef()
   const [textures, setTextures] = useState({})
   const { camera } = useThree()
   const textRefs = useRef([])
+  const logoRefs = useRef([])
 
-  // Initialize text refs
+  // Initialize refs
   useEffect(() => {
     textRefs.current = textElements.map((_, i) => textRefs.current[i] || createRef())
-  }, [textElements])
+    logoRefs.current = logoElements.map((_, i) => logoRefs.current[i] || createRef())
+  }, [textElements, logoElements])
 
   // Load textures when materials change
   useEffect(() => {
@@ -54,6 +59,15 @@ function Model({
       const textIndex = textElements.findIndex((_, i) => textRefs.current[i]?.current === e.object)
       if (textIndex !== -1) {
         onTextSelect(textIndex)
+        return
+      }
+    }
+
+    // Check if we clicked on a logo
+    if (e.object.isLogo) {
+      const logoIndex = logoElements.findIndex((_, i) => logoRefs.current[i]?.current === e.object)
+      if (logoIndex !== -1) {
+        onLogoSelect(logoIndex)
         return
       }
     }
@@ -102,7 +116,7 @@ function Model({
         textElements.map((element, index) => (
           <Text
             ref={textRefs.current[index]}
-            key={index}
+            key={`text-${index}`}
             color={element.color}
             fontSize={element.fontSize * 0.02} // Scale down for 3D space
             position={element.position}
@@ -125,7 +139,51 @@ function Model({
             {index === selectedTextIndex && <meshBasicMaterial color={element.color} transparent opacity={0.8} />}
           </Text>
         ))}
+
+      {/* Render logo elements */}
+      {logoElements &&
+        logoElements.map((logo, index) => (
+          <LogoPlane
+            key={`logo-${index}`}
+            ref={logoRefs.current[index]}
+            logo={logo}
+            isSelected={index === selectedLogoIndex}
+            onClick={(e) => {
+              e.stopPropagation()
+              onLogoSelect(index)
+            }}
+          />
+        ))}
     </group>
+  )
+}
+
+// Component for rendering a logo on a plane
+const LogoPlane = ({ logo, isSelected, onClick }) => {
+  const texture = useTexture(logo.image)
+
+  // Calculate aspect ratio to maintain image proportions
+  const aspectRatio = texture.image ? texture.image.width / texture.image.height : 1
+  const width = logo.size
+  const height = width / aspectRatio
+
+  return (
+    <mesh
+      position={logo.position}
+      rotation={logo.rotation}
+      onClick={onClick}
+      userData={{ isLogo: true }}
+      renderOrder={2} // Render on top of text
+    >
+      <planeGeometry args={[width, height]} />
+      <meshBasicMaterial map={texture} transparent={true} opacity={isSelected ? 0.8 : 1} />
+      {isSelected && (
+        <lineSegments>
+          <edgesGeometry attach="geometry" args={[new THREE.PlaneGeometry(width + 0.1, height + 0.1)]} />
+          <lineBasicMaterial attach="material" color="white" />
+        </lineSegments>
+      )}
+    </mesh>
   )
 }
 
