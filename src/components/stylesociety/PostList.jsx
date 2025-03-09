@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from "../../firebaseConfig";
-import { collection, query, orderBy, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, updateDoc, doc, deleteDoc } from "firebase/firestore";
 import LikeButton from "./LikeButton";
 import CommentSection from "./CommentSection";
 import ShareButton from "./ShareButton";
@@ -10,16 +10,21 @@ import "../../assets/css/StyleSociety/PostList.css";
 
 function PostList() {
   const [posts, setPosts] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(null); // Track open menus
+  const [menuOpen, setMenuOpen] = useState(null);
+  const [editPostId, setEditPostId] = useState(null);
+  const [editedText, setEditedText] = useState("");
 
   useEffect(() => {
     const postsQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
     const unsubscribe = onSnapshot(postsQuery, (snapshot) => {
-      setPosts(snapshot.docs.map(doc => ({
+      const sortedPosts = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-      })));
+      }));
+
+      sortedPosts.sort((a, b) => (b.pinned - a.pinned) || b.createdAt - a.createdAt);
+      setPosts(sortedPosts);
     });
 
     return () => unsubscribe();
@@ -40,28 +45,51 @@ function PostList() {
     alert("Post link copied to clipboard!");
   };
 
+  const handleEdit = (postId, currentText) => {
+    setEditPostId(postId);
+    setEditedText(currentText);
+  };
+
+  const handleSaveEdit = async (postId) => {
+    try {
+      await updateDoc(doc(db, "posts", postId), { text: editedText });
+      setEditPostId(null);
+    } catch (error) {
+      console.error("Error updating post: ", error);
+    }
+  };
+
+  const handleTogglePin = async (postId, isPinned) => {
+    try {
+      await updateDoc(doc(db, "posts", postId), { pinned: !isPinned });
+      alert(isPinned ? "Post unpinned!" : "Post pinned!");
+    } catch (error) {
+      console.error("Error updating pin status: ", error);
+    }
+  };
+
   const toggleMenu = (postId) => {
-    setMenuOpen(menuOpen === postId ? null : postId); // Toggle the menu
+    setMenuOpen(menuOpen === postId ? null : postId);
   };
 
   return (
     <div className="post-set">
       <div className="post-list">
         {posts.map((post) => (
-          <div key={post.id} className="post">
-            {/* Post Menu Bar */}
+          <div key={post.id} className={`post ${post.pinned ? "pinned" : ""}`}>
+            {/* Post Menu */}
             <div className="post-menu">
               <FontAwesomeIcon icon={faEllipsisV} className="menu-icon" onClick={() => toggleMenu(post.id)} />
               {menuOpen === post.id && (
                 <div className="menu-dropdown">
-                  <button className="menu-item">
+                  <button className="menu-item" onClick={() => handleEdit(post.id, post.text)}>
                     <FontAwesomeIcon icon={faEdit} /> Edit Post
                   </button>
-                  <button className="menu-item">
+                  <button className="menu-item" onClick={() => alert("Post saved!")}>
                     <FontAwesomeIcon icon={faSave} /> Save Post
                   </button>
-                  <button className="menu-item">
-                    <FontAwesomeIcon icon={faThumbtack} /> Pin Post
+                  <button className="menu-item" onClick={() => handleTogglePin(post.id, post.pinned)}>
+                    <FontAwesomeIcon icon={faThumbtack} /> {post.pinned ? "Unpin Post" : "Pin Post"}
                   </button>
                   <button className="menu-item" onClick={() => handleCopyLink(post.id)}>
                     <FontAwesomeIcon icon={faCopy} /> Copy Link
@@ -79,17 +107,26 @@ function PostList() {
               <span className="post-user-name">{post.userName}</span>
               <small className="post-timestamp">{post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Just now"}</small>
             </div>
-            <p>{post.text}</p>
 
+            {editPostId === post.id ? (
+              <textarea
+                className="edit-input"
+                value={editedText}
+                onChange={(e) => setEditedText(e.target.value)}
+              />
+            ) : (
+              <p>{post.text}</p>
+            )}
+
+            {editPostId === post.id && (
+              <button className="save-btn" onClick={() => handleSaveEdit(post.id)}>
+                Save
+              </button>
+            )}
 
             <div className="p-action">
-              {/* Like Component */}
               <LikeButton post={post} />
-
-              {/* Comment Component */}
               <CommentSection post={post} />
-
-              {/* Share Component */}
               <ShareButton post={post} />
             </div>
           </div>
@@ -99,4 +136,4 @@ function PostList() {
   );
 }
 
-export default PostList
+export default PostList;
