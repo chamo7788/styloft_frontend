@@ -1,14 +1,34 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
-import { useGLTF } from "@react-three/drei"
+import { useRef, useState, useEffect, createRef } from "react"
+import { useGLTF, Text } from "@react-three/drei"
 import { TextureLoader } from "three"
-import { useFrame } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 
-function Model({ modelPath, colors, materials, modelType, modelSettings, modelParts, selectedPart, setSelectedPart }) {
+function Model({
+  modelPath,
+  colors,
+  materials,
+  modelType,
+  modelSettings,
+  modelParts,
+  selectedPart,
+  setSelectedPart,
+  textElements,
+  selectedTextIndex,
+  onTextSelect,
+  onTextMove,
+}) {
   const { scene } = useGLTF(modelPath, true)
   const modelRef = useRef()
   const [textures, setTextures] = useState({})
+  const { camera } = useThree()
+  const textRefs = useRef([])
+
+  // Initialize text refs
+  useEffect(() => {
+    textRefs.current = textElements.map((_, i) => textRefs.current[i] || createRef())
+  }, [textElements])
 
   // Load textures when materials change
   useEffect(() => {
@@ -28,15 +48,21 @@ function Model({ modelPath, colors, materials, modelType, modelSettings, modelPa
   // Handle part selection on click
   const handleClick = (e) => {
     e.stopPropagation()
-    // Get the clicked mesh name and find which part it belongs to
-    const meshName = e.object.name.toLowerCase()
 
-    // This is a simplified example - in a real app, you'd map mesh names to parts
-    // based on your model structure
+    // Check if we clicked on text
+    if (e.object.isText) {
+      const textIndex = textElements.findIndex((_, i) => textRefs.current[i]?.current === e.object)
+      if (textIndex !== -1) {
+        onTextSelect(textIndex)
+        return
+      }
+    }
+
+    // Otherwise, select the part that was clicked
+    const meshName = e.object.name.toLowerCase()
     const part =
       modelParts[modelType].find((part) => meshName.includes(part) || part.includes(meshName)) ||
       modelParts[modelType][0]
-
     setSelectedPart(part)
   }
 
@@ -49,7 +75,6 @@ function Model({ modelPath, colors, materials, modelType, modelSettings, modelPa
       modelRef.current.traverse((child) => {
         if (child.isMesh) {
           // Determine which part this mesh belongs to
-          // This is simplified - in a real app, you'd have a more robust mapping
           const meshName = child.name.toLowerCase()
           const part =
             modelParts[modelType].find((part) => meshName.includes(part) || part.includes(meshName)) ||
@@ -68,7 +93,40 @@ function Model({ modelPath, colors, materials, modelType, modelSettings, modelPa
     }
   })
 
-  return <primitive ref={modelRef} object={scene} onClick={handleClick} />
+  return (
+    <group>
+      <primitive ref={modelRef} object={scene} onClick={handleClick} />
+
+      {/* Render text elements */}
+      {textElements &&
+        textElements.map((element, index) => (
+          <Text
+            ref={textRefs.current[index]}
+            key={index}
+            color={element.color}
+            fontSize={element.fontSize * 0.02} // Scale down for 3D space
+            position={element.position}
+            anchorX={element.textAlign || "center"}
+            anchorY="middle"
+            fontWeight={element.fontWeight || "normal"}
+            fontStyle={element.fontStyle || "normal"}
+            onClick={(e) => {
+              e.stopPropagation()
+              onTextSelect(index)
+            }}
+            // Make text always face the camera
+            lookAt={camera.position}
+            // Add a small offset to prevent z-fighting
+            renderOrder={1}
+            // Highlight selected text
+            userData={{ isSelected: index === selectedTextIndex }}
+          >
+            {element.text}
+            {index === selectedTextIndex && <meshBasicMaterial color={element.color} transparent opacity={0.8} />}
+          </Text>
+        ))}
+    </group>
+  )
 }
 
 export default Model

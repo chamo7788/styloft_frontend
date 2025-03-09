@@ -15,7 +15,8 @@ import ColorPicker from "./ColorPicker"
 import FileUploader from "./FileUploader"
 import TextPlacement from "./TextPlacement"
 import LightingControls from "./LightingControls"
-import "../../assets/css/StyleStudio/viewer.css"
+import TextPositionControls from "./TextPositionControls"
+import "../../assets/css/StyleStudio/Viewer.css"
 
 // Model settings for different scale and position
 const models = {
@@ -33,6 +34,14 @@ const modelParts = {
   frock: ["body", "sleeves", "collar"],
 }
 
+// Model settings for different scale and position
+const modelSettings = {
+  shirt: { scale: 6.5, position: [0, 0.5, 0] },
+  trouser: { scale: 4, position: [0, -2.5, 0] },
+  short: { scale: 4.5, position: [0, -3.3, 0] },
+  frock: { scale: 3, position: [0, -4.2, 0] },
+}
+
 export default function ModelEditor() {
   // Model state
   const [selectedModel, setSelectedModel] = useState("shirt")
@@ -44,10 +53,13 @@ export default function ModelEditor() {
   const canvasRef = useRef(null)
   const cameraRef = useRef(null)
 
+  // Text state
+  const [textElements, setTextElements] = useState([])
+  const [selectedTextIndex, setSelectedTextIndex] = useState(null)
+
   // Feature states
   const [colors, setColors] = useState({ main: "#ffffff" })
   const [materials, setMaterials] = useState({})
-  const [textElements, setTextElements] = useState([])
   const [lighting, setLighting] = useState({
     intensity: 0.5,
     direction: [5, 5, 5],
@@ -214,6 +226,29 @@ export default function ModelEditor() {
     }
   }
 
+  // Handle text selection
+  const handleTextSelect = (index) => {
+    setSelectedTextIndex(index)
+    setActiveTab("text") // Switch to text tab when text is selected
+  }
+
+  // Handle text position update
+  const handleUpdateTextPosition = (index, position) => {
+    const newTextElements = [...textElements]
+    newTextElements[index] = {
+      ...newTextElements[index],
+      position,
+    }
+    setTextElements(newTextElements)
+  }
+
+  // Handle text update
+  const handleUpdateText = (index, updatedText) => {
+    const newTextElements = [...textElements]
+    newTextElements[index] = updatedText
+    setTextElements(newTextElements)
+  }
+
   return (
     <div className="model-editor-container">
       <div className="canvas-card" style={{ backgroundColor }}>
@@ -246,6 +281,9 @@ export default function ModelEditor() {
                 modelParts={modelParts}
                 selectedPart={selectedPart}
                 setSelectedPart={setSelectedPart}
+                textElements={textElements}
+                selectedTextIndex={selectedTextIndex}
+                onTextSelect={handleTextSelect}
               />
             </Suspense>
 
@@ -316,14 +354,28 @@ export default function ModelEditor() {
               <TextPlacement
                 onAddText={(textElement) => {
                   setTextElements([...textElements, textElement])
+                  setSelectedTextIndex(textElements.length) // Select the newly added text
                 }}
                 textElements={textElements}
                 onRemoveText={(index) => {
                   const newElements = [...textElements]
                   newElements.splice(index, 1)
                   setTextElements(newElements)
+                  if (selectedTextIndex === index) {
+                    setSelectedTextIndex(null)
+                  } else if (selectedTextIndex > index) {
+                    setSelectedTextIndex(selectedTextIndex - 1)
+                  }
                 }}
+                onUpdateText={handleUpdateText}
               />
+
+              {selectedTextIndex !== null && (
+                <TextPositionControls
+                  textElement={textElements[selectedTextIndex]}
+                  onUpdatePosition={(position) => handleUpdateTextPosition(selectedTextIndex, position)}
+                />
+              )}
             </div>
 
             <div id="lighting">
@@ -334,13 +386,5 @@ export default function ModelEditor() {
       </div>
     </div>
   )
-}
-
-// Model settings for different scale and position
-const modelSettings = {
-  shirt: { scale: 6.5, position: [0, 0.5, 0] },
-  trouser: { scale: 4, position: [0, -2.5, 0] },
-  short: { scale: 4.5, position: [0, -3.3, 0] },
-  frock: { scale: 3, position: [0, -4.2, 0] },
 }
 
