@@ -1,4 +1,4 @@
-import React from 'react';
+"use client"
 
 function LightingControls({ onChange, lighting }) {
   return (
@@ -63,7 +63,8 @@ function LightingControls({ onChange, lighting }) {
         </select>
       </div>
     </div>
-  );
+  )
 }
 
-export default LightingControls;
+export default LightingControls
+

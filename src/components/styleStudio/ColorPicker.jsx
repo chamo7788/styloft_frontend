@@ -1,5 +1,4 @@
-import React from 'react';
-
+"use client"
 
 function ColorPicker({ color, onChange }) {
   const colors = [
@@ -13,7 +12,7 @@ function ColorPicker({ color, onChange }) {
     "#00ffff",
     "#ff9900",
     "#9900ff",
-  ];
+  ]
 
   return (
     <div className="color-grid">
@@ -39,7 +38,8 @@ function ColorPicker({ color, onChange }) {
         />
       </div>
     </div>
-  );
+  )
 }
 
-export default ColorPicker;
+export default ColorPicker
+
