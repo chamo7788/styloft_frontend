@@ -1,22 +1,12 @@
 "use client"
 
-import { useState, useRef, Suspense } from "react"
-import { Canvas } from "@react-three/fiber"
-import { PerspectiveCamera, Environment } from "@react-three/drei"
-import { OrbitControls } from "@react-three/drei"
-import { Vector3 } from "three"
-
-import Model from "./Model"
+import { useState, useRef } from "react"
+import ModelViewer from "./ModelViewer"
+import TextureEditor from "./TextureEditor"
+import ControlPanel from "./ControlPanel"
 import Toolbar from "./Toolbar"
-import TabPanel from "./TabPanel"
-import ModelSelector from "./ModelSelector"
-import PartSelector from "./PartSelector"
-import ColorPicker from "./ColorPicker"
-import FileUploader from "./FileUploader"
-import TextPlacement from "./TextPlacement"
-import LightingControls from "./LightingControls"
-import TextPositionControls from "./TextPositionControls"
-import "../../assets/css/StyleStudio/Viewer.css"
+import "../../assets/css/StyleStudio/viewer.css"
+import "../../assets/css/StyleStudio/text-editor.css"
 
 // Model settings for different scale and position
 const models = {
@@ -42,20 +32,61 @@ const modelSettings = {
   frock: { scale: 3, position: [0, -4.2, 0] },
 }
 
+// UV mapping coordinates for different model parts
+const uvMappings = {
+  shirt: {
+    body: { x: 0, y: 0, width: 1, height: 1 },
+    collar: { x: 0, y: 0, width: 1, height: 0.2 },
+    sleeves: { x: 0, y: 0.2, width: 1, height: 0.4 },
+  },
+  trouser: {
+    main: { x: 0, y: 0, width: 1, height: 1 },
+    pockets: { x: 0.2, y: 0.2, width: 0.6, height: 0.3 },
+    waistband: { x: 0, y: 0, width: 1, height: 0.2 },
+  },
+  short: {
+    main: { x: 0, y: 0, width: 1, height: 1 },
+    pockets: { x: 0.2, y: 0.2, width: 0.6, height: 0.3 },
+  },
+  frock: {
+    body: { x: 0, y: 0, width: 1, height: 1 },
+    sleeves: { x: 0, y: 0.2, width: 1, height: 0.4 },
+    collar: { x: 0, y: 0, width: 1, height: 0.2 },
+  },
+}
+
 export default function ModelEditor() {
   // Model state
   const [selectedModel, setSelectedModel] = useState("shirt")
   const [modelKey, setModelKey] = useState(0)
-  const [selectedPart, setSelectedPart] = useState("main")
+  const [selectedPart, setSelectedPart] = useState("body")
 
   // UI state
   const [activeTab, setActiveTab] = useState("model")
   const canvasRef = useRef(null)
-  const cameraRef = useRef(null)
+  const [showTextureEditor, setShowTextureEditor] = useState(false)
+  const [backgroundColor, setBackgroundColor] = useState("#f5f5f5")
 
   // Text state
   const [textElements, setTextElements] = useState([])
   const [selectedTextIndex, setSelectedTextIndex] = useState(null)
+  const [textSettings, setTextSettings] = useState({
+    text: "",
+    fontSize: 24,
+    color: "#000000",
+    fontWeight: "normal",
+    fontStyle: "normal",
+    fontFamily: "Arial",
+    textAlign: "center",
+  })
+
+  // Texture state
+  const [textures, setTextures] = useState({})
+  const [canvasTextures, setCanvasTextures] = useState({})
+
+  // Logo state
+  const [logoElements, setLogoElements] = useState([])
+  const [selectedLogoIndex, setSelectedLogoIndex] = useState(null)
 
   // Feature states
   const [colors, setColors] = useState({ main: "#ffffff" })
@@ -65,7 +96,6 @@ export default function ModelEditor() {
     direction: [5, 5, 5],
     environment: "studio",
   })
-  const [backgroundColor, setBackgroundColor] = useState("#f5f5f5")
 
   // History for undo/redo
   const [history, setHistory] = useState([{ colors: { main: "#ffffff" }, materials: {} }])
@@ -75,18 +105,21 @@ export default function ModelEditor() {
   const handleModelChange = (model) => {
     setSelectedModel(model)
     setModelKey((prevKey) => prevKey + 1)
-    setSelectedPart("main")
+    setSelectedPart(modelParts[model][0])
 
     // Reset colors and materials for new model
     const newColors = {}
     const newMaterials = {}
+    const newCanvasTextures = {}
 
     modelParts[model].forEach((part) => {
       newColors[part] = "#ffffff"
+      newCanvasTextures[part] = null
     })
 
     setColors(newColors)
     setMaterials(newMaterials)
+    setCanvasTextures(newCanvasTextures)
 
     // Add to history
     addToHistory(newColors, newMaterials)
@@ -147,25 +180,6 @@ export default function ModelEditor() {
     }
   }
 
-  // Handle camera rotation
-  const handleRotate = (direction) => {
-    if (cameraRef.current) {
-      const currentPosition = new Vector3().copy(cameraRef.current.position)
-
-      if (direction === "left") {
-        cameraRef.current.position.x = currentPosition.z
-        cameraRef.current.position.z = -currentPosition.x
-      } else if (direction === "right") {
-        cameraRef.current.position.x = -currentPosition.z
-        cameraRef.current.position.z = currentPosition.x
-      } else if (direction === "reset") {
-        cameraRef.current.position.set(0, 0, 10)
-      }
-
-      cameraRef.current.lookAt(0, 0, 0)
-    }
-  }
-
   // Take screenshot
   const handleScreenshot = () => {
     if (canvasRef.current) {
@@ -184,6 +198,7 @@ export default function ModelEditor() {
       colors,
       materials,
       textElements,
+      logoElements,
       lighting,
       backgroundColor,
     }
@@ -208,6 +223,7 @@ export default function ModelEditor() {
           setColors(design.colors)
           setMaterials(design.materials)
           setTextElements(design.textElements || [])
+          setLogoElements(design.logoElements || [])
           setLighting(design.lighting || lighting)
           setBackgroundColor(design.backgroundColor || backgroundColor)
 
@@ -229,17 +245,21 @@ export default function ModelEditor() {
   // Handle text selection
   const handleTextSelect = (index) => {
     setSelectedTextIndex(index)
+    setSelectedLogoIndex(null)
     setActiveTab("text") // Switch to text tab when text is selected
-  }
 
-  // Handle text position update
-  const handleUpdateTextPosition = (index, position) => {
-    const newTextElements = [...textElements]
-    newTextElements[index] = {
-      ...newTextElements[index],
-      position,
+    if (index !== null) {
+      const element = textElements[index]
+      setTextSettings({
+        text: element.text,
+        fontSize: element.fontSize || 24,
+        color: element.color || "#000000",
+        fontWeight: element.fontWeight || "normal",
+        fontStyle: element.fontStyle || "normal",
+        fontFamily: element.fontFamily || "Arial",
+        textAlign: element.textAlign || "center",
+      })
     }
-    setTextElements(newTextElements)
   }
 
   // Handle text update
@@ -249,141 +269,197 @@ export default function ModelEditor() {
     setTextElements(newTextElements)
   }
 
+  // Handle adding new text
+  const handleAddText = () => {
+    if (textSettings.text.trim()) {
+      // Default position for front of shirt
+      const position = [0, 0, 0.5] // Slightly in front of the model
+
+      const newTextElement = {
+        ...textSettings,
+        position,
+      }
+
+      setTextElements([...textElements, newTextElement])
+      setSelectedTextIndex(textElements.length) // Select the newly added text
+      setShowTextureEditor(true) // Show the text editor
+    }
+  }
+
+  // Handle removing text
+  const handleRemoveText = (index) => {
+    const newElements = [...textElements]
+    newElements.splice(index, 1)
+    setTextElements(newElements)
+
+    if (selectedTextIndex === index) {
+      setSelectedTextIndex(null)
+    } else if (selectedTextIndex > index) {
+      setSelectedTextIndex(selectedTextIndex - 1)
+    }
+  }
+
+  // Handle text settings change
+  const handleTextSettingsChange = (setting, value) => {
+    setTextSettings({
+      ...textSettings,
+      [setting]: value,
+    })
+
+    if (selectedTextIndex !== null) {
+      const updatedText = {
+        ...textElements[selectedTextIndex],
+        [setting]: value,
+      }
+      handleUpdateText(selectedTextIndex, updatedText)
+    }
+  }
+
+  // Handle logo selection
+  const handleLogoSelect = (index) => {
+    setSelectedLogoIndex(index)
+    setSelectedTextIndex(null)
+    setActiveTab("logo") // Switch to logo tab when logo is selected
+  }
+
+  // Handle logo position update
+  const handleUpdateLogoPosition = (index, position) => {
+    const newLogoElements = [...logoElements]
+    newLogoElements[index] = {
+      ...newLogoElements[index],
+      position,
+    }
+    setLogoElements(newLogoElements)
+  }
+
+  // Handle logo rotation update
+  const handleUpdateLogoRotation = (index, rotation) => {
+    const newLogoElements = [...logoElements]
+    newLogoElements[index] = {
+      ...newLogoElements[index],
+      rotation,
+    }
+    setLogoElements(newLogoElements)
+  }
+
+  // Handle logo update
+  const handleUpdateLogo = (index, updatedLogo) => {
+    const newLogoElements = [...logoElements]
+    newLogoElements[index] = updatedLogo
+    setLogoElements(newLogoElements)
+  }
+
+  // Toggle texture editor visibility
+  const toggleTextureEditor = () => {
+    setShowTextureEditor(!showTextureEditor)
+  }
+
   return (
     <div className="model-editor-container">
-      <div className="canvas-card" style={{ backgroundColor }}>
-        <Toolbar
-          onRotate={handleRotate}
-          onUndo={handleUndo}
-          onRedo={handleRedo}
-          onScreenshot={handleScreenshot}
-          onSaveDesign={handleSaveDesign}
-          onLoadDesign={handleLoadDesign}
-          canUndo={historyIndex > 0}
-          canRedo={historyIndex < history.length - 1}
-        />
+      <div className={`model-view-container ${showTextureEditor ? "with-editor" : ""}`}>
+        <div className="canvas-card" style={{ backgroundColor }}>
+          <Toolbar
+            onRotate={() => {}} // Will be handled by ModelViewer
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            onScreenshot={handleScreenshot}
+            onSaveDesign={handleSaveDesign}
+            onLoadDesign={handleLoadDesign}
+            canUndo={historyIndex > 0}
+            canRedo={historyIndex < history.length - 1}
+          />
 
-        <div className="canvas-content">
-          <Canvas shadows className="canvas" ref={canvasRef} gl={{ preserveDrawingBuffer: true }}>
-            <PerspectiveCamera makeDefault position={[0, 0, 10]} ref={cameraRef} />
-            <ambientLight intensity={lighting.intensity} />
-            <directionalLight position={lighting.direction} intensity={lighting.intensity} castShadow />
-            <Environment preset={lighting.environment} />
+          <div className="canvas-content">
+            <ModelViewer
+              ref={canvasRef}
+              modelKey={modelKey}
+              selectedModel={selectedModel}
+              modelPath={models[selectedModel]}
+              colors={colors}
+              materials={materials}
+              modelSettings={modelSettings}
+              modelParts={modelParts}
+              selectedPart={selectedPart}
+              setSelectedPart={setSelectedPart}
+              textElements={textElements}
+              selectedTextIndex={selectedTextIndex}
+              onTextSelect={handleTextSelect}
+              logoElements={logoElements}
+              selectedLogoIndex={selectedLogoIndex}
+              onLogoSelect={handleLogoSelect}
+              textures={textures}
+              lighting={lighting}
+            />
+          </div>
 
-            <Suspense fallback={null}>
-              <Model
-                key={modelKey}
-                modelPath={models[selectedModel]}
-                colors={colors}
-                materials={materials}
-                modelType={selectedModel}
-                modelSettings={modelSettings}
-                modelParts={modelParts}
-                selectedPart={selectedPart}
-                setSelectedPart={setSelectedPart}
-                textElements={textElements}
-                selectedTextIndex={selectedTextIndex}
-                onTextSelect={handleTextSelect}
-              />
-            </Suspense>
-
-            <OrbitControls enableZoom={true} />
-          </Canvas>
+          {selectedPart && (
+            <div className="part-indicator">
+              Selected part: <span className="part-name">{selectedPart}</span>
+            </div>
+          )}
         </div>
 
-        {selectedPart && (
-          <div className="part-indicator">
-            Selected part: <span className="part-name">{selectedPart}</span>
-          </div>
+        {showTextureEditor && (
+          <TextureEditor
+            selectedModel={selectedModel}
+            selectedPart={selectedPart}
+            uvMappings={uvMappings}
+            textElements={textElements}
+            textSettings={textSettings}
+            onTextSettingsChange={handleTextSettingsChange}
+            canvasTextures={canvasTextures}
+            setCanvasTextures={setCanvasTextures}
+            setTextures={setTextures}
+          />
         )}
       </div>
 
-      <div className="controls-card">
-        <div className="controls-content">
-          <TabPanel
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            tabs={[
-              { id: "model", label: "Model" },
-              { id: "color", label: "Color" },
-              { id: "texture", label: "Texture" },
-              { id: "text", label: "Text" },
-              { id: "lighting", label: "Lighting" },
-            ]}
-          >
-            <div id="model">
-              <ModelSelector selectedModel={selectedModel} onModelChange={handleModelChange} />
-
-              <div className="background-control">
-                <label className="background-label">Background Color</label>
-                <input
-                  type="color"
-                  value={backgroundColor}
-                  onChange={(e) => setBackgroundColor(e.target.value)}
-                  className="background-color-input"
-                />
-              </div>
-            </div>
-
-            <div id="color">
-              <PartSelector
-                parts={modelParts[selectedModel]}
-                selectedPart={selectedPart}
-                onPartSelect={setSelectedPart}
-              />
-
-              <ColorPicker color={colors[selectedPart] || "#ffffff"} onChange={handleColorChange} />
-            </div>
-
-            <div id="texture">
-              <PartSelector
-                parts={modelParts[selectedModel]}
-                selectedPart={selectedPart}
-                onPartSelect={setSelectedPart}
-              />
-
-              <FileUploader
-                label={`Upload Texture for ${selectedPart}`}
-                accept="image/*"
-                onChange={handleMaterialChange}
-                preview={materials[selectedPart]}
-              />
-            </div>
-
-            <div id="text">
-              <TextPlacement
-                onAddText={(textElement) => {
-                  setTextElements([...textElements, textElement])
-                  setSelectedTextIndex(textElements.length) // Select the newly added text
-                }}
-                textElements={textElements}
-                onRemoveText={(index) => {
-                  const newElements = [...textElements]
-                  newElements.splice(index, 1)
-                  setTextElements(newElements)
-                  if (selectedTextIndex === index) {
-                    setSelectedTextIndex(null)
-                  } else if (selectedTextIndex > index) {
-                    setSelectedTextIndex(selectedTextIndex - 1)
-                  }
-                }}
-                onUpdateText={handleUpdateText}
-              />
-
-              {selectedTextIndex !== null && (
-                <TextPositionControls
-                  textElement={textElements[selectedTextIndex]}
-                  onUpdatePosition={(position) => handleUpdateTextPosition(selectedTextIndex, position)}
-                />
-              )}
-            </div>
-
-            <div id="lighting">
-              <LightingControls lighting={lighting} onChange={setLighting} />
-            </div>
-          </TabPanel>
-        </div>
-      </div>
+      <ControlPanel
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        selectedModel={selectedModel}
+        onModelChange={handleModelChange}
+        backgroundColor={backgroundColor}
+        setBackgroundColor={setBackgroundColor}
+        selectedPart={selectedPart}
+        setSelectedPart={setSelectedPart}
+        modelParts={modelParts[selectedModel]}
+        colors={colors}
+        onColorChange={handleColorChange}
+        materials={materials}
+        onMaterialChange={handleMaterialChange}
+        showTextureEditor={showTextureEditor}
+        toggleTextureEditor={toggleTextureEditor}
+        textElements={textElements}
+        selectedTextIndex={selectedTextIndex}
+        onTextSelect={handleTextSelect}
+        onRemoveText={handleRemoveText}
+        logoElements={logoElements}
+        selectedLogoIndex={selectedLogoIndex}
+        onAddLogo={(logoElement) => {
+          setLogoElements([...logoElements, logoElement])
+          setSelectedLogoIndex(logoElements.length)
+        }}
+        onRemoveLogo={(index) => {
+          const newElements = [...logoElements]
+          newElements.splice(index, 1)
+          setLogoElements(newElements)
+          if (selectedLogoIndex === index) {
+            setSelectedLogoIndex(null)
+          } else if (selectedLogoIndex > index) {
+            setSelectedLogoIndex(selectedLogoIndex - 1)
+          }
+        }}
+        onUpdateLogo={handleUpdateLogo}
+        onUpdateLogoPosition={(position) =>
+          selectedLogoIndex !== null && handleUpdateLogoPosition(selectedLogoIndex, position)
+        }
+        onUpdateLogoRotation={(rotation) =>
+          selectedLogoIndex !== null && handleUpdateLogoRotation(selectedLogoIndex, rotation)
+        }
+        lighting={lighting}
+        setLighting={setLighting}
+      />
     </div>
   )
 }

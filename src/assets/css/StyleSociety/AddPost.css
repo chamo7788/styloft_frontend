@@ -29,7 +29,6 @@
   height: 45px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid #101010;
 }
 
 .post-input {

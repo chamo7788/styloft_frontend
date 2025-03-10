@@ -4,8 +4,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import "../../assets/css/StyleMarket/buy.css";
 
-import visaImage from "../../assets/images/visa.png";
-import masterCardImage from "../../assets/images/mastercard.png";
 
 const stripePromise = loadStripe("pk_test_51R0PouFKqSRL4Eus1nQLaIYdWsBCGb0rkCZeSXivdL1aI4zxn3bqQOGmXuxZRL9im9UTRmBZnujboCXn2Mwu97aG00QUvxvr91");
 

@@ -2,7 +2,7 @@
 .createPost {
   position: absolute;
   top: 270%;
-  left: 95%;
+  left: 85%;
   transform: translate(-50%, -50%);
   max-width: 900px;
   width: 900%;
@@ -91,6 +91,9 @@
 }
 
 .createUserName {
+  position: relative;
+  left: 5px;
+  top: -16px; 
   font-weight: bold;
   font-size: 16px;
 }
@@ -210,9 +213,6 @@
   background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
   z-index: 999; /* Behind the modal */
 }
-
-
-
 
  
  
