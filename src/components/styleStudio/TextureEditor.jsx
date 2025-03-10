@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { CanvasTexture } from "three"
-import { RotateCw, Type, Trash2, Save, Brush, Eraser } from "lucide-react"
+import { RotateCw, Type, Trash2, Save, Brush, Eraser, ImageIcon } from "lucide-react"
 
 const TextureEditor = ({
   selectedModel,
@@ -14,6 +14,9 @@ const TextureEditor = ({
   canvasTextures,
   setCanvasTextures,
   setTextures,
+  logoElements,
+  logoSettings,
+  onLogoSettingsChange,
 }) => {
   const editorCanvasRef = useRef(null)
   const [canvasSize, setCanvasSize] = useState({ width: 512, height: 512 })
@@ -305,6 +308,44 @@ const TextureEditor = ({
     updateTextureFromCanvas()
   }
 
+  // Apply logo to canvas
+  const handleApplyLogoToCanvas = () => {
+    if (!logoSettings.image) return
+
+    const canvas = editorCanvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    // Save current state for undo
+    saveCanvasState()
+
+    // Load and draw the logo image
+    const img = new Image()
+    img.onload = () => {
+      const aspectRatio = img.width / img.height
+      const logoWidth = logoSettings.size * 100 // Adjust size as needed
+      const logoHeight = logoWidth / aspectRatio
+
+      // Calculate position based on UV mapping
+      const mapping = uvMappings[selectedModel][selectedPart]
+      const x = mapping.x * canvasSize.width + mapping.width * canvasSize.width * logoSettings.position[0]
+      const y = mapping.y * canvasSize.height + mapping.height * canvasSize.height * logoSettings.position[1]
+
+      // Apply rotation
+      ctx.save()
+      ctx.translate(x, y)
+      ctx.rotate(logoSettings.rotation[2]) // Assuming rotation around Z-axis
+      ctx.drawImage(img, -logoWidth / 2, -logoHeight / 2, logoWidth, logoHeight)
+      ctx.restore()
+
+      // Update texture
+      updateTextureFromCanvas()
+    }
+    img.src = logoSettings.image
+  }
+
   return (
     <div className="texture-editor-container">
       <div className="texture-editor-toolbar">
@@ -328,6 +369,13 @@ const TextureEditor = ({
           title="Text"
         >
           <Type size={16} />
+        </button>
+        <button
+          className={`texture-editor-tool ${drawingMode === "logo" ? "active" : ""}`}
+          onClick={() => setDrawingMode("logo")}
+          title="Logo"
+        >
+          <ImageIcon size={16} />
         </button>
         <button className="texture-editor-tool" onClick={handleCanvasUndo} title="Undo">
           <RotateCw size={16} />
@@ -435,6 +483,51 @@ const TextureEditor = ({
                 disabled={!textSettings.text.trim()}
               >
                 Add Text to Canvas
+              </button>
+            </div>
+          </>
+        )}
+        {drawingMode === "logo" && (
+          <>
+            <div className="logo-input-group">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  if (file) {
+                    const reader = new FileReader()
+                    reader.onload = (event) => {
+                      onLogoSettingsChange("image", event.target.result)
+                    }
+                    reader.readAsDataURL(file)
+                  }
+                }}
+                className="logo-input"
+              />
+            </div>
+
+            <div className="logo-controls-grid">
+              <div className="logo-control">
+                <label className="logo-control-label">Size</label>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="2"
+                  step="0.1"
+                  value={logoSettings.size}
+                  onChange={(e) => onLogoSettingsChange("size", Number(e.target.value))}
+                  className="logo-range"
+                />
+                <span className="logo-value">{logoSettings.size.toFixed(1)}x</span>
+              </div>
+
+              {/* Add more controls for position and rotation as needed */}
+            </div>
+
+            <div className="logo-actions">
+              <button className="logo-add-button" onClick={handleApplyLogoToCanvas} disabled={!logoSettings.image}>
+                Add Logo to Canvas
               </button>
             </div>
           </>
