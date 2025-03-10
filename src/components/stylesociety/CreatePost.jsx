@@ -4,16 +4,23 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faImage, faSmile, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import EmojiPicker from "emoji-picker-react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "../../assets/css/StyleSociety/CreatePost.css";
 import Dp from "../../assets/images/s-societybackground.jpg"; // Default profile image (can be updated from user data)
 
-function CreatePost({ onClose, setPosts, user }) {
+function CreatePost({ onClose, setPosts }) {
   const [postContent, setPostContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileUrls, setFileUrls] = useState([]);
   const [selectedPrivacy, setSelectedPrivacy] = useState('Friend');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // Emoji Picker State
+  const [currentUser, setCurrentUser] = useState(null); // New state for current user
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    setCurrentUser(user); // Get user data from localStorage
+  }, []);
 
   const handlePostClick = async () => {
     if (!postContent) return;
@@ -25,8 +32,8 @@ function CreatePost({ onClose, setPosts, user }) {
         files: fileUrls,
         privacy: selectedPrivacy,
         createdAt: serverTimestamp(),
-        userName: user?.displayName || "Anonymous",  // Use user name from auth
-        userProfile: user?.photoURL || Dp,  // Use user profile photo or default image
+        userName: currentUser?.displayName || "Anonymous",  // Use user name from auth
+        userProfile: currentUser?.photoURL || Dp,  // Use user profile photo or default image
       };
 
       const docRef = await addDoc(collection(db, "posts"), newPost);
@@ -68,72 +75,82 @@ function CreatePost({ onClose, setPosts, user }) {
 
   return (
     <>
-    <div className="create-background-blur"></div>
-    <div className="createPost">
-      <div className="topic">
-        <button className="clossicon1" onClick={onClose}>
-          <span className="clossicon">Close</span>
-        </button>
-        <span className="header">Create Post</span>
-        <button className={`PostButton ${isPosting ? 'loading' : ''}`} onClick={handlePostClick} disabled={isPosting}>
-          {isPosting ? 'Posting...' : <FontAwesomeIcon icon={faPaperPlane} />}
-        </button>
-      </div>
+      <div className="create-background-blur"></div>
+      <div className="createPost">
+        <div className="topic">
+          <button className="clossicon1" onClick={onClose}>
+            <span className="clossicon">Close</span>
+          </button>
+          <span className="header">Create Post</span>
+          <button className={`PostButton ${isPosting ? 'loading' : ''}`} onClick={handlePostClick} disabled={isPosting}>
+            {isPosting ? 'Posting...' : <FontAwesomeIcon icon={faPaperPlane} />}
+          </button>
+        </div>
 
-      <div className="createTop">
-        <img src={user?.photoURL || Dp} alt="User Profile" className="createImage" />
-        <span className="createUserName">{user?.displayName || "Anonymous"}</span>
-      </div>
-
-      <div className="createCenter">
-        <textarea 
-          placeholder="What's on your mind?" 
-          rows="4" 
-          cols="70" 
-          className="addPostInput"
-          value={postContent} 
-          onChange={(e) => setPostContent(e.target.value)} 
-        />
-      </div>
-
-      <div className="uploadedFilesContainer">
-        <div className="uploadedFiles">
-          {fileUrls.map((fileUrl, index) => (
-            <div key={index} className="filePreview1">
-              {fileUrl.endsWith('.mp4') ? (
-                <video controls className="fileVideo">
-                  <source src={fileUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <img src={fileUrl} alt={`Uploaded file ${index}`} className="fileImage" />
-              )}
+        <div className="createTop">
+          {currentUser && (
+            <div className="current-user-info">
+              {/* Wrap the profile image in a Link to navigate to the Profile page */}
+              <Link to="/profile">
+                <img
+                  src={currentUser.photoURL || Dp} // Use current user's photoURL or fallback
+                  className="createImage"
+                />
+              </Link>
+              <span className="createUserName">{currentUser.displayName}</span>
             </div>
-          ))}
+          )}
         </div>
-      </div>
 
-      <div className="createBottom">
-        <label htmlFor="file-input" className="uploadButton">
-          <FontAwesomeIcon icon={faImage} className="PIcon" />
-        </label>
-        <input type="file" id="file-input" style={{ display: 'none' }} accept="image/*,video/*" multiple onChange={handleFileChange} />
-
-        <label onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-          <FontAwesomeIcon icon={faSmile} className="emojiIcon" />
-        </label>
-
-        <label>
-          <FontAwesomeIcon icon={faMapMarkerAlt} className="locationIcon" />
-        </label>
-      </div>
-
-      {showEmojiPicker && (
-        <div className="emojiPickerContainer">
-          <EmojiPicker onEmojiClick={handleEmojiClick} />
+        <div className="createCenter">
+          <textarea
+            placeholder="What's on your mind?"
+            rows="4"
+            cols="70"
+            className="addPostInput"
+            value={postContent}
+            onChange={(e) => setPostContent(e.target.value)}
+          />
         </div>
-      )}
-    </div>
+
+        <div className="uploadedFilesContainer">
+          <div className="uploadedFiles">
+            {fileUrls.map((fileUrl, index) => (
+              <div key={index} className="filePreview1">
+                {fileUrl.endsWith('.mp4') ? (
+                  <video controls className="fileVideo">
+                    <source src={fileUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <img src={fileUrl} alt={`Uploaded file ${index}`} className="fileImage" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="createBottom">
+          <label htmlFor="file-input" className="uploadButton">
+            <FontAwesomeIcon icon={faImage} className="PIcon" />
+          </label>
+          <input type="file" id="file-input" style={{ display: 'none' }} accept="image/*,video/*" multiple onChange={handleFileChange} />
+
+          <label onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+            <FontAwesomeIcon icon={faSmile} className="emojiIcon" />
+          </label>
+
+          <label>
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="locationIcon" />
+          </label>
+        </div>
+
+        {showEmojiPicker && (
+          <div className="emojiPickerContainer">
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
+          </div>
+        )}
+      </div>
     </>
   );
 }
