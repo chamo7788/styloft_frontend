@@ -21,10 +21,11 @@ function Model({
   logoElements,
   selectedLogoIndex,
   onLogoSelect,
+  textures,
 }) {
   const { scene } = useGLTF(modelPath, true)
   const modelRef = useRef()
-  const [textures, setTextures] = useState({})
+  const [loadedTextures, setLoadedTextures] = useState({})
   const { camera } = useThree()
   const textRefs = useRef([])
   const logoRefs = useRef([])
@@ -44,7 +45,7 @@ function Model({
       if (material) {
         loader.load(material, (texture) => {
           newTextures[part] = texture
-          setTextures((prev) => ({ ...prev, [part]: texture }))
+          setLoadedTextures((prev) => ({ ...prev, [part]: texture }))
         })
       }
     })
@@ -97,8 +98,14 @@ function Model({
           // Apply the color for this part
           child.material.color.set(colors[part] || colors.main || "#ffffff")
 
-          // Apply texture if available
-          if (textures[part]) {
+          // Apply texture if available from materials
+          if (loadedTextures[part]) {
+            child.material.map = loadedTextures[part]
+            child.material.needsUpdate = true
+          }
+
+          // Apply canvas texture if available
+          if (textures && textures[part]) {
             child.material.map = textures[part]
             child.material.needsUpdate = true
           }
@@ -111,33 +118,53 @@ function Model({
     <group>
       <primitive ref={modelRef} object={scene} onClick={handleClick} />
 
-      {/* Render text elements */}
+      {/* Render text elements with improved positioning and wrapping */}
       {textElements &&
         textElements.map((element, index) => (
-          <Text
-            ref={textRefs.current[index]}
-            key={`text-${index}`}
-            color={element.color}
-            fontSize={element.fontSize * 0.02} // Scale down for 3D space
+          <group
+            key={`text-group-${index}`}
             position={element.position}
-            anchorX={element.textAlign || "center"}
-            anchorY="middle"
-            fontWeight={element.fontWeight || "normal"}
-            fontStyle={element.fontStyle || "normal"}
             onClick={(e) => {
               e.stopPropagation()
               onTextSelect(index)
             }}
-            // Make text always face the camera
-            lookAt={camera.position}
-            // Add a small offset to prevent z-fighting
-            renderOrder={1}
-            // Highlight selected text
-            userData={{ isSelected: index === selectedTextIndex }}
           >
-            {element.text}
-            {index === selectedTextIndex && <meshBasicMaterial color={element.color} transparent opacity={0.8} />}
-          </Text>
+            <Text
+              ref={textRefs.current[index]}
+              color={element.color}
+              fontSize={element.fontSize * 0.02}
+              maxWidth={2} // Add text wrapping support
+              lineHeight={1.2}
+              textAlign={element.textAlign || "center"}
+              anchorX={element.textAlign || "center"}
+              anchorY="middle"
+              fontWeight={element.fontWeight || "normal"}
+              fontStyle={element.fontStyle || "normal"}
+              renderOrder={1}
+              userData={{ isText: true, isSelected: index === selectedTextIndex }}
+              material-toneMapped={false} // Ensures text color is accurate
+              material-transparent={true}
+              material-depthTest={true}
+              material-depthWrite={true}
+              material-opacity={0.95}
+              outlineWidth={index === selectedTextIndex ? 0.01 : 0} // Highlight selected text
+              outlineColor="#ffffff"
+            >
+              {element.text}
+            </Text>
+
+            {/* Add a draggable handle when text is selected */}
+            {index === selectedTextIndex && (
+              <mesh
+                position={[0, 0, 0.05]}
+                scale={[element.text.length * element.fontSize * 0.0008, element.fontSize * 0.0015, 0.001]}
+                userData={{ isDragHandle: true }}
+              >
+                <planeGeometry />
+                <meshBasicMaterial color="#ffffff" transparent opacity={0.2} />
+              </mesh>
+            )}
+          </group>
         ))}
 
       {/* Render logo elements */}

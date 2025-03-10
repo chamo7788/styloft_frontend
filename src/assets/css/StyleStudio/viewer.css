@@ -19,7 +19,6 @@
   overflow: hidden;
 }
 
-
 .canvas-content {
   padding: 0;
   height: 100%;
@@ -951,5 +950,45 @@
   .controls-card {
     width: 320px;
   }
+}
+
+/* Add these styles to your viewer.css */
+
+.bg-grid-pattern {
+  background-color: #f8f9fa;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.moveable-control {
+  --moveable-color: #4f46e5;
+  --moveable-line-color: #4f46e5;
+  --moveable-point-color: #4f46e5;
+  --moveable-handle-color: #4f46e5;
+}
+
+.moveable-control .moveable-line {
+  background: var(--moveable-line-color);
+}
+
+.moveable-control .moveable-control-box {
+  border-color: var(--moveable-color);
+}
+
+.moveable-control .moveable-rotation-control {
+  border-color: var(--moveable-handle-color);
+  background: white;
+}
+
+.moveable-control .moveable-direction {
+  background: var(--moveable-point-color);
+}
+
+.text-editor-panel {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
