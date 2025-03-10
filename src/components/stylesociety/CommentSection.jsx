@@ -1,15 +1,23 @@
-import { doc, updateDoc, arrayUnion, getDoc, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useState, useEffect } from "react";
 import { FaRegComment, FaTrash } from "react-icons/fa";
 import "../../assets/css/StyleSociety/CommentSection.css";
 
-const currentUserId = "user123"; // Replace with actual logged-in user ID
-
 function CommentSection({ post }) {
+  const [name, setName] = useState("");
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user?.displayName) {
+      setName(user.displayName);
+      setCurrentUserId(user.uid);
+    }
+  }, []);
 
   useEffect(() => {
     if (showComments) {
@@ -18,41 +26,44 @@ function CommentSection({ post }) {
   }, [showComments]);
 
   const fetchComments = async () => {
-    const postRef = doc(db, "posts", post.id);
-    const postSnap = await getDoc(postRef);
-    if (postSnap.exists()) {
-      setComments(postSnap.data().comments || []);
+    if (!post?.id) return console.error("Post ID is missing in fetchComments!");
+
+    try {
+      const postRef = doc(db, "posts", post.id);
+      const postSnap = await getDoc(postRef);
+      if (postSnap.exists()) {
+        setComments(postSnap.data().comments || []);
+        console.log("Fetched comments:", postSnap.data().comments);
+      }
+    } catch (error) {
+      console.error("Error fetching comments: ", error);
     }
   };
 
   const toggleComments = () => {
-    setShowComments(!showComments);
+    setShowComments((prev) => !prev);
   };
 
   const handleComment = async () => {
-    if (!commentText.trim()) return;
-    const newComment = { userId: currentUserId, text: commentText, timestamp: new Date() };
+    if (!commentText.trim()) return alert("Comment cannot be empty!");
+    if (!post?.id) return console.error("Post ID is missing!");
+
+    const newComment = {
+      userId: currentUserId,
+      userName: name,
+      text: commentText,
+      timestamp: new Date().toISOString(),
+    };
+
     try {
       const postRef = doc(db, "posts", post.id);
-      await updateDoc(postRef, {
-        comments: arrayUnion(newComment),
-      });
-      setComments([...comments, newComment]);
-      setCommentText("");
+      await updateDoc(postRef, { comments: arrayUnion(newComment) });
+
+      setShowComments(true);  // 🔹 Ensure comments are shown
+      fetchComments();        // 🔹 Fetch latest comments
+      setCommentText("");     // 🔹 Clear input
     } catch (error) {
       console.error("Error adding comment: ", error);
-    }
-  };
-
-  const handleDeleteComment = async (comment) => {
-    try {
-      const postRef = doc(db, "posts", post.id);
-      await updateDoc(postRef, {
-        comments: arrayRemove(comment),
-      });
-      setComments(comments.filter(c => c !== comment));
-    } catch (error) {
-      console.error("Error deleting comment: ", error);
     }
   };
 
@@ -70,13 +81,15 @@ function CommentSection({ post }) {
               onChange={(e) => setCommentText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleComment()}
             />
-            <button onClick={handleComment} className="comment-button">Comment</button>
+            <button onClick={handleComment} className="comment-button">
+              Comment
+            </button>
           </div>
 
           <ul className="comment-list">
             {comments.map((c, index) => (
               <li key={index} className="comment-item">
-                <strong>{c.userId}:</strong> {c.text}
+                <strong>{c.userName || c.userId}:</strong> {c.text}
                 {c.userId === currentUserId && (
                   <FaTrash className="delete-icon" onClick={() => handleDeleteComment(c)} />
                 )}
