@@ -1,119 +1,130 @@
-import { useState, useRef } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { doc, updateDoc, onSnapshot, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
-import { FaRegHeart, FaHeart, FaSmile, FaSadTear } from "react-icons/fa"; // Additional icons
+import { FaHeart } from "react-icons/fa";
 import "../../assets/css/StyleSociety/LikeButton.css";
 
-const currentUserId = "user123"; // Replace with actual logged-in user ID
-
 function LikeButton({ post }) {
-  const [liked, setLiked] = useState(post.likes?.some(like => like.userId === currentUserId));
-  const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
-  const [likedUsers, setLikedUsers] = useState(post.likes?.map(like => like.userId) || []);
-  const [showPopUp, setShowPopUp] = useState(false);
-  const [reaction, setReaction] = useState(""); // Stores the reaction type
-  const timerRef = useRef(null);
+  const [likes, setLikes] = useState([]);
+  const [showLikes, setShowLikes] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  const handleLike = async () => {
+  // Get current user info from localStorage
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user) {
+      setCurrentUser(user);
+    }
+  }, []);
+
+  // Fetch likes in real-time
+  useEffect(() => {
+    if (!post?.id) return;
+
+    const postRef = doc(db, "posts", post.id);
+    const unsubscribe = onSnapshot(postRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const postData = docSnap.data();
+        setLikes(postData.likes || []); // Ensure UI updates only from Firestore
+      }
+    });
+
+    return () => unsubscribe();
+  }, [post?.id]);
+
+  const handleLike = async (e) => {
+    e.preventDefault();
+    if (!post?.id || !currentUser) return;
+
     try {
       const postRef = doc(db, "posts", post.id);
-      const isLiked = liked;
+      const isLiked = likes.some((like) => like.userId === currentUser.uid);
 
       if (isLiked) {
-        // Unlike
-        await updateDoc(postRef, {
-          likes: post.likes.filter(like => like.userId !== currentUserId)
-        });
-        setLikeCount(likeCount - 1);
-        setLikedUsers(likedUsers.filter(userId => userId !== currentUserId));
+        // Remove like
+        const likeToRemove = likes.find((like) => like.userId === currentUser.uid);
+        if (likeToRemove) {
+          await updateDoc(postRef, {
+            likes: arrayRemove(likeToRemove),
+          });
+        }
       } else {
-        // Like
+        // Add like
+        const newLike = {
+          userId: currentUser.uid,
+          userName: currentUser.displayName || "Anonymous",
+        };
         await updateDoc(postRef, {
-          likes: [...(post.likes || []), { userId: currentUserId, timestamp: new Date() }]
+          likes: arrayUnion(newLike),
         });
-        setLikeCount(likeCount + 1);
-        setLikedUsers([...likedUsers, currentUserId]);
       }
-
-      setLiked(!isLiked);
-      console.log(`${currentUserId} ${isLiked ? "unliked" : "liked"} post ${post.id}`);
     } catch (error) {
-      console.error("Error liking post: ", error);
+      console.error("Error updating like:", error);
     }
   };
 
-  const handleMouseDown = () => {
-    // Start the timer instantly (0.001 seconds)
-    timerRef.current = setTimeout(() => {
-      setShowPopUp(true); // Show the pop-up after 0.001 seconds (immediate effect)
-    }, 1); // 0.001 seconds is basically instantaneous (rounded to 1 ms)
-  };
-
-  const handleMouseUp = () => {
-    // Clear the timer if mouse is released before showing the pop-up
-    clearTimeout(timerRef.current);
-  };
-
-  const handleReaction = (reactionType) => {
-    setReaction(reactionType); // Set the chosen reaction
-    setShowPopUp(false); // Close the pop-up after a reaction is selected
-    console.log(`${currentUserId} reacted with ${reactionType} on post ${post.id}`);
-  };
+  const isLiked = currentUser && likes.some((like) => like.userId === currentUser.uid);
 
   return (
     <div className="like-container">
-      <div
-        className="like-icon"
-        onClick={handleLike}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp} // In case mouse leaves the button before 0.001 seconds
-      >
-        {liked ? <FaHeart className="liked" /> : <FaRegHeart className="unliked" />}
-        <span className="like-count">{likeCount}</span>
+      <div className="like-button-wrapper">
+        <button 
+          className={`like-button ${isLiked ? "liked" : ""}`} 
+          onClick={handleLike} 
+          title={isLiked ? "Unlike" : "Like"}
+        >
+          <FaHeart className="like-icon" />
+          <span 
+            className="like-count"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowLikes(!showLikes);
+            }}
+          >
+            {likes.length > 0 && likes.length}
+          </span>
+        </button>
       </div>
 
-      {likeCount > 0 && (
-        <div className="liked-by">
-          <strong>Liked by:</strong> {likedUsers.join(", ")}
+      {/* 🔹 Display Names Under the Like Button */}
+      {likes.length > 0 && (
+        <div className="like-names">
+          <strong>Liked by:</strong>{" "}
+          {[...new Map(likes.map((like) => [like.userId, like])).values()]
+            .slice(0, 3)
+            .map((like, index) => (
+              <span key={like.userId}>
+                {like.userName}
+                {index < likes.length - 1 ? ", " : ""}
+              </span>
+            ))}
+          {likes.length > 3 && <span> and {likes.length - 3} others</span>}
         </div>
       )}
 
-      {showPopUp && (
-        <div className="reaction-popup">
-          <div
-            className="reaction-icon"
-            onClick={() => handleReaction("like")}
-            style={{ 
-              border: reaction === "like" ? "2px solid #ff4757" : "none", // Add a border to indicate selection
-              color: reaction === "like" ? "#ff4757" : "", // Change color of the icon
-            }}
-          >
-            <FaHeart className="reaction" />
-            <span>Like</span>
+      {/* 🔹 Pop-up List of Likes */}
+      {showLikes && (
+        <div className="likes-popup">
+          <div className="likes-header">
+            <h4>{likes.length} {likes.length === 1 ? "Like" : "Likes"}</h4>
+            <button 
+              className="close-button" 
+              onClick={() => setShowLikes(false)}
+            >
+              ×
+            </button>
           </div>
-          <div
-            className="reaction-icon"
-            onClick={() => handleReaction("smile")}
-            style={{ 
-              border: reaction === "smile" ? "2px solid #ffcc00" : "none", // Border color for smile
-              color: reaction === "smile" ? "#ffcc00" : "", // Icon color change for smile
-            }}
-          >
-            <FaSmile className="reaction" />
-            <span>Smile</span>
-          </div>
-          <div
-            className="reaction-icon"
-            onClick={() => handleReaction("sad")}
-            style={{ 
-              border: reaction === "sad" ? "2px solid #1f8e89" : "none", // Border color for sad
-              color: reaction === "sad" ? "#1f8e89" : "", // Icon color change for sad
-            }}
-          >
-            <FaSadTear className="reaction" />
-            <span>Sad</span>
-          </div>
+          <ul className="likes-list">
+            {[...new Map(likes.map((like) => [like.userId, like])).values()].map(
+              (like, index) => (
+                <li key={`${like.userId}-${index}`} className="like-item">
+                  <div className="like-user-info">
+                    <strong>{like.userName}</strong>
+                  </div>
+                </li>
+              )
+            )}
+          </ul>
         </div>
       )}
     </div>
