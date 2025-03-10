@@ -1,39 +1,34 @@
-import React, { useEffect } from "react";
-import "../assets/css/Home/home.css";
-import "../assets/js/scroll";
-import { ReactTyped } from "react-typed";
+"use client"
+
+import { useEffect, useRef } from "react"
+import { Link } from "react-router-dom"
+import "../assets/css/Home/home.css"
+import { ReactTyped } from "react-typed"
+ 
+import Stylemarket from "../assets/images/StyleMarket.jpg"
+import Stylestudio from "../assets/images/StyleStudio.jpg"
+import Stylesociety from "../assets/images/style_society.jpg"
 
 export default function Home() {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "../assets/js/scroll.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
   return (
-    <>
-      <div className="home-container">
-        {/* Hero Section */}
-        <HeroSection />
-        {/* Features Section */}
-        <FeaturesSection />
-        {/* Detailed Sections */}
-        <DetailedSections />
-      </div>
-    </>
-  );
+    <div className="home-container">
+      <HeroSection />
+      <AboutSection />
+      <StyleSection />
+      <CTASection />
+    </div>
+  )
 }
 
 function HeroSection() {
   return (
     <div className="hero-section" id="hero-section">
-      <div className="hero-image"></div>
-      <div className="intro">      
+      <div className="hero-overlay"></div>
+
+      <div className="intro">
+       
         <h1>Styloft</h1>
+        <div className="hero-divider"></div>
         <ReactTyped
           className="typed-text"
           strings={["Design Your Style", "Create Your Fashion", "Inspire the World"]}
@@ -42,58 +37,146 @@ function HeroSection() {
           loop
         />
       </div>
-
     </div>
-  );
+  )
 }
 
-function FeaturesSection() {
+function AboutSection() {
+  const aboutRef = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view")
+          }
+        })
+      },
+      { threshold: 0.2 },
+    )
+
+    if (aboutRef.current) {
+      observer.observe(aboutRef.current)
+    }
+
+    return () => {
+      if (aboutRef.current) {
+        observer.unobserve(aboutRef.current)
+      }
+    }
+  }, [])
+
+  const features = [
+    { icon: "✨", title: "Creative Freedom", text: "Express your unique vision" },
+    { icon: "🔄", title: "Collaboration", text: "Connect with designers" },
+    { icon: "🚀", title: "Innovation", text: "Stay ahead with cutting-edge tools" },
+    { icon: "🌐", title: "Global Reach", text: "Showcase your work worldwide" },
+  ]
+
   return (
-    <div className="features-grid" id="features-section">
-      <FeatureItem className="feature-style-market" title="STYLE Market" />
-      <FeatureItem className="feature-style-studio" title="STYLE Studio" />
-      <FeatureItem className="feature-inspire-zone" title="INSPIRE Zone" />
-      <FeatureItem className="feature-style-society" title="STYLE Society" />
+    <div ref={aboutRef} className="about-section" id="about-section">
+      <div className="about-container">
+        <h2 className="about-title">About Styloft</h2>
+        <div className="about-content">
+          <p className="about-intro">
+            Welcome to <strong>Styloft</strong> – a platform where creativity and innovation come together in fashion
+            design. Styloft empowers designers, students, and businesses to create, collaborate, and showcase their
+            unique designs.
+          </p>
+
+          <div className="about-features">
+            {features.map((feature, index) => (
+              <div className="feature-card" key={index}>
+                <div className="feature-icon">{feature.icon}</div>
+                <h3>{feature.title}</h3>
+                <p>{feature.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="about-cta">Join Styloft today and be part of the future of fashion design.</p>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
 
-function FeatureItem({ className, title }) {
-  return <div className={`feature-item ${className}`}>{title}</div>;
-}
+function StyleSection() {
+  const sectionRef = useRef(null); 
 
-function DetailedSections() {
+  const styles = [
+    {
+      title: "STYLE MARKET",
+      image: Stylemarket,
+      description:
+        "Connect with designers, explore exclusive clothing collections, and shop one-of-a-kind pieces in our vibrant marketplace.",
+    },
+    {
+      title: "STYLE STUDIO",
+      image: Stylestudio,
+      description: "Design and customize your own fashion pieces with our intuitive tools and professional features.",
+    },
+    {
+      title: "STYLE SOCIETY",
+      image: Stylesociety,
+      description: "Join our community of fashion enthusiasts, share ideas, and collaborate with fellow designers.",
+    },
+  ];
+
+ 
   return (
-    <>
-      <Section className="style-studio" title="STYLE STUDIO" imgClass="style_studio_img" link="/stylestudio">
-        The Style Studio is your creative space to design custom clothing and experiment with styles and fabrics. Whether you're a beginner or a professional, showcase your designs, collaborate with others, and explore new trends. Unleash your creativity and redefine fashion!
-      </Section>
-      <Section className="style-market" title="STYLE MARKET">
-        The Style Market is your go-to marketplace for unique, custom-made fashion. Connect with designers, explore exclusive clothing collections, and shop one-of-a-kind pieces. Whether you're looking for personalized designs or the latest trends, the Style Market brings creativity and style together in one place.
-      </Section>
-      <Section className="inspire-zone" title="INSPIRE ZONE" imgClass="inspire_zone_img" link="/inspirezone">
-        The Style Market is your go-to marketplace for unique, custom-made fashion. Connect with designers, explore exclusive clothing collections, and shop one-of-a-kind pieces. Whether you're looking for personalized designs or the latest trends, the Style Market brings creativity and style together in one place.
-      </Section>
-      <Section className="style-society" title="STYLE SOCIETY" imgClass="style_society_img" link="/stylesociety">
-        The Style Society is a vibrant community for fashion enthusiasts, designers, and fashion students. Share ideas, collaborate on projects, participate in design challenges, and connect with like-minded creatives. Join us to inspire and be inspired!
-      </Section>
-      <Section className="design-contests" title="DESIGN CONTESTS" imgClass="design_contests_img" link="/contest">
-        Showcase your creativity, compete with the best, and win exciting rewards in our design challenges!
-      </Section>
-      <Section className="about-us" title="About Us">
-        Welcome to Styloft, a platform dedicated to transforming the world of fashion design. We provide a space where designers, students, and enthusiasts can unleash their creativity using advanced tools and collaborate seamlessly. At Styloft, we aim to bridge the gap between innovation and accessibility, empowering users to bring their unique fashion visions to life. Together, we inspire and shape the future of style.
-      </Section>
-    </>
+    <section ref={sectionRef} className="style-section" id="style-section">
+      <div className="style-header">
+        <h2 className="style-title">Explore Now</h2>
+        <div className="style-title-divider"></div>
+      </div>
+
+      <div className="style-grid">
+        {styles.map((style, index) => (
+          <div key={index} className="style-card" style={{ animationDelay: `${index * 0.2}s` }}>
+            <div className="style-image">
+              <img src={style.image || "/placeholder.svg"} alt={style.title} />
+            </div>
+            <div className="style-overlay">
+              <h3>{style.title}</h3>
+              <p>{style.description}</p>
+              <Link
+                to={
+                  style.title === "STYLE MARKET"
+                    ? "/stylemarket"
+                    : style.title === "STYLE STUDIO"
+                      ? "/stylestudio"
+                      : "/stylesociety"
+                }
+                className="style-button"
+              >
+                Discover
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
-function Section({ className, title, imgClass, children, link }) {
+function CTASection() {
   return (
-    <div className={`section ${className}`}>
-      {imgClass && <div className={imgClass}></div>}
-      <h2>{title}</h2>
-      <p>{children}</p>
-      <a href={link} className="explore-button">Explore</a>
-    </div>
-  );
+    <section className="cta-section">
+      <div className="cta-content">
+        <h2>Ready to Transform Your Fashion Ideas?</h2>
+        <p>Join Styloft today and become part of a growing community of fashion innovators.</p>
+        <div className="cta-buttons">
+          <Link to="/register" className="primary-button">
+            Sign Up Now
+          </Link>
+          <Link to="/login" className="secondary-button">
+            Sign In
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
 }
+
