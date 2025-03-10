@@ -5,13 +5,13 @@
   width: 100%;
   gap: 24px;
   padding: 16px;
-  margin-top: 35px;
+  margin-top: 40px;
 }
 
 /* Canvas card */
 .canvas-card {
   flex: 1;
-  min-height: 600px;
+  height: 600px; /* Fixed height */
   position: relative;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -88,7 +88,9 @@
 
 /* Controls card */
 .controls-card {
-  width: 100%;
+  width: 320px;
+  height: 700px; /* Fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: white;
@@ -536,17 +538,26 @@
 }
 
 /* Position controls */
-.text-position-controls {
+.text-position-controls,
+.logo-position-controls {
   margin-top: 24px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 16px;
 }
 
-.position-controls-title {
+.position-controls-title,
+.rotation-controls-title {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rotation-icon {
+  color: #4b5563;
 }
 
 .position-presets {
@@ -569,32 +580,309 @@
   background-color: #f3f4f6;
 }
 
-.position-sliders {
+.position-sliders,
+.rotation-sliders {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.position-control {
+.position-control,
+.rotation-control {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.position-control label {
+.position-control label,
+.rotation-control label {
   width: 120px;
   font-size: 14px;
 }
 
-.position-slider {
+.position-slider,
+.rotation-slider {
   flex: 1;
 }
 
-.position-value {
+.position-value,
+.rotation-value {
   width: 40px;
   text-align: right;
   font-size: 14px;
   color: #6b7280;
+}
+
+/* Logo uploader */
+.logo-uploader {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.logo-uploader-header {
+  margin-bottom: 16px;
+}
+
+.logo-uploader-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.logo-icon {
+  color: #4b5563;
+}
+
+.logo-input-group {
+  margin-bottom: 16px;
+}
+
+.logo-name-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.logo-file-upload {
+  margin-bottom: 16px;
+}
+
+.logo-preview-container {
+  width: 100%;
+  height: 150px;
+  border: 2px dashed #e5e7eb;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.logo-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.logo-preview-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.logo-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.logo-upload-button {
+  width: 100%;
+  padding: 10px 16px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+.logo-upload-button:hover {
+  background-color: #f9fafb;
+}
+
+.logo-controls {
+  margin-bottom: 16px;
+}
+
+.logo-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logo-control-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logo-range {
+  width: 100%;
+}
+
+.logo-value {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.logo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.logo-add-button,
+.logo-update-button {
+  flex: 1;
+  padding: 10px 16px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+.logo-add-button:hover,
+.logo-update-button:hover {
+  background-color: #1f2937;
+}
+
+.logo-add-button:disabled,
+.logo-update-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.logo-cancel-button {
+  flex: 1;
+  padding: 10px 16px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+.logo-cancel-button:hover {
+  background-color: #dc2626;
+}
+
+/* Logo elements */
+.logo-elements {
+  margin-top: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.logo-elements-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.logo-elements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logo-element {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.logo-element:hover {
+  border-color: #d1d5db;
+}
+
+.logo-element-selected {
+  border-color: #111827;
+  background-color: #f9fafb;
+}
+
+.logo-element-preview {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.logo-element-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logo-element-info {
+  flex: 1;
+}
+
+.logo-element-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.logo-element-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.logo-element-edit,
+.logo-element-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.logo-element-edit {
+  background-color: #111827;
+  color: white;
+}
+
+.logo-element-remove {
+  background-color: #ef4444;
+  color: white;
 }
 
 /* Lighting controls */
@@ -662,5 +950,45 @@
   .controls-card {
     width: 320px;
   }
+}
+
+/* Add these styles to your viewer.css */
+
+.bg-grid-pattern {
+  background-color: #f8f9fa;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.moveable-control {
+  --moveable-color: #4f46e5;
+  --moveable-line-color: #4f46e5;
+  --moveable-point-color: #4f46e5;
+  --moveable-handle-color: #4f46e5;
+}
+
+.moveable-control .moveable-line {
+  background: var(--moveable-line-color);
+}
+
+.moveable-control .moveable-control-box {
+  border-color: var(--moveable-color);
+}
+
+.moveable-control .moveable-rotation-control {
+  border-color: var(--moveable-handle-color);
+  background: white;
+}
+
+.moveable-control .moveable-direction {
+  background: var(--moveable-point-color);
+}
+
+.text-editor-panel {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
