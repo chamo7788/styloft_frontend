@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
-import "../../assets/css/StyleMarket/addShop.css"; 
-import { Upload, AlertCircle } from "lucide-react";
+"use client"
+
+import { useState, useRef } from "react"
+import { Upload, AlertCircle, Check } from "lucide-react"
 
 export function AddShopForm() {
   const [formData, setFormData] = useState({
@@ -8,153 +9,171 @@ export function AddShopForm() {
     description: "",
     price: "",
     image: "", // Image URL from Cloudinary
-  });
+  })
 
-  const [imagePreview, setImagePreview] = useState(null); // For displaying selected image
-  const [uploading, setUploading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [dragActive, setDragActive] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState(null) // 'success', 'error', or null
+  const fileInputRef = useRef(null)
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault()
+    e.stopPropagation()
     if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
+      setDragActive(true)
     } else if (e.type === "dragleave") {
-      setDragActive(false);
+      setDragActive(false)
     }
-  };
+  }
 
   const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleImageFile(e.dataTransfer.files[0]);
+      handleImageFile(e.dataTransfer.files[0])
     }
-  };
+  }
 
   const handleImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
-      handleImageFile(e.target.files[0]);
+      handleImageFile(e.target.files[0])
     }
-  };
+  }
 
   const handleImageFile = async (file) => {
-    if (!file) return;
+    if (!file) return
 
     // Validate file type
-    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const validTypes = ["image/jpeg", "image/png", "image/jpg"]
     if (!validTypes.includes(file.type)) {
-      setErrorMessage("Invalid file type. Please upload a JPG or PNG image.");
-      showToast("Invalid file type", "Please upload a JPG or PNG image.", "error");
-      return;
+      setErrorMessage("Invalid file type. Please upload a JPG or PNG image.")
+      showToast("Invalid file type", "Please upload a JPG or PNG image.", "error")
+      return
     }
 
     // Show preview
-    setImagePreview(URL.createObjectURL(file));
-    setUploading(true);
+    setImagePreview(URL.createObjectURL(file))
+    setUploading(true)
+    setErrorMessage("")
 
-    const imageData = new FormData();
-    imageData.append("file", file);
-    imageData.append("upload_preset", "Styloft"); // Replace with your actual preset
+    const imageData = new FormData()
+    imageData.append("file", file)
+    imageData.append("upload_preset", "Styloft") // Replace with your actual preset
 
     try {
       const response = await fetch("https://api.cloudinary.com/v1_1/ds0xdh85j/image/upload", {
         method: "POST",
         body: imageData,
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (data.secure_url) {
         setFormData((prevData) => ({
           ...prevData,
           image: data.secure_url, // Save image URL
-        }));
-        setErrorMessage("");
-        showToast("Image uploaded successfully", "Your image has been uploaded to the cloud.", "success");
+        }))
+        setErrorMessage("")
+        showToast("Image uploaded successfully", "Your image has been uploaded to the cloud.", "success")
       } else {
-        setErrorMessage("Image upload failed. Try again.");
-        showToast("Upload failed", "Image upload failed. Please try again.", "error");
+        setErrorMessage("Image upload failed. Try again.")
+        showToast("Upload failed", "Image upload failed. Please try again.", "error")
       }
     } catch (error) {
-      setErrorMessage("Error uploading image. Check your network.");
-      showToast("Upload error", "Error uploading image. Check your network connection.", "error");
+      setErrorMessage("Error uploading image. Check your network.")
+      showToast("Upload error", "Error uploading image. Check your network connection.", "error")
     } finally {
-      setUploading(false);
+      setUploading(false)
     }
-  };
+  }
 
   const showToast = (title, message, type = "success") => {
-    // Simple toast implementation
-    const toast = document.createElement("div");
-    toast.className = `toast toast-${type}`;
+    // Create toast element
+    const toast = document.createElement("div")
+    toast.className = `toast toast-${type}`
     toast.innerHTML = `
       <div class="toast-header">${title}</div>
       <div class="toast-body">${message}</div>
-    `;
-    document.body.appendChild(toast);
+    `
+    document.body.appendChild(toast)
+
+    // Show and hide toast with animation
     setTimeout(() => {
-      toast.classList.add("show");
+      toast.classList.add("show")
       setTimeout(() => {
-        toast.classList.remove("show");
+        toast.classList.remove("show")
         setTimeout(() => {
-          document.body.removeChild(toast);
-        }, 300);
-      }, 3000);
-    }, 100);
-  };
+          document.body.removeChild(toast)
+        }, 300)
+      }, 3000)
+    }, 100)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setSubmitStatus(null)
 
-    // ✅ Check if all fields are filled
+    // Check if all fields are filled
     if (!formData.name || !formData.description || !formData.price || !formData.image) {
-      alert("Please fill all fields before submitting.");
-      return;
+      setErrorMessage("Please fill all fields before submitting.")
+      showToast("Form incomplete", "Please fill all fields before submitting.", "error")
+      return
     }
-
-    console.log("Submitting Form Data:", formData); // Debugging
 
     try {
       const response = await fetch("http://localhost:3000/shop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      });
+      })
 
-      const result = await response.json();
-      console.log("Server Response:", result);
+      const result = await response.json()
 
       if (response.ok) {
-        alert("Shop Created Successfully!");
+        setSubmitStatus("success")
+        showToast("Success!", "Shop created successfully.", "success")
 
-        // ✅ Reset the form
-        setFormData({ name: "", description: "", price: "", image: "" });
-        setImagePreview(null);
+        // Reset the form
+        setFormData({ name: "", description: "", price: "", image: "" })
+        setImagePreview(null)
+
+        // Clear success status after 3 seconds
+        setTimeout(() => setSubmitStatus(null), 3000)
       } else {
-        alert("Failed to create shop: " + result.message);
+        setSubmitStatus("error")
+        setErrorMessage(`Failed to create shop: ${result.message}`)
+        showToast("Submission failed", `Failed to create shop: ${result.message}`, "error")
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("An error occurred while submitting the form.");
+      setSubmitStatus("error")
+      setErrorMessage("An error occurred while submitting the form.")
+      showToast("Submission error", "An error occurred while submitting the form.", "error")
     }
-  };
+  }
 
   return (
     <div className="add-shop-container">
       <h2 className="add-shop-title">Create a New Shop</h2>
+
+      {submitStatus === "success" && (
+        <div className="success-message">
+          <Check className="success-icon" />
+          <p>Shop created successfully!</p>
+        </div>
+      )}
+
       <form className="add-shop-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="name" className="form-label">
@@ -197,6 +216,7 @@ export function AddShopForm() {
             onChange={handleChange}
             className="form-input"
             min="0"
+            step="0.01"
             required
           />
         </div>
@@ -247,14 +267,19 @@ export function AddShopForm() {
         {/* Image Preview */}
         {imagePreview && (
           <div className="image-preview">
-            <img src={imagePreview} alt="Preview" className="preview-img" />
+            <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="preview-img" />
           </div>
         )}
 
-        <button type="submit" className="submit-button" disabled={uploading}>
-          {uploading ? "Uploading..." : "Create Shop"}
+        <button
+          type="submit"
+          className={`submit-button ${submitStatus === "success" ? "success" : submitStatus === "error" ? "error" : ""}`}
+          disabled={uploading}
+        >
+          {uploading ? "Uploading..." : submitStatus === "success" ? "Created Successfully!" : "Create Shop"}
         </button>
       </form>
     </div>
-  );
+  )
 }
+
