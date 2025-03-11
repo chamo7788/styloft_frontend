@@ -34,6 +34,8 @@ const Profile = () => {
     if (user.photoURL) {
       setProfilePic(user.photoURL);
     }
+    if (user.aboutText) {
+      setAboutText(user.aboutText);
 
     if (user && user.uid) {
       fetch(`http://localhost:3000/design/user/${user.uid}`)
@@ -138,7 +140,7 @@ const Profile = () => {
     setModalImage("");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     let valid = true;
     if (!name.trim()) {
       setNameError("Name cannot be empty");
@@ -156,6 +158,29 @@ const Profile = () => {
 
     if (valid) {
       setIsEditingAbout(false);
+
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      if (!user || !user.email) return;
+
+      try {
+        const response = await fetch("http://localhost:3000/user/updateAbout", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: user.email, aboutText }),
+        });
+
+        if (response.ok) {
+          user.aboutText = aboutText;
+          localStorage.setItem("currentUser", JSON.stringify(user));
+        } else {
+          const errorData = await response.json();
+          console.error("Error updating about text:", errorData.message);
+        }
+      } catch (error) {
+        console.error("Error updating about text:", error);
+      }
     }
   };
 
