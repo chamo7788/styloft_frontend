@@ -36,6 +36,7 @@ const Profile = () => {
     }
     if (user.aboutText) {
       setAboutText(user.aboutText);
+    }
 
     if (user && user.uid) {
       fetch(`http://localhost:3000/design/user/${user.uid}`)
