@@ -2,7 +2,7 @@
 .createPost {
   position: absolute;
   top: 270%;
-  left: 85%;
+  left: 95%;
   transform: translate(-50%, -50%);
   max-width: 900px;
   width: 900%;
@@ -213,6 +213,3 @@
   background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
   z-index: 999; /* Behind the modal */
 }
-
- 
- 

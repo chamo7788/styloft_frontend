@@ -4,9 +4,9 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faImage, faSmile, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import EmojiPicker from "emoji-picker-react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "../../assets/css/StyleSociety/CreatePost.css";
 import Dp from "../../assets/images/s-societybackground.jpg"; // Default profile image (can be updated from user data)
+import { Link } from "react-router-dom"; 
 
 function CreatePost({ onClose, setPosts }) {
   const [postContent, setPostContent] = useState('');
