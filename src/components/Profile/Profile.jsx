@@ -24,6 +24,8 @@ const Profile = () => {
   const [imageType, setImageType] = useState(""); 
   const imgRef = useRef(null);
 
+  const [designs, setDesigns] = useState([]);
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     if (user && user.displayName) {
@@ -31,6 +33,16 @@ const Profile = () => {
     }
     if (user.photoURL) {
       setProfilePic(user.photoURL);
+    }
+    if (user.aboutText) {
+      setAboutText(user.aboutText);
+    }
+
+    if (user && user.uid) {
+      fetch(`http://localhost:3000/design/user/${user.uid}`)
+        .then((response) => response.json())
+        .then((data) => setDesigns(data))
+        .catch((error) => console.error("Error fetching designs:", error));
     }
   }, []);
 
@@ -188,14 +200,14 @@ const Profile = () => {
           </div>
           <div className="profile-details">
             <div className="profile-pic-container">
-             <img src={profilePic} alt="Profile" className="profile-pic" />
-             <label className="edit-button profile-edit">
-               ✎
-             <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, "profile")} hidden />
-           </label>
-          </div>
+              <img src={profilePic} alt="Profile" className="profile-pic" />
+              <label className="edit-button profile-edit">
+                ✎
+                <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, "profile")} hidden />
+              </label>
+            </div>
 
-          <div className="user-info">
+            <div className="user-info">
               {isEditingAbout ? (
                 <>
                   <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
@@ -234,18 +246,18 @@ const Profile = () => {
         <div className="profile-sections">
           <div className="about-section">
             <h3>Designs</h3>
-            <p>Experienced consultant with expertise in fintech and business development.</p>
+            {designs.length > 0 ? (
+              designs.map((design) => (
+                <div key={design.id} className="DesignCard" onClick={() => openModal(design.fileUrl)}>
+                  <img src={design.fileUrl} alt="Design" className="design-img" />
+                  <h3 className="DesignName">{design.description}</h3>
+                  <p className="DesignReview">⭐ 4.5 (180 reviews)</p>
+                </div>
+              ))
+            ) : (
+              <p>No designs available.</p>
+            )}
           </div>
-        </div>
-        <div className="DesignCard" onClick={() => openModal(designImage)}>
-          <img src={designImage} alt="Design" className="design-img" />
-          <h3 className="DesignName">"A frock for every mood, a style for every story."</h3>
-          <p className="DesignReview">⭐ 4.5 (180 reviews)</p>
-        </div>
-        <div className="DesignCard" onClick={() => openModal(designimage)}>
-          <img src={designimage} alt="Design" className="design-img" />
-          <h3 className="DesignName">" "Fashioned to perfection, tailored for you."</h3>
-          <p className="DesignReview">⭐ 4.5 (180 reviews)</p>
         </div>
       </div>
 

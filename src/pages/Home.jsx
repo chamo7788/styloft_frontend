@@ -151,7 +151,7 @@ function StyleSection() {
                 }
                 className="style-button"
               >
-                Discover
+                Explore
               </Link>
             </div>
           </div>

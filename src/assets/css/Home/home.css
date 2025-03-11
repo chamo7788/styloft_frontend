@@ -206,7 +206,7 @@
   .cta-section {
     position: relative;
     padding: var(--spacing-xl) var(--spacing-md);
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background-color: rgb(142, 142, 244);
     color: var(--text-light);
   }
   
@@ -238,7 +238,7 @@
   
   .cta-section .primary-button {
     background-color: white;
-    color: var(--primary);
+    color: rgb(142, 142, 244);
     font-size: 1.1rem;
     font-weight: 600;
     padding: 14px 32px;
@@ -464,44 +464,63 @@
     transition: all 0.5s ease 0.1s;
     margin-bottom: var(--spacing-md);
   }
-  
   .style-button {
     display: inline-block;
-    padding: 12px 30px;
-    background-color: var(--primary);
+    padding: 19px 45px;
+    background: linear-gradient( var(--primary), var(--primary-dark));
     color: white;
     text-decoration: none;
     border-radius: 50px;
     font-weight: 600;
     letter-spacing: 1px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease 0.2s;
+    transition: all 0.4s ease;
     align-self: flex-start;
     position: relative;
     overflow: hidden;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
   }
   
+  .style-button::before {
+    left:   100%;
+  }
   .style-button::before {
     content: "";
     position: absolute;
     top: 0;
     left: -100%;
-    width: 100%;
+    width: 200%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: 0.7s;
-    z-index: 1;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: transform 0.7s ease-in-out;
   }
   
   .style-button:hover::before {
-    left: 100%;
+    transform: translateX(100%);
   }
   
   .style-button:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  }
+  .style-button:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  }
+  
+  .style-button:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  }
+  .style-button:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
   }
   
   .style-card:hover .style-overlay {
