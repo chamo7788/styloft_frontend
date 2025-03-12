@@ -1,4 +1,4 @@
-import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useState, useEffect } from "react";
 import { FaRegComment, FaTrash } from "react-icons/fa";
@@ -59,11 +59,25 @@ function CommentSection({ post }) {
       const postRef = doc(db, "posts", post.id);
       await updateDoc(postRef, { comments: arrayUnion(newComment) });
 
-      setShowComments(true);  // 🔹 Ensure comments are shown
-      fetchComments();        // 🔹 Fetch latest comments
-      setCommentText("");     // 🔹 Clear input
+      setShowComments(true);
+      fetchComments();
+      setCommentText("");
     } catch (error) {
       console.error("Error adding comment: ", error);
+    }
+  };
+
+  const handleDeleteComment = async (comment) => {
+    if (!post?.id) return console.error("Post ID is missing!");
+
+    try {
+      const postRef = doc(db, "posts", post.id);
+      await updateDoc(postRef, { comments: arrayRemove(comment) });
+
+      // Remove comment from local state
+      setComments((prev) => prev.filter((c) => c.timestamp !== comment.timestamp));
+    } catch (error) {
+      console.error("Error deleting comment: ", error);
     }
   };
 
