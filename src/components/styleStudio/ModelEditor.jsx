@@ -189,11 +189,13 @@ export default function ModelEditor() {
   // Take screenshot
   const handleScreenshot = () => {
     if (canvasRef.current) {
-      const canvas = canvasRef.current
-      const link = document.createElement("a")
-      link.download = `${selectedModel}-design.png`
-      link.href = canvas.toDataURL("image/png")
-      link.click()
+      requestAnimationFrame(() => {
+        const canvas = canvasRef.current
+        const link = document.createElement("a")
+        link.download = `${selectedModel}-design.png`
+        link.href = canvas.toDataURL("image/png")
+        link.click()
+      })
     }
   }
 
