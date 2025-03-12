@@ -1,6 +1,5 @@
 "use client"
 
-<<<<<<< HEAD
 import { useState } from "react"
 import { Eye } from "lucide-react"
 
@@ -44,22 +43,6 @@ const ProductCard = ({ product, onExplore }) => {
         />
       </div>
 
-=======
-// Default placeholder image
-const defaultImage = "https://www.imghippo.com/i/QMsd7261qms.jpg";
-
-const ProductCard = ({ product, onExplore }) => {
-  if (!product) return null;
-
-  const imageSrc = product.imageUrl || defaultImage;
-  const formattedPrice =
-    product.price && !isNaN(product.price) ? `$${Number(product.price).toFixed(2)}` : "Price Not Available";
-
-  return (
-    <div className="product-card">
-      <img src={imageSrc} alt={`Image of ${product.name || "Product"}`} className="product-image" />
-
->>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
       <div className="product-details">
         <h3 className="product-name">{product.name || "Unnamed Product"}</h3>
         <p className="product-price">{formattedPrice}</p>
@@ -80,4 +63,3 @@ const ProductCard = ({ product, onExplore }) => {
 }
 
 export default ProductCard
-
