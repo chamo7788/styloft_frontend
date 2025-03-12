@@ -8,8 +8,8 @@ export function AddShopForm() {
     name: "",
     description: "",
     price: "",
-    image: "", // Image URL from Cloudinary
-  })
+    image: "", // Image URL from ImgHippo
+  });
 
   const [imagePreview, setImagePreview] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -23,79 +23,11 @@ export function AddShopForm() {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-    }))
-  }
+    }));
 
-  const handleDrag = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
-    } else if (e.type === "dragleave") {
-      setDragActive(false)
-    }
-  }
-
-  const handleDrop = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleImageFile(e.dataTransfer.files[0])
-    }
-  }
-
-  const handleImageUpload = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      handleImageFile(e.target.files[0])
-    }
-  }
-
-  const handleImageFile = async (file) => {
-    if (!file) return
-
-    // Validate file type
-    const validTypes = ["image/jpeg", "image/png", "image/jpg"]
-    if (!validTypes.includes(file.type)) {
-      setErrorMessage("Invalid file type. Please upload a JPG or PNG image.")
-      showToast("Invalid file type", "Please upload a JPG or PNG image.", "error")
-      return
-    }
-
-    // Show preview
-    setImagePreview(URL.createObjectURL(file))
-    setUploading(true)
-    setErrorMessage("")
-
-    const imageData = new FormData()
-    imageData.append("file", file)
-    imageData.append("upload_preset", "Styloft") // Replace with your actual preset
-
-    try {
-      const response = await fetch("https://api.cloudinary.com/v1_1/ds0xdh85j/image/upload", {
-        method: "POST",
-        body: imageData,
-      })
-
-      const data = await response.json()
-
-      if (data.secure_url) {
-        setFormData((prevData) => ({
-          ...prevData,
-          image: data.secure_url, // Save image URL
-        }))
-        setErrorMessage("")
-        showToast("Image uploaded successfully", "Your image has been uploaded to the cloud.", "success")
-      } else {
-        setErrorMessage("Image upload failed. Try again.")
-        showToast("Upload failed", "Image upload failed. Please try again.", "error")
-      }
-    } catch (error) {
-      setErrorMessage("Error uploading image. Check your network.")
-      showToast("Upload error", "Error uploading image. Check your network connection.", "error")
-    } finally {
-      setUploading(false)
+    // If updating image field, update preview
+    if (name === "image") {
+      setImagePreview(value);
     }
   }
 
@@ -122,15 +54,15 @@ export function AddShopForm() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setSubmitStatus(null)
+    e.preventDefault();
 
-    // Check if all fields are filled
+    // ✅ Check if all fields are filled
     if (!formData.name || !formData.description || !formData.price || !formData.image) {
-      setErrorMessage("Please fill all fields before submitting.")
-      showToast("Form incomplete", "Please fill all fields before submitting.", "error")
-      return
+      alert("Please fill all fields before submitting.");
+      return;
     }
+
+    console.log("Submitting Form Data:", formData); // Debugging
 
     try {
       const response = await fetch("http://localhost:3000/shop", {
@@ -142,15 +74,11 @@ export function AddShopForm() {
       const result = await response.json()
 
       if (response.ok) {
-        setSubmitStatus("success")
-        showToast("Success!", "Shop created successfully.", "success")
+        alert("Shop Created Successfully!");
 
-        // Reset the form
-        setFormData({ name: "", description: "", price: "", image: "" })
-        setImagePreview(null)
-
-        // Clear success status after 3 seconds
-        setTimeout(() => setSubmitStatus(null), 3000)
+        // ✅ Reset the form
+        setFormData({ name: "", description: "", price: "", image: "" });
+        setImagePreview(null);
       } else {
         setSubmitStatus("error")
         setErrorMessage(`Failed to create shop: ${result.message}`)
@@ -222,46 +150,19 @@ export function AddShopForm() {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Shop Image</label>
-          <div
-            className={`image-upload-area ${dragActive ? "active" : ""}`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current.click()}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleImageUpload}
-              className="hidden-input"
-              accept="image/png, image/jpeg"
-            />
-            <div className="upload-content">
-              <div className="upload-icon-container">
-                <Upload className="upload-icon" />
-              </div>
-              <p className="upload-text">{imagePreview ? "Change image" : "Upload shop image"}</p>
-              <p className="upload-subtext">Drag and drop or click to browse</p>
-            </div>
-          </div>
-
-          {uploading && (
-            <div className="upload-status">
-              <div className="spinner"></div>
-              <span className="upload-status-text">Uploading...</span>
-            </div>
-          )}
-
-          {errorMessage && (
-            <div className="error-message">
-              <AlertCircle className="error-icon" />
-              <p>{errorMessage}</p>
-            </div>
-          )}
+          <label htmlFor="image" className="form-label">
+            Image URL (Upload to ImgHippo)
+          </label>
+          <input
+            type="text"
+            id="image"
+            name="image"
+            placeholder="Paste ImgHippo image link here"
+            value={formData.image}
+            onChange={handleChange}
+            className="form-input"
+            required
+          />
         </div>
 
         {/* Image Preview */}

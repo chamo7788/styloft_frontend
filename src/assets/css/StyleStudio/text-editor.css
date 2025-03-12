@@ -55,6 +55,10 @@
     color: #0ea5e9;
   }
   
+  .texture-editor-tool-spacer {
+    flex: 1;
+  }
+  
   .texture-editor-canvas-container {
     flex: 1;
     position: relative;
@@ -64,6 +68,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 16px;
   }
   
   .texture-editor-canvas {
@@ -281,5 +286,27 @@
       width: 100%;
     }
   }
-  
-  
+
+/* Add these styles for better Fabric.js integration */
+.texture-editor-canvas-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style for the canvas container */
+[id^="canvas-container-"] {
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Style for the canvas element */
+[id^="fabric-canvas-"] {
+  border: 1px solid #ddd;
+  background-color: white;
+}
+

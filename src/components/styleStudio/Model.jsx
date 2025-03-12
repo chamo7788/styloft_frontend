@@ -1,10 +1,9 @@
 "use client"
 
-import { useRef, useState, useEffect, createRef } from "react"
-import { useGLTF, Text, useTexture } from "@react-three/drei"
+import { useRef, useState, useEffect, createRef, useMemo } from "react"
+import { useGLTF, Text } from "@react-three/drei"
 import { TextureLoader } from "three"
 import { useFrame, useThree } from "@react-three/fiber"
-import * as THREE from "three"
 
 function Model({
   modelPath,
@@ -114,6 +113,34 @@ function Model({
     }
   })
 
+  // Load logo textures using useMemo to avoid recreating them on every render
+  const logoTextures = useMemo(() => {
+    return logoElements.map((logo) => {
+      return new TextureLoader().load(logo.image)
+    })
+  }, [logoElements])
+
+  // Render logo elements
+  const logoMeshes = logoElements.map((logo, index) => {
+    const texture = logoTextures[index]
+
+    return (
+      <mesh
+        key={`logo-${index}`}
+        position={logo.position}
+        rotation={logo.rotation}
+        onClick={(e) => {
+          e.stopPropagation()
+          onLogoSelect(index)
+        }}
+        userData={{ isLogo: true }}
+      >
+        <planeGeometry args={[logo.size, logo.size]} />
+        <meshBasicMaterial map={texture} transparent opacity={selectedLogoIndex === index ? 0.8 : 1} />
+      </mesh>
+    )
+  })
+
   return (
     <group>
       <primitive ref={modelRef} object={scene} onClick={handleClick} />
@@ -166,51 +193,8 @@ function Model({
             )}
           </group>
         ))}
-
-      {/* Render logo elements */}
-      {logoElements &&
-        logoElements.map((logo, index) => (
-          <LogoPlane
-            key={`logo-${index}`}
-            ref={logoRefs.current[index]}
-            logo={logo}
-            isSelected={index === selectedLogoIndex}
-            onClick={(e) => {
-              e.stopPropagation()
-              onLogoSelect(index)
-            }}
-          />
-        ))}
+      {logoMeshes}
     </group>
-  )
-}
-
-// Component for rendering a logo on a plane
-const LogoPlane = ({ logo, isSelected, onClick }) => {
-  const texture = useTexture(logo.image)
-
-  // Calculate aspect ratio to maintain image proportions
-  const aspectRatio = texture.image ? texture.image.width / texture.image.height : 1
-  const width = logo.size
-  const height = width / aspectRatio
-
-  return (
-    <mesh
-      position={logo.position}
-      rotation={logo.rotation}
-      onClick={onClick}
-      userData={{ isLogo: true }}
-      renderOrder={2} // Render on top of text
-    >
-      <planeGeometry args={[width, height]} />
-      <meshBasicMaterial map={texture} transparent={true} opacity={isSelected ? 0.8 : 1} />
-      {isSelected && (
-        <lineSegments>
-          <edgesGeometry attach="geometry" args={[new THREE.PlaneGeometry(width + 0.1, height + 0.1)]} />
-          <lineBasicMaterial attach="material" color="white" />
-        </lineSegments>
-      )}
-    </mesh>
   )
 }
 
