@@ -1,9 +1,9 @@
 /* Feed Container */
 .Feed-container {
   position: absolute;
-  top: 755px;
+  top: 743px;
   left: 61%;
-  width: 550px;
+  width: 570px;
   max-width: 90%;
   height: 550px;
   background-color: #e6c9e7;
@@ -24,55 +24,6 @@
   margin-bottom: 12px;
 }
 
-.add-btn {
-  background-color: transparent;
-  border: none;
-  font-size: 23px;
-  cursor: pointer;
-  color: #333;
-  transition: color 0.3s ease-in-out;
-}
-
-.add-btn:hover {
-  color: #0073b1;
-}
-
-/* Add Feed Form */
-.add-feed-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: #f7e6f8;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 12px;
-}
-
-.add-feed-form input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.submitbtn {
-  background-color: #5f1865;
-  color: white;
-  border: none;
-  padding: 8px;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
-}
-
-.submitbtn:hover {
-  background-color: #b365c3;
-}
-
 /* Notification Items */
 .Feed-item {
   display: flex;
@@ -90,7 +41,7 @@
   position: relative;
   width: 45px;
   height: 45px;
-  top: -25px;
+  top: -1px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -100,19 +51,15 @@
 }
 
 .Feed-title {
+  position: relative;
+  top: 10px;
+  left: 3%;
   font-size: 15px;
   font-weight: bold;
-  color: #222;
+ 
   margin: 0;
 }
 
-.Feed-category {
-  position: relative;
-  top: -6px;
-  font-size: 12px;
-  color: #666;
-  margin: 4px 0;
-}
 
 /* Follow Button */
 .followbtn {
@@ -127,7 +74,7 @@
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   left: 64%;
-  top:-60px;
+  top:-18px;
 }
 
 .followbtn:hover {
@@ -154,7 +101,7 @@
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   left: 66%;
-  top:-60px;
+  top:-18px;
   width: 70px;
 }
 
@@ -164,86 +111,3 @@
   border: 1px solid  #480667;
 }
 
-/* Responsive Design */
-@media screen and (max-width: 1024px) {
-  .Feed-container {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70%;
-    height: 500px;
-    top: 650px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .Feed-container {
-    width: 80%;
-    height: 500px;
-    top: 600px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .Feed-header {
-    font-size: 20px;
-  }
-
-  .add-btn {
-    font-size: 20px;
-  }
-
-  .Feed-avatar {
-    width: 40px;
-    height: 40px;
-  }
-
-  .Feed-title {
-    font-size: 14px;
-  }
-
-  .Feed-category {
-    font-size: 11px;
-  }
-
-  .followbtn {
-    font-size: 12px;
-    padding: 4px 8px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .Feed-container {
-    width: 90%;
-    height: auto;
-    top: 500px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 12px;
-  }
-
-  .Feed-header {
-    font-size: 18px;
-  }
-
-  .add-btn {
-    font-size: 18px;
-  }
-
-  .Feed-avatar {
-    width: 35px;
-    height: 35px;
-  }
-
-  .Feed-title {
-    font-size: 13px;
-  }
-
-  .Feed-category {
-    font-size: 10px;
-  }
-
-  .followbtn {
-    font-size: 11px;
-    padding: 3px 6px;
-  }
-}
