@@ -32,6 +32,9 @@ const Profile = () => {
     if (user.photoURL) {
       setProfilePic(user.photoURL);
     }
+    if (user.coverPhotoURL) {
+      setCoverPhoto(user.coverPhotoURL);
+    }
     if (user.aboutText) {
       setAboutText(user.aboutText);
     }
@@ -59,7 +62,7 @@ const Profile = () => {
         setImageType(type);
       };
       reader.readAsDataURL(file);
-
+  
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", "Styloft"); // Change to your Cloudinary preset
@@ -73,10 +76,11 @@ const Profile = () => {
         if (data.secure_url) {
           if (type === "profile") {
             setProfilePic(data.secure_url);
+            await updateProfilePicture(data.secure_url);
           } else {
             setCoverPhoto(data.secure_url);
+            await updateCoverPhoto(data.secure_url);
           }
-          await updateProfilePicture(data.secure_url);
         }
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -165,7 +169,7 @@ const Profile = () => {
       setIsEditingAbout(false);
       await updateAboutText(aboutText);
       await updateProfileInfo(name, profession);
-      await fetchUserProfile(); // Fetch the updated user profile
+      await fetchUserProfile(); 
     }
   };
   
@@ -192,6 +196,31 @@ const Profile = () => {
       }
     } catch (error) {
       console.error("Error updating profile picture:", error);
+    }
+  };
+
+  const updateCoverPhoto = async (coverPhotoURL) => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user || !user.uid) return;
+  
+    try {
+      const response = await fetch("http://localhost:3000/user/updateCoverPhoto", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: user.uid, coverPhotoURL }),
+      });
+  
+      if (response.ok) {
+        user.coverPhotoURL = coverPhotoURL;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating cover photo:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error updating cover photo:", error);
     }
   };
 
