@@ -7,7 +7,31 @@ const LogoUploader = ({ onAddLogo, logoElements, onRemoveLogo, onUpdateLogo, sel
     if (file) {
       const reader = new FileReader()
       reader.onload = (e) => {
-        onAddLogo({ image: e.target.result })
+        // Create an image to get dimensions
+        const img = new Image()
+        img.onload = () => {
+          // Calculate aspect ratio
+          const aspectRatio = img.width / img.height
+          let width = 100
+          let height = 100
+
+          // Maintain aspect ratio
+          if (aspectRatio > 1) {
+            height = width / aspectRatio
+          } else {
+            width = height * aspectRatio
+          }
+
+          onAddLogo({
+            image: e.target.result,
+            x: 100, // Default position
+            y: 100,
+            width: width, // Size based on aspect ratio
+            height: height,
+            rotation: 0,
+          })
+        }
+        img.src = e.target.result
       }
       reader.readAsDataURL(file)
     }
@@ -29,7 +53,10 @@ const LogoUploader = ({ onAddLogo, logoElements, onRemoveLogo, onUpdateLogo, sel
             className={`logo-element ${selectedLogoIndex === index ? "logo-element-selected" : ""}`}
             onClick={() => onLogoSelect(index)}
           >
-            <img src={logo.image || "/placeholder.svg"} alt={`Logo ${index + 1}`} className="logo-preview" />
+            <div className="logo-preview-container">
+              <img src={logo.image || "/placeholder.svg"} alt={`Logo ${index + 1}`} className="logo-preview" />
+              {selectedLogoIndex === index && <div className="logo-selected-indicator"></div>}
+            </div>
             <div className="logo-element-actions">
               <button
                 className="logo-element-edit"
@@ -37,6 +64,7 @@ const LogoUploader = ({ onAddLogo, logoElements, onRemoveLogo, onUpdateLogo, sel
                   e.stopPropagation()
                   onLogoSelect(index)
                 }}
+                title="Edit Logo"
               >
                 <Edit2 size={16} />
               </button>
@@ -46,12 +74,28 @@ const LogoUploader = ({ onAddLogo, logoElements, onRemoveLogo, onUpdateLogo, sel
                   e.stopPropagation()
                   onRemoveLogo(index)
                 }}
+                title="Remove Logo"
               >
                 <Trash2 size={16} />
               </button>
             </div>
           </div>
         ))}
+      </div>
+      <div className="logo-instructions">
+        <p>Click on a logo to select it, then use the canvas to:</p>
+        <ul>
+          <li>
+            <strong>Drag center:</strong> Move the logo
+          </li>
+          <li>
+            <strong>Drag corners:</strong> Resize proportionally
+          </li>
+          <li>
+            <strong>Drag top handle:</strong> Rotate freely
+          </li>
+        </ul>
+        <p className="logo-tip">Tip: Hold Shift while resizing to maintain aspect ratio</p>
       </div>
     </div>
   )

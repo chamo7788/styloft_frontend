@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 import ModelViewer from "./ModelViewer"
-import TextureEditor from "./TextureEditor"
+import TextureEditor from "./texture-editor/TextureEditor"
 import ControlPanel from "./ControlPanel"
 import Toolbar from "./Toolbar"
 import "../../assets/css/StyleStudio/viewer.css"
