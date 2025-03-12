@@ -24,11 +24,11 @@ export function StyleSearchBar() {
         <div className="stylesearch-container">
             {/* Search Bar */}
             <div className="stylesearch-bar">
-                <input 
-                    type="text" 
-                    placeholder="Search Designers"  
-                    className="stylesearch-input" 
-                    value={searchQuery} 
+                <input
+                    type="text"
+                    placeholder="Search Designers"
+                    className="stylesearch-input"
+                    value={searchQuery}
                     onChange={handleSearchChange}
                     aria-label="Search Designers"
                 />
@@ -40,19 +40,19 @@ export function StyleSearchBar() {
 //             <p className="stylesubtitle">These projects are highly rated by other clients</p>
 
 //             {/* Trend Cards */}
-//             <div className="trend-card-container">
-//                 {trendCards.map((card) => (
-//                     <div key={card.id} className="trend-card">
-//                         <img src={card.image} alt={card.title} className="trend-card-image" />
-//                         <div className="trend-card-content">
-//                             <h3>{card.title}</h3>
-//                             <p className="discount">{card.discount}</p>
-//                             <span className="brand">{card.brand}</span>
-                            
-//                         </div>
-//                     </div>
-//                 ))}
-//             </div>
+            <div className="trend-card-container">
+                {trendCards.map((card) => (
+                    <div key={card.id} className="trend-card">
+                        <img src={card.image} alt={card.title} className="trend-card-image" />
+                        <div className="trend-card-content">
+                            <h3>{card.title}</h3>
+                            <p className="discount">{card.discount}</p>
+                            <span className="brand">{card.brand}</span>
+
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
