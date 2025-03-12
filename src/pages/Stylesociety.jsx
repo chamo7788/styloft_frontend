@@ -5,6 +5,7 @@ import PostList from "../components/stylesociety/PostList";
 import AddPost from "../components/stylesociety/AddPost";
 import Feed from "../components/stylesociety/Feed";
 import StyleSearchBar from "../components/stylesociety/StyleSearchBar";
+import { TrendingCard } from "../components/stylesociety/TrendingCard";
 
 
 export default function Stylesociety() {
@@ -12,10 +13,10 @@ export default function Stylesociety() {
 
   return (
     <div>
+      <TrendingCard />
       <StyleSearchBar />
-      <PostList />
       <AddPost />
-     
+      <PostList />
       <Feed />
       
       

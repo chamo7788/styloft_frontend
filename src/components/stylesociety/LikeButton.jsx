@@ -89,7 +89,7 @@ function LikeButton({ post }) {
       {/* 🔹 Display Names Under the Like Button */}
       {likes.length > 0 && (
         <div className="like-names">
-          <strong>Liked by:</strong>{" "}
+          <strong></strong>{" "}
           {[...new Map(likes.map((like) => [like.userId, like])).values()]
             .slice(0, 2)
             .map((like, index) => (
@@ -101,6 +101,8 @@ function LikeButton({ post }) {
           {likes.length > 3 && <span> and {likes.length - 3} others</span>}
         </div>
       )}
+
+      
 
       {/* 🔹 Pop-up List of Likes */}
       {showLikes && (

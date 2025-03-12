@@ -27,31 +27,32 @@ export function StyleSearchBar() {
                 <input 
                     type="text" 
                     placeholder="Search Designers"  
-                    className="Style" 
+                    className="stylesearch-input" 
                     value={searchQuery} 
                     onChange={handleSearchChange}
+                    aria-label="Search Designers"
                 />
-                <Search className="sty" />
+                <Search className="stylesearch-icon" />
             </div>
 
-            {/* Section Title */}
-            <h1 className="styletop-projects">Top Projects You May Like</h1>
-            <p className="stylesubtitle">These projects are highly rated by other clients</p>
+//             {/* Section Title */}
+//             <h1 className="styletop-projects">Top Projects You May Like</h1>
+//             <p className="stylesubtitle">These projects are highly rated by other clients</p>
 
-            {/* Trend Cards */}
-            <div className="trend-card-container">
-                {trendCards.map((card) => (
-                    <div key={card.id} className="trend-card">
-                        <img src={card.image} alt={card.title} className="trend-card-image" />
-                        <div className="trend-card-content">
-                            <h3>{card.title}</h3>
-                            <p className="discount">{card.discount}</p>
-                            <span className="brand">{card.brand}</span>
+//             {/* Trend Cards */}
+//             <div className="trend-card-container">
+//                 {trendCards.map((card) => (
+//                     <div key={card.id} className="trend-card">
+//                         <img src={card.image} alt={card.title} className="trend-card-image" />
+//                         <div className="trend-card-content">
+//                             <h3>{card.title}</h3>
+//                             <p className="discount">{card.discount}</p>
+//                             <span className="brand">{card.brand}</span>
                             
-                        </div>
-                    </div>
-                ))}
-            </div>
+//                         </div>
+//                     </div>
+//                 ))}
+//             </div>
         </div>
     );
 }

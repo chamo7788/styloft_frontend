@@ -2,7 +2,7 @@
 .add-post-container {
   position: absolute;
   width: 58%;
-  top: 700px;
+  top: 1500px;
   max-width: 600px;
   margin: 20px auto 20px 1.5%;
   background-color: #fff;
@@ -64,7 +64,6 @@
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
-/* Post Options - LinkedIn Style */
 .post-options {
   display: flex;
   justify-content: space-around;
