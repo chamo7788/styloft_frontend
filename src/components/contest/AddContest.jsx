@@ -136,7 +136,6 @@ export function AddContestForm() {
   }
 
   const handleSubmit = async (e) => {
-<<<<<<< HEAD
     e.preventDefault()
     const user = JSON.parse(localStorage.getItem("currentUser"))
     if (!user || !user.uid) {
@@ -155,27 +154,6 @@ export function AddContestForm() {
       createdBy: user.uid,
     }
 
-=======
-    e.preventDefault();
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-  
-    if (!user || !user.uid) {
-      console.log("User not authenticated");
-      return;
-    }
-  
-    if (!formData.image) {
-      console.log("Image upload is not completed!");
-      alert("Please wait for the image to finish uploading before submitting.");
-      return;
-    }
-  
-    const contestData = {
-      ...formData,
-      createdBy: user.uid, // Add UID from localStorage to the form data
-    };
-  
->>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
     try {
       const response = await fetch("http://localhost:3000/contest", {
         method: "POST",
@@ -183,20 +161,12 @@ export function AddContestForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(contestData),
-<<<<<<< HEAD
       })
 
       const result = await response.json()
 
       showToast("Contest created!", "Your contest has been successfully created.", "success")
 
-=======
-      });
-  
-      const result = await response.json();
-      console.log("Form submitted:", result);
-  
->>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
       // Reset form after submission
       setFormData({
         title: "",
@@ -204,53 +174,12 @@ export function AddContestForm() {
         prize: "",
         deadline: "",
         image: "",
-<<<<<<< HEAD
       })
       setImagePreview(null)
       setDate(null)
-=======
-      });
-  
-      setImagePreview(null);
-    } catch (error) {
-      console.error("Error submitting contest:", error);
-    }
-  };
-  
-
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return; 
-  
-    setImagePreview(URL.createObjectURL(file)); 
-  
-    const imageData = new FormData();
-    imageData.append('file', file);
-    imageData.append('upload_preset', 'Styloft'); 
-  
-    try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dkonpzste/image/upload', {
-        method: 'POST',
-        body: imageData,
-      });
-  
-      const data = await response.json();
-      console.log("Upload response:", data); // Debugging line
-  
-      if (data.secure_url) {
-        setFormData((prevData) => ({
-          ...prevData,
-          image: data.secure_url, 
-        }));
-        console.log("Uploaded Image URL:", data.secure_url);
-      } else {
-        console.error("Image upload failed. Response:", data);
-      }
->>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
     } catch (error) {
       showToast("Submission error", "There was an error creating your contest. Please try again.", "error")
     }
-<<<<<<< HEAD
   }
 
   // Simple calendar component
@@ -328,12 +257,6 @@ export function AddContestForm() {
       </div>
     )
   }
-=======
-  };
-  
-  
-  
->>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
 
   return (
     <div className="container">
