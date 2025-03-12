@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
-import "../../assets/css/StyleMarket/buyNow.css";
-import defaultImage from "../../assets/images/default-placeholder.png"; // Ensure you have a fallback image
-import Buy from "./buy";
+"use client"
+
+import { useState } from "react"
+import { ArrowLeft, ShoppingBag, Minus, Plus } from "lucide-react"
+import Buy from "./buy"
 
 const BuyNow = ({ product, onBack }) => {
-  const [selectedSize, setSelectedSize] = useState("M");
-  const [quantity, setQuantity] = useState(1);
-  const sizes = ["XS", "S", "M", "L", "XL"];
+  const [selectedSize, setSelectedSize] = useState("M")
+  const [quantity, setQuantity] = useState(1)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const sizes = ["XS", "S", "M", "L", "XL"]
 
-  const [showOrderForm, setShowOrderForm] = useState(false); // Track visibility of order form
+  const [showOrderForm, setShowOrderForm] = useState(false)
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -18,18 +19,26 @@ const BuyNow = ({ product, onBack }) => {
     city: "",
     zipCode: "",
     phone: "",
-  });
+  })
 
-  const productImage = product.image || defaultImage; // Use product image or default fallback
+  // Use product image or default fallback
+  const defaultImage = "https://www.imghippo.com/i/QMsd7261qms.jpg"
+  const productImage = product.image || defaultImage
 
   const handleBuyNow = () => {
     console.log("Buying Now:", {
       product: product.name,
       size: selectedSize,
       quantity: quantity,
-    });
-    setShowOrderForm(true); // Show order form when "Buy Now" is clicked
-  };
+    })
+    setShowOrderForm(true)
+  }
+
+  const handleQuantityChange = (newQuantity) => {
+    if (newQuantity >= 1) {
+      setQuantity(newQuantity)
+    }
+  }
 
   if (showOrderForm) {
     return (
@@ -41,26 +50,33 @@ const BuyNow = ({ product, onBack }) => {
         setFormData={setFormData}
         setShowOrderForm={setShowOrderForm}
       />
-    );
+    )
   }
 
   return (
     <div className="buynow">
       <div className="buy-now-container">
         <button className="back-button" onClick={onBack}>
-          <ArrowLeft className="icon" /> Back to Products
+          <ArrowLeft size={18} /> Back to Products
         </button>
 
         <div className="buy-now-content">
           {/* Product Image */}
           <div className="product-image-container">
+            {!imageLoaded && (
+              <div className="image-placeholder">
+                <div className="spinner"></div>
+              </div>
+            )}
             <img
-              src={productImage}
+              src={productImage || "/placeholder.svg"}
               alt={product.name}
-              className="product-image"
+              className={`product-image ${imageLoaded ? "loaded" : ""}`}
+              onLoad={() => setImageLoaded(true)}
               onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = defaultImage; // Set default if error occurs
+                e.target.onerror = null
+                e.target.src = defaultImage
+                setImageLoaded(true)
               }}
             />
           </div>
@@ -79,6 +95,8 @@ const BuyNow = ({ product, onBack }) => {
                     key={size}
                     className={`size-button ${selectedSize === size ? "active" : ""}`}
                     onClick={() => setSelectedSize(size)}
+                    aria-label={`Select size ${size}`}
+                    aria-pressed={selectedSize === size}
                   >
                     {size}
                   </button>
@@ -91,29 +109,35 @@ const BuyNow = ({ product, onBack }) => {
               <h3>Quantity</h3>
               <div className="quantity-controls">
                 <button
-                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                  disabled={quantity <= 1}
+                  aria-label="Decrease quantity"
                 >
-                  -
+                  <Minus size={16} />
                 </button>
                 <input
                   type="number"
                   min="1"
                   value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e) => handleQuantityChange(Math.max(1, Number.parseInt(e.target.value) || 1))}
+                  aria-label="Quantity"
                 />
-                <button onClick={() => setQuantity((prev) => prev + 1)}>+</button>
+                <button onClick={() => handleQuantityChange(quantity + 1)} aria-label="Increase quantity">
+                  <Plus size={16} />
+                </button>
               </div>
             </div>
 
             {/* Buy Now Button */}
             <button className="buy-now-button" onClick={handleBuyNow}>
-              <ShoppingBag className="icon" /> Buy Now
+              <ShoppingBag size={18} /> Buy Now
             </button>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BuyNow;
+export default BuyNow
+
