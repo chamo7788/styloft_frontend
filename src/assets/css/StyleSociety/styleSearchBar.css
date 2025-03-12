@@ -62,7 +62,6 @@
     transform: scale(1.2);
     color: #6a9be0;
   }
-
   /* Responsive Design */
   @media screen and (max-width: 768px) {
     .stylesearch-bar {
@@ -89,6 +88,5 @@
     .stylesubtitle {
       font-size: 14px;
     }
-  
 }
   

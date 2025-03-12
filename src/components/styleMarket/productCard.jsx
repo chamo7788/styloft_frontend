@@ -63,4 +63,3 @@ const ProductCard = ({ product, onExplore }) => {
 }
 
 export default ProductCard
-

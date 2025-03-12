@@ -17,8 +17,6 @@ export default function Stylesociety() {
       <StyleSearchBar />
       <AddPost />
       <PostList />
-      
-     
       <Feed />
       
       
