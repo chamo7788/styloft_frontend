@@ -5,25 +5,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faImage, faSmile, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import EmojiPicker from "emoji-picker-react";
 import "../../assets/css/StyleSociety/CreatePost.css";
-import Dp from "../../assets/images/s-societybackground.jpg"; // Default profile image (can be updated from user data)
-import { Link } from "react-router-dom"; 
+import Dp from "../../assets/images/s-societybackground.jpg"; // Default profile image
+import { Link } from "react-router-dom";
 
 function CreatePost({ onClose, setPosts }) {
-  const [postContent, setPostContent] = useState('');
+  const [postContent, setPostContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileUrls, setFileUrls] = useState([]);
-  const [selectedPrivacy, setSelectedPrivacy] = useState('Friend');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // Emoji Picker State
-  const [currentUser, setCurrentUser] = useState(null); // New state for current user
+  const [selectedPrivacy, setSelectedPrivacy] = useState("Friend");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
-    setCurrentUser(user); // Get user data from localStorage
+    setCurrentUser(user);
   }, []);
 
   const handlePostClick = async () => {
-    if (!postContent) return;
+    if (!postContent && fileUrls.length === 0) return;
     setIsPosting(true);
 
     try {
@@ -32,15 +33,15 @@ function CreatePost({ onClose, setPosts }) {
         files: fileUrls,
         privacy: selectedPrivacy,
         createdAt: serverTimestamp(),
-        userName: currentUser?.displayName || "Anonymous",  // Use user name from auth
-        userProfile: currentUser?.photoURL || Dp,  // Use user profile photo or default image
+        userName: currentUser?.displayName || "Anonymous",
+        userProfile: currentUser?.photoURL || Dp,
       };
 
       const docRef = await addDoc(collection(db, "posts"), newPost);
 
-      setPosts(prevPosts => [
+      setPosts((prevPosts) => [
         { id: docRef.id, ...newPost, createdAt: new Date() },
-        ...prevPosts
+        ...prevPosts,
       ]);
 
       setPostContent("");
@@ -54,20 +55,52 @@ function CreatePost({ onClose, setPosts }) {
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const files = Array.from(event.target.files);
     if (files.length + selectedFiles.length > 10) {
-      alert('You can only upload a maximum of 10 files.');
+      alert("You can only upload a maximum of 10 files.");
       return;
     }
-    const validFiles = files.filter(file => file.type.startsWith('image/') || file.type.startsWith('video/'));
-    setSelectedFiles(prevFiles => [...prevFiles, ...validFiles]);
-    setFileUrls(prevUrls => [...prevUrls, ...validFiles.map(file => URL.createObjectURL(file))]);
+
+    const validFiles = files.filter(
+      (file) => file.type.startsWith("image/") || file.type.startsWith("video/")
+    );
+
+    setIsPosting(true);
+
+    try {
+      const uploadedUrls = await Promise.all(validFiles.map(uploadToCloudinary));
+      setFileUrls((prevUrls) => [...prevUrls, ...uploadedUrls.filter((url) => url)]);
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    } finally {
+      setIsPosting(false);
+    }
   };
 
-  useEffect(() => {
-    return () => fileUrls.forEach(url => URL.revokeObjectURL(url));
-  }, [fileUrls]);
+  const uploadToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "Styloft"); // Replace with your actual preset
+
+    try {
+      const response = await fetch("https://api.cloudinary.com/v1_1/ds0xdh85j/image/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.secure_url) {
+        return data.secure_url;
+      } else {
+        throw new Error("Upload failed");
+      }
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      return null;
+    }
+  };
 
   const handleEmojiClick = (emojiData) => {
     setPostContent((prev) => prev + emojiData.emoji);
@@ -82,19 +115,19 @@ function CreatePost({ onClose, setPosts }) {
             <span className="clossicon">Close</span>
           </button>
           <span className="header">Create Post</span>
-          <button className={`PostButton ${isPosting ? 'loading' : ''}`} onClick={handlePostClick} disabled={isPosting}>
-            {isPosting ? 'Posting...' : <FontAwesomeIcon icon={faPaperPlane} />}
+          <button className={`PostButton ${isPosting ? "Posting" : ""}`} onClick={handlePostClick} disabled={isPosting}>
+            {isPosting ? "loading..." : <FontAwesomeIcon icon={faPaperPlane} />}
           </button>
         </div>
 
         <div className="createTop">
           {currentUser && (
             <div className="current-user-info">
-              {/* Wrap the profile image in a Link to navigate to the Profile page */}
               <Link to="/profile">
                 <img
-                  src={currentUser.photoURL || Dp} // Use current user's photoURL or fallback
+                  src={currentUser.photoURL || Dp}
                   className="createImage"
+                  alt="User Profile"
                 />
               </Link>
               <span className="createUserName">{currentUser.displayName}</span>
@@ -117,7 +150,7 @@ function CreatePost({ onClose, setPosts }) {
           <div className="uploadedFiles">
             {fileUrls.map((fileUrl, index) => (
               <div key={index} className="filePreview1">
-                {fileUrl.endsWith('.mp4') ? (
+                {fileUrl.endsWith(".mp4") ? (
                   <video controls className="fileVideo">
                     <source src={fileUrl} type="video/mp4" />
                     Your browser does not support the video tag.
@@ -134,7 +167,14 @@ function CreatePost({ onClose, setPosts }) {
           <label htmlFor="file-input" className="uploadButton">
             <FontAwesomeIcon icon={faImage} className="PIcon" />
           </label>
-          <input type="file" id="file-input" style={{ display: 'none' }} accept="image/*,video/*" multiple onChange={handleFileChange} />
+          <input
+            type="file"
+            id="file-input"
+            style={{ display: "none" }}
+            accept="image/*,video/*"
+            multiple
+            onChange={handleFileChange}
+          />
 
           <label onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
             <FontAwesomeIcon icon={faSmile} className="emojiIcon" />
