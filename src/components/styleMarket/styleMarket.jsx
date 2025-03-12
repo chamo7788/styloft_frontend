@@ -1,4 +1,13 @@
+<<<<<<< HEAD
 "use client"
+=======
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setProducts } from "../../redux/productSlice.js";
+import ProductCard from "./productCard.jsx";
+import BuyNow from "./buyNow.jsx";
+import "../../assets/css/StyleMarket/styleMarket.css";
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
 
 import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
@@ -11,6 +20,7 @@ import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 const ITEMS_PER_PAGE = 8
 
 const StyleMarket = () => {
+<<<<<<< HEAD
   const dispatch = useDispatch()
   const products = useSelector((state) => state.products.filteredProducts)
 
@@ -33,6 +43,28 @@ const StyleMarket = () => {
         setIsLoading(false)
       }
     }
+=======
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.products.filteredProducts);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // ✅ Fetch products from the backend when the component loads
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/shop"); // Replace with actual backend URL
+        const data = await response.json();
+        dispatch(setProducts(data)); // Store fetched data in Redux
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, [dispatch]);
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
 
     fetchProducts()
   }, [dispatch])
@@ -48,6 +80,7 @@ const StyleMarket = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+<<<<<<< HEAD
   const handlePageChange = (newPage) => {
     if (newPage === currentPage) return
 
@@ -64,6 +97,8 @@ const StyleMarket = () => {
     }
   }
 
+=======
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
   return (
     <div className="style-market-page">
       <div className="container">
@@ -73,6 +108,7 @@ const StyleMarket = () => {
           <>
             <h2>New Arrivals</h2>
 
+<<<<<<< HEAD
             {isLoading ? (
               <div className="loading-container">
                 <Loader2 className="loading-spinner" />
@@ -99,6 +135,18 @@ const StyleMarket = () => {
                       <ChevronLeft size={18} />
                       <span>Previous</span>
                     </button>
+=======
+            {/* Product Grid */}
+            <div className="product-grid">
+              {currentProducts.map((product) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  onExplore={() => handleExplore(product)} 
+                />
+              ))}
+            </div>
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
 
                     <div className="pagination-info">
                       <span>

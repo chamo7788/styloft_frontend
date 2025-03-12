@@ -8,8 +8,13 @@ export function AddShopForm() {
     name: "",
     description: "",
     price: "",
+<<<<<<< HEAD
     image: "", // Image URL from Cloudinary
   })
+=======
+    image: "", // Image URL from ImgHippo
+  });
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
 
   const [imagePreview, setImagePreview] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -23,6 +28,7 @@ export function AddShopForm() {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+<<<<<<< HEAD
     }))
   }
 
@@ -96,6 +102,13 @@ export function AddShopForm() {
       showToast("Upload error", "Error uploading image. Check your network connection.", "error")
     } finally {
       setUploading(false)
+=======
+    }));
+
+    // If updating image field, update preview
+    if (name === "image") {
+      setImagePreview(value);
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
     }
   }
 
@@ -122,6 +135,7 @@ export function AddShopForm() {
   }
 
   const handleSubmit = async (e) => {
+<<<<<<< HEAD
     e.preventDefault()
     setSubmitStatus(null)
 
@@ -131,6 +145,17 @@ export function AddShopForm() {
       showToast("Form incomplete", "Please fill all fields before submitting.", "error")
       return
     }
+=======
+    e.preventDefault();
+
+    // ✅ Check if all fields are filled
+    if (!formData.name || !formData.description || !formData.price || !formData.image) {
+      alert("Please fill all fields before submitting.");
+      return;
+    }
+
+    console.log("Submitting Form Data:", formData); // Debugging
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
 
     try {
       const response = await fetch("http://localhost:3000/shop", {
@@ -142,6 +167,7 @@ export function AddShopForm() {
       const result = await response.json()
 
       if (response.ok) {
+<<<<<<< HEAD
         setSubmitStatus("success")
         showToast("Success!", "Shop created successfully.", "success")
 
@@ -151,6 +177,13 @@ export function AddShopForm() {
 
         // Clear success status after 3 seconds
         setTimeout(() => setSubmitStatus(null), 3000)
+=======
+        alert("Shop Created Successfully!");
+
+        // ✅ Reset the form
+        setFormData({ name: "", description: "", price: "", image: "" });
+        setImagePreview(null);
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
       } else {
         setSubmitStatus("error")
         setErrorMessage(`Failed to create shop: ${result.message}`)
@@ -222,6 +255,7 @@ export function AddShopForm() {
         </div>
 
         <div className="form-group">
+<<<<<<< HEAD
           <label className="form-label">Shop Image</label>
           <div
             className={`image-upload-area ${dragActive ? "active" : ""}`}
@@ -262,6 +296,21 @@ export function AddShopForm() {
               <p>{errorMessage}</p>
             </div>
           )}
+=======
+          <label htmlFor="image" className="form-label">
+            Image URL (Upload to ImgHippo)
+          </label>
+          <input
+            type="text"
+            id="image"
+            name="image"
+            placeholder="Paste ImgHippo image link here"
+            value={formData.image}
+            onChange={handleChange}
+            className="form-input"
+            required
+          />
+>>>>>>> 1e2660c644ec86990fb1374cf6e2d197749dcd46
         </div>
 
         {/* Image Preview */}
