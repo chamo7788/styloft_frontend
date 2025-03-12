@@ -310,3 +310,123 @@
   background-color: white;
 }
 
+/* Add to your component CSS file */
+.logo-upload-label {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #4285f4;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.logo-upload-label:hover {
+  background-color: #3367d6;
+}
+
+.logo-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.logo-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.logo-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-control-label {
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logo-range {
+  flex: 1;
+}
+
+.logo-value {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.logo-add-button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background-color 0.2s;
+}
+
+.logo-add-button:hover {
+  background-color: #3367d6;
+}
+
+.logo-add-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.logo-remove-button {
+  background-color: #ea4335;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.logo-remove-button:hover {
+  background-color: #d33426;
+}
+
+.logo-advanced-controls {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.logo-control-checkbox {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo-control-checkbox input {
+  margin-right: 8px;
+}
+
+.logo-manipulation-info {
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  font-size: 13px;
+}
+
+.logo-manipulation-info p {
+  margin: 4px 0;
+  color: #555;
+}
+
