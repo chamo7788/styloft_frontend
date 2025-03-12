@@ -35,6 +35,12 @@ const Profile = () => {
     if (user.aboutText) {
       setAboutText(user.aboutText);
     }
+    if(user.profession) {
+      setProfession(user.profession);
+    }
+    if (user.fetchUserProfile) {
+      fetchUserProfile();
+    }
 
     if (user && user.uid) {
       fetch(`http://localhost:3000/design/user/${user.uid}`)
@@ -139,7 +145,7 @@ const Profile = () => {
     setModalImage("");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     let valid = true;
     if (!name.trim()) {
       setNameError("Name cannot be empty");
@@ -147,18 +153,22 @@ const Profile = () => {
     } else {
       setNameError("");
     }
-
+  
     if (!profession.trim()) {
       setProfessionError("Profession cannot be empty");
       valid = false;
     } else {
       setProfessionError("");
     }
-
+  
     if (valid) {
       setIsEditingAbout(false);
+      await updateAboutText(aboutText);
+      await updateProfileInfo(name, profession);
+      await fetchUserProfile(); // Fetch the updated user profile
     }
   };
+  
 
   const updateProfilePicture = async (imageUrl) => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
@@ -183,6 +193,78 @@ const Profile = () => {
     } catch (error) {
       console.error("Error updating profile picture:", error);
     }
+  };
+
+  const updateAboutText = async (aboutText) => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user || !user.uid) return;
+  
+    try {
+      const response = await fetch("http://localhost:3000/user/updateAbout", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: user.uid, aboutText }),
+      });
+  
+      if (response.ok) {
+        user.aboutText = aboutText;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating about text:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error updating about text:", error);
+    }
+  };
+
+  const updateProfileInfo = async (displayName, profession) => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user || !user.uid) return;
+  
+    try {
+      const response = await fetch("http://localhost:3000/user/updateProfileInfo", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: user.uid, displayName, profession }),
+      });
+  
+      if (response.ok) {
+        user.displayName = displayName;
+        user.profession = profession;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating profile info:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error updating profile info:", error);
+    }
+
+    const fetchUserProfile = async () => {
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      if (!user || !user.uid) return;
+    
+      try {
+        const response = await fetch(`http://localhost:3000/user/${user.uid}`);
+        if (response.ok) {
+          const updatedUser = await response.json();
+          setName(updatedUser.displayName);
+          setProfession(updatedUser.profession);
+          setAboutText(updatedUser.aboutText);
+          setProfilePic(updatedUser.photoURL);
+          localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+        } else {
+          console.error("Error fetching updated user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching updated user profile:", error);
+      }
+    };
   };
 
   return (
