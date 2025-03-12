@@ -31,6 +31,7 @@ const ControlPanel = ({
   onRemoveText,
   logoElements,
   selectedLogoIndex,
+  onLogoSelect,
   onAddLogo,
   onRemoveLogo,
   onUpdateLogo,
@@ -161,6 +162,8 @@ const ControlPanel = ({
               logoElements={logoElements}
               onRemoveLogo={onRemoveLogo}
               onUpdateLogo={onUpdateLogo}
+              selectedLogoIndex={selectedLogoIndex}
+              onLogoSelect={onLogoSelect}
             />
 
             {selectedLogoIndex !== null && (
