@@ -1,5 +1,5 @@
 /* Main Container */
-.stylesearch-container {
+/*.stylesearch-container {
     position: relative;
     width: 100%;
     min-height: 100vh;
@@ -13,10 +13,13 @@
     padding: 50px 20px;
     color: white;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  }
+  }*/
   
   /* Search Bar */
   .stylesearch-bar {
+    position: absolute;
+    bottom: -900px; /* Adjust for spacing */
+    left: 20px; /* Align to the left */
     display: flex;
     align-items: center;
     background: white;
@@ -25,7 +28,6 @@
     width: 500px;
     max-width: 90%;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    margin-bottom: 30px;
     transition: all 0.3s ease;
   }
   
@@ -60,108 +62,7 @@
     transform: scale(1.2);
     color: #6a9be0;
   }
-  
-  /* Headings */
-  .styletop-projects {
-    font-size: 32px;
-    font-weight: 700;
-    margin-top: 30px;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .stylesubtitle {
-    font-size: 18px;
-    opacity: 0.9;
-    margin-bottom: 40px;
-    max-width: 600px;
-  }
-  
-  /* Trend Cards */
-  .trend-card-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 30px;
-    width: 100%;
-    max-width: 1200px;
-  }
-  
-  .trend-card {
-    width: 300px;
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-  }
-  
-  .trend-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  }
-  
-  .trend-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-  
-  .trend-card:hover img {
-    transform: scale(1.05);
-  }
-  
-  .trend-card-content {
-    padding: 20px;
-    text-align: left;
-    color: #333;
-  }
-  
-  .trend-card-content h3 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #222;
-  }
-  
-  .discount {
-    font-size: 18px;
-    font-weight: 700;
-    color: #ff6b00;
-    margin-bottom: 5px;
-  }
-  
-  .brand {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
-  .shop-now {
-    display: block;
-    width: 100%;
-    background: #ffcc00;
-    color: #222;
-    border: none;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-    margin-top: 15px;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .shop-now:hover {
-    background: #ff9900;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
-  }
-  
+
   /* Responsive Design */
   @media screen and (max-width: 768px) {
     .stylesearch-bar {
@@ -178,10 +79,7 @@
       padding: 0 20px;
     }
   
-    .trend-card {
-      width: 280px;
-    }
-  }
+}
   
   @media screen and (max-width: 480px) {
     .styletop-projects {
@@ -192,14 +90,5 @@
       font-size: 14px;
     }
   
-    .trend-card-container {
-      gap: 20px;
-    }
-  
-    .trend-card {
-      width: 100%;
-      max-width: 320px;
-    }
-  }
-  
+}
   

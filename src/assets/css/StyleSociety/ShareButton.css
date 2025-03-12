@@ -14,13 +14,13 @@
   border: none;
   cursor: pointer;
   font-size: 22px;
-  color: #2ecc71;
+  color: #101110;
   transition: transform 0.2s ease-in-out, color 0.2s;
 }
 
 .share-button:hover {
   transform: scale(1.1);
-  color: #27ae60;
+  color: #101110;
 }
 
 .share-button.shared {
