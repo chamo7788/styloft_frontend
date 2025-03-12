@@ -14,13 +14,13 @@ const Profile = () => {
   const [modalImage, setModalImage] = useState("");
   const [isEditingAbout, setIsEditingAbout] = useState(false);
   const [aboutText, setAboutText] = useState("Experienced consultant with expertise in fintech and business development.");
-  const [name, setName] = useState("");
+  const [name, setName] = useState("User");
   const [profession, setProfession] = useState("Advisor and Consultant at Stripe Inc.");
   const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [nameError, setNameError] = useState("");
   const [professionError, setProfessionError] = useState("");
   const [designs, setDesigns] = useState([]);
-  
   const [selectedImage, setSelectedImage] = useState(null);
   const [crop, setCrop] = useState(null);
   const [imageType, setImageType] = useState(""); 
@@ -35,6 +35,7 @@ const Profile = () => {
         setProfilePic(currentUser.photoURL || defaultProfilePic);
         setProfession("Advisor and Consultant at Stripe Inc."); // Can be fetched from user data if needed
         fetchFollowersCount(currentUser.email);
+        fetchFollowingCount(currentUser.email);
         fetchUserDesigns(currentUser.uid);
       } else {
         setUser(null);
@@ -52,6 +53,19 @@ const Profile = () => {
 
     const unsubscribe = onSnapshot(followersRef, (snapshot) => {
       setFollowersCount(snapshot.size);
+    });
+
+    return () => unsubscribe();
+  };
+
+  const fetchFollowingCount = async (email) => {
+    if (!email) return;
+
+    const userDocRef = doc(db, "users", email);
+    const followingRef = collection(userDocRef, "following");
+
+    const unsubscribe = onSnapshot(followingRef, (snapshot) => {
+      setFollowingCount(snapshot.size);
     });
 
     return () => unsubscribe();
@@ -237,7 +251,8 @@ const Profile = () => {
                   <p>{profession}</p>
                 </>
               )}
-              <p className="followers">| {followersCount} followers</p>
+              <p className="followers">{followersCount} Followers</p>
+              <p className="following">{followingCount} Following</p>
             </div>
           </div>
         </div>
@@ -301,5 +316,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-
