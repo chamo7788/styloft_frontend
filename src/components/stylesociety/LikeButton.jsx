@@ -91,7 +91,7 @@ function LikeButton({ post }) {
         <div className="like-names">
           <strong>Liked by:</strong>{" "}
           {[...new Map(likes.map((like) => [like.userId, like])).values()]
-            .slice(0, 3)
+            .slice(0, 2)
             .map((like, index) => (
               <span key={like.userId}>
                 {like.userName}
