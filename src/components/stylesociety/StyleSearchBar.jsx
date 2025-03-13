@@ -1,28 +1,77 @@
-import React, { useState } from "react";
-import { Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, X } from "lucide-react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import { useNavigate } from "react-router-dom";
 import "../../assets/css/StyleSociety/styleSearchBar.css";
-
-// Importing images correctly
-import trend1 from "../../assets/images/avatar1.jpg";
-import trend2 from "../../assets/images/avatar2.jpg";
-import trend3 from "../../assets/images/avatar3.jpg";
-
-const trendCards = [
-    { id: 1, image: trend1, title: "Unlimited" },
-    { id: 2, image: trend2, title: "Exclusive Offer" },
-    { id: 3, image: trend3, title: "Limited Time Deal" },
-];
 
 export function StyleSearchBar() {
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isResultVisible, setIsResultVisible] = useState(false);
+    const [feedData, setFeedData] = useState([]);
+
+    const navigate = useNavigate();
+
+    // Fetch user feed data from Firestore
+    useEffect(() => {
+        const fetchFeed = async () => {
+            try {
+                const feedRef = collection(db, "feed");
+                const querySnapshot = await getDocs(feedRef);
+                const data = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setFeedData(data);
+            } catch (error) {
+                console.error("Error fetching feed data:", error);
+            }
+        };
+
+        fetchFeed();
+    }, []);
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
     };
 
+    const handleSearch = () => {
+        if (!searchQuery.trim()) {
+            setErrorMessage("Please enter a name to search.");
+            setSearchResults([]);
+            return;
+        }
+
+        const results = feedData.filter((item) =>
+            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        if (results.length > 0) {
+            setSearchResults(results);
+            setErrorMessage("");
+            setIsResultVisible(true);
+        } else {
+            setSearchResults([]);
+            setErrorMessage("User not found.");
+            setIsResultVisible(true);
+        }
+    };
+
+    const handleProfileClick = (userId) => {
+        navigate(`/Profile/${userId}`); // Navigate to the profile page with userId
+        setIsResultVisible(false);
+        setSearchQuery("");
+    };
+
+    const handleClose = () => {
+        setIsResultVisible(false);
+        setSearchQuery("");
+    };
+
     return (
         <div className="stylesearch-container">
-            {/* Search Bar */}
             <div className="stylesearch-bar">
                 <input
                     type="text"
@@ -32,27 +81,43 @@ export function StyleSearchBar() {
                     onChange={handleSearchChange}
                     aria-label="Search Designers"
                 />
-                <Search className="stylesearch-icon" />
+                <button className="stylesearch-button" onClick={handleSearch}>
+                    <Search className="stylesearch-icon" />
+                </button>
             </div>
 
-//             {/* Section Title */}
-//             <h1 className="styletop-projects">Top Projects You May Like</h1>
-//             <p className="stylesubtitle">These projects are highly rated by other clients</p>
-
-//             {/* Trend Cards */}
-            <div className="trend-card-container">
-                {trendCards.map((card) => (
-                    <div key={card.id} className="trend-card">
-                        <img src={card.image} alt={card.title} className="trend-card-image" />
-                        <div className="trend-card-content">
-                            <h3>{card.title}</h3>
-                            <p className="discount">{card.discount}</p>
-                            <span className="brand">{card.brand}</span>
-
+            {isResultVisible && (
+                <div className="search-result-container">
+                    {searchResults.length > 0 ? (
+                        searchResults.map((user) => (
+                            <div 
+                                key={user.id}
+                                className="search-result"
+                                onClick={() => handleProfileClick(user.id)} 
+                                style={{ cursor: "pointer" }}
+                            >
+                                <img
+                                    src={user.avatar || "/dp.jpg"}
+                                    alt="avatar"
+                                    className="search-result-avatar"
+                                />
+                                <div className="search-result-info">
+                                    <p>{user.name}</p>
+                                    <p className="search-result-email">{user.email}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="no-result">
+                            <p>{errorMessage}</p>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    )}
+
+                    <button className="close-button" onClick={handleClose}>
+                        <X className="close-icon" />
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
