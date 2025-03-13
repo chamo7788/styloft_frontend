@@ -1,7 +1,7 @@
 .post-list {
   position: relative;
   width: 52%;
-  margin: 290px auto 200px 1.5%;
+  margin: 50px auto 60px 1.5%;
   background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
@@ -21,7 +21,7 @@
   border-radius: 8px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08),
               0 2px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   word-break: break-word;
   position: relative;
   transition: box-shadow 0.2s ease;
