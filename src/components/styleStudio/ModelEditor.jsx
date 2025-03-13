@@ -5,8 +5,8 @@ import ModelViewer from "./ModelViewer"
 import TextureEditor from "./texture-editor/TextureEditor"
 import ControlPanel from "./ControlPanel"
 import Toolbar from "./Toolbar"
-import "../../assets/css/StyleStudio/viewer.css"
 import "../../assets/css/StyleStudio/text-editor.css"
+import "../../assets/css/StyleStudio/main.css"
 
 // Move constants outside component to prevent recreation on each render
 const models = {

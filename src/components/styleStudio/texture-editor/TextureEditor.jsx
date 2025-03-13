@@ -19,9 +19,8 @@ const TextureEditor = ({
   setCanvasTextures,
   setTextures,
   logoElements,
-  // Remove this line if it exists:
-  // logoSettings,
   onLogoSettingsChange,
+  onClose,
 }) => {
   const canvasRef = useRef(null)
   const fabricCanvasRef = useRef(null)
@@ -577,16 +576,25 @@ const initializeCanvas = () => {
 
   return (
     <div className="texture-editor-container">
-      <EditorToolbar
-        drawingMode={drawingMode}
-        setDrawingMode={setDrawingMode}
-        handleCanvasUndo={handleCanvasUndo}
-        handleCanvasRedo={handleCanvasRedo}
-        handleClearCanvas={handleClearCanvas}
-        updateTextureFromCanvas={updateTextureFromCanvas} // Pass the function here
-        canUndo={historyIndex[selectedPart] > 0}
-        canRedo={historyIndex[selectedPart] < (canvasHistory[selectedPart]?.length || 1) - 1}
-      />
+      <div className="texture-editor-toolbar">
+        <EditorToolbar
+          drawingMode={drawingMode}
+          setDrawingMode={setDrawingMode}
+          handleCanvasUndo={handleCanvasUndo}
+          handleCanvasRedo={handleCanvasRedo}
+          handleClearCanvas={handleClearCanvas}
+          updateTextureFromCanvas={updateTextureFromCanvas} // Pass the function here
+          canUndo={historyIndex[selectedPart] > 0}
+          canRedo={historyIndex[selectedPart] < (canvasHistory[selectedPart]?.length || 1) - 1}
+        />
+        <button 
+          className="texture-editor-tool" 
+          onClick={onClose} 
+          data-tooltip="Close Editor"
+        >
+          <span>✕</span>
+        </button>
+      </div>
       
       <div className="texture-editor-canvas-container">
         <div ref={canvasRef} className="texture-editor-canvas-wrapper" />
