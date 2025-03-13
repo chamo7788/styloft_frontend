@@ -1,5 +1,6 @@
 "use client"
 import { Upload, Trash2, Edit2 } from "lucide-react"
+import AILogoGenerator from "./AILogoGenerator" // Import the new component
 
 const LogoUploader = ({ onAddLogo, logoElements, onRemoveLogo, onUpdateLogo, selectedLogoIndex, onLogoSelect }) => {
   const handleFileChange = (event) => {
@@ -37,9 +38,39 @@ const LogoUploader = ({ onAddLogo, logoElements, onRemoveLogo, onUpdateLogo, sel
     }
   }
 
+  const handleAILogoGenerated = (logoUrl) => {
+    // Create an image to get dimensions
+    const img = new Image()
+    img.onload = () => {
+      // Calculate aspect ratio
+      const aspectRatio = img.width / img.height
+      let width = 100
+      let height = 100
+
+      // Maintain aspect ratio
+      if (aspectRatio > 1) {
+        height = width / aspectRatio
+      } else {
+        width = height * aspectRatio
+      }
+
+      onAddLogo({
+        image: logoUrl,
+        x: 100, // Default position
+        y: 100,
+        width: width, 
+        height: height,
+        rotation: 0,
+      })
+    }
+    img.src = logoUrl
+  }
+
   return (
     <div className="logo-uploader">
       <h3 className="logo-uploader-title">Logo Elements</h3>
+      
+      {/* Existing upload button */}
       <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} id="logo-upload" />
       <label htmlFor="logo-upload" className="logo-upload-button">
         <Upload size={16} />
