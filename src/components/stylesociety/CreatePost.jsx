@@ -13,7 +13,6 @@ function CreatePost({ onClose, setPosts }) {
   const [isPosting, setIsPosting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileUrls, setFileUrls] = useState([]);
-  const [selectedPrivacy, setSelectedPrivacy] = useState("Friend");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,7 +30,6 @@ function CreatePost({ onClose, setPosts }) {
       const newPost = {
         text: postContent,
         files: fileUrls,
-        privacy: selectedPrivacy,
         createdAt: serverTimestamp(),
         userName: currentUser?.displayName || "Anonymous",
         userProfile: currentUser?.photoURL || Dp,
@@ -179,10 +177,6 @@ function CreatePost({ onClose, setPosts }) {
           <label onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
             <FontAwesomeIcon icon={faSmile} className="emojiIcon" />
           </label>
-
-          <label>
-            <FontAwesomeIcon icon={faMapMarkerAlt} className="locationIcon" />
-          </label>
         </div>
 
         {showEmojiPicker && (
@@ -196,3 +190,6 @@ function CreatePost({ onClose, setPosts }) {
 }
 
 export default CreatePost;
+
+
+
