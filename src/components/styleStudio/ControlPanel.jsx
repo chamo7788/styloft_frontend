@@ -8,6 +8,7 @@ import FileUploader from "./FileUploader"
 import LogoUploader from "./LogoUploader"
 import LogoPositionControls from "./LogoPositionControls"
 import LightingControls from "./LightingControls"
+import AITextureGenerator from "./AITextureGenerator" // Import the new component
 
 const ControlPanel = ({
   activeTab,
@@ -94,12 +95,22 @@ const ControlPanel = ({
             <div className="sample-materials">
               <h3>Sample Materials</h3>
               <div className="material-grid">
-                {Array.from({ length: 5 }).map((_, index) => (
+
+                {[
+                  'Fabrics-Background-PNG-Image.png',
+                  'Fabrics-PNG-Images-HD.png',
+                  'Fabrics-PNG-Photo-Image.png',
+                  'Fabrics-Transparent-Background.png'
+                ].map((imageName, index) => (
                   <div
                     key={index}
                     className="material-sample"
-                    style={{ backgroundImage: `url(/materials/material${index + 1}.jpg)` }}
-                    onClick={() => onMaterialChange(`/materials/material${index + 1}.jpg`)}
+                    style={{ 
+                      backgroundImage: `url(/src/assets/images/StyleStudio/${imageName})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
+                    onClick={() => onMaterialChange(`/src/assets/images/StyleStudio/${imageName}`)}
                   />
                 ))}
               </div>
