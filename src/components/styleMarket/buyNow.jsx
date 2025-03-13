@@ -140,4 +140,3 @@ const BuyNow = ({ product, onBack }) => {
 }
 
 export default BuyNow
-

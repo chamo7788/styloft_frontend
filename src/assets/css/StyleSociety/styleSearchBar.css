@@ -1,70 +1,92 @@
-.stylesearch-container {
-    position: absolute;
+/* Main Container */
+/*.stylesearch-container {
+    position: relative;
     width: 100%;
-    height: 100%;
-    background-image: url("../../images/s-societybackground.jpg");
+    min-height: 100vh;
+    background: linear-gradient(135deg, #82adee, #6a9be0);
     background-size: cover;
     background-position: center;
-    z-index: 10;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; 
-    justify-content: flex-start;
-    color: white;
-    text-align: left;
+    align-items: center;
+    text-align: center;
     padding: 50px 20px;
-}
-
-/* Search Bar */
-.stylesearch-bar {
+    color: white;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }*/
+  
+  /* Search Bar */
+  .stylesearch-bar {
+    position: absolute;
+    bottom: -900px; /* Adjust for spacing */
+    left: 20px; /* Align to the left */
     display: flex;
     align-items: center;
     background: white;
-    border-radius: 12px;
-    padding: 1px 15px;
-    width: 350px;
-    position: absolute;
-    top: 75px; /* Positioned 10px from the top */
-    left: 18px; /* Left aligned */
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease-in-out;
-}
-
-.stylesearch-bar input {
+    border-radius: 50px;
+    padding: 8px 20px;
+    width: 500px;
+    max-width: 90%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+  }
+  
+  .stylesearch-bar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .stylesearch-bar input {
     flex: 1;
     border: none;
     outline: none;
-    padding: 10px;
+    padding: 12px;
     font-size: 16px;
-    border-radius: 6px;
     background: transparent;
     color: #333;
-}
-
-.stylesearch-bar input::placeholder {
+  }
+  
+  .stylesearch-bar input::placeholder {
     color: #888;
-}
-
-.stylesearch-bar .sty {
+    font-weight: 300;
+  }
+  
+  .stylesearch-bar .sty {
     color: #333;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
+    font-size: 20px;
+  }
+  
+  .stylesearch-bar .sty:hover {
+    transform: scale(1.2);
+    color: #6a9be0;
+  }
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .stylesearch-bar {
+      width: 90%;
+      padding: 6px 15px;
+    }
+  
+    .styletop-projects {
+      font-size: 28px;
+    }
+  
+    .stylesubtitle {
+      font-size: 16px;
+      padding: 0 20px;
+    }
+  
 }
-
-.stylesearch-bar .sty:hover {
-    transform: scale(1.1);
+  
+  @media screen and (max-width: 480px) {
+    .styletop-projects {
+      font-size: 24px;
+    }
+  
+    .stylesubtitle {
+      font-size: 14px;
+    }
 }
-
-/* Headings */
-.styletop-projects {
-    font-size: 26px;
-    font-weight: bold;
-    margin-top: 80px; /* Adjusting to align below the search bar */
-    margin-left: 2px;
-}
-
-.stylesubtitle {
-    font-size: 16px;
-    margin-left: 2px;
-    opacity: 0.8;
-}
+  

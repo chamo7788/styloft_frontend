@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../firebaseConfig";
-import { collection, addDoc, doc, setDoc, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, query, where, getDocs, deleteDoc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "../../assets/css/StyleSociety/Feed.css";
 import Dp from "../../assets/images/s-societybackground.jpg"; // Default avatar
 
-const Feed = ({ updateFollowingCount }) => {
+const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
   const [notifications, setNotifications] = useState([]);
   const [followed, setFollowed] = useState({});
   const [hiddenItems, setHiddenItems] = useState({});
   const [user, setUser] = useState(null);
 
+  // Track the logged-in user and add them to the feed
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -24,6 +25,7 @@ const Feed = ({ updateFollowingCount }) => {
     return () => unsubscribe();
   }, []);
 
+  // Real-time feed listener excluding the logged-in user
   useEffect(() => {
     if (!user) return;
 
@@ -43,8 +45,10 @@ const Feed = ({ updateFollowingCount }) => {
     return () => unsubscribe();
   }, [user]);
 
+  // Add user to the feed only if their email is not already present
   const addFeed = async (name, avatar, email) => {
     const feedRef = collection(db, "feed");
+
     const q = query(feedRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
 
@@ -57,6 +61,7 @@ const Feed = ({ updateFollowingCount }) => {
     }
   };
 
+  // Handle follow button click, add follower in Firestore and update follower count
   const handleFollow = async (followedUserEmail, followedUserId) => {
     if (!user) return;
 
@@ -76,20 +81,26 @@ const Feed = ({ updateFollowingCount }) => {
       const userDocRef = doc(db, "users", user.email);
       const followingRef = collection(userDocRef, "following");
 
-      if (followed[followedUserId]) {
-        await setDoc(doc(followingRef, followedUserEmail), { email: followedUserEmail });
-      } else {
-        await setDoc(doc(followingRef, followedUserEmail), { email: followedUserEmail });
-      }
+      await setDoc(doc(followingRef, followedUserEmail), { email: followedUserEmail });
+
       // Trigger profile follower count update
-      updateFollowingCount(user.email); 
+      updateFollowingCount(user.email);
+
+      const followedUserDocRef = doc(db, "users", followedUserEmail);
+      const followersRef = collection(followedUserDocRef, "followers");
+
+      // Add current user as a follower
+      await setDoc(doc(followersRef, user.email), { email: user.email });
+
+      // Trigger profile follower count update
+      updateFollowerCount(followedUserEmail); // This will trigger re-fetch of follower count
     } catch (error) {
       console.error("Error following user:", error);
     }
   };
 
-   // Handle feed item deletion - Only remove from the UI (local state), not Firestore
-   const handleDelete = async (id) => {
+  // Handle feed item deletion - Only remove from the UI (local state), not Firestore
+  const handleDelete = async (id) => {
     try {
       // Remove the item locally from the notifications state
       setNotifications((prevState) => prevState.filter((item) => item.id !== id));
@@ -111,7 +122,6 @@ const Feed = ({ updateFollowingCount }) => {
       <div className="Feed-header">
         <p>Your Feed</p>
       </div>
-
       {notifications.map((item) =>
         hiddenItems[item.id] ? null : (
           <div key={item.id} className="Feed-item">

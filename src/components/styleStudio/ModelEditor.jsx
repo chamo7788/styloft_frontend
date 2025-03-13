@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 import ModelViewer from "./ModelViewer"
-import TextureEditor from "./TextureEditor"
+import TextureEditor from "./texture-editor/TextureEditor"
 import ControlPanel from "./ControlPanel"
 import Toolbar from "./Toolbar"
 import "../../assets/css/StyleStudio/viewer.css"
@@ -87,6 +87,12 @@ export default function ModelEditor() {
   // Logo state
   const [logoElements, setLogoElements] = useState([])
   const [selectedLogoIndex, setSelectedLogoIndex] = useState(null)
+  const [logoSettings, setLogoSettings] = useState({
+    image: null,
+    size: 1,
+    position: [0, 0, 0.5],
+    rotation: [0, 0, 0],
+  })
 
   // Feature states
   const [colors, setColors] = useState({ main: "#ffffff" })
@@ -183,11 +189,13 @@ export default function ModelEditor() {
   // Take screenshot
   const handleScreenshot = () => {
     if (canvasRef.current) {
-      const canvas = canvasRef.current
-      const link = document.createElement("a")
-      link.download = `${selectedModel}-design.png`
-      link.href = canvas.toDataURL("image/png")
-      link.click()
+      requestAnimationFrame(() => {
+        const canvas = canvasRef.current
+        const link = document.createElement("a")
+        link.download = `${selectedModel}-design.png`
+        link.href = canvas.toDataURL("image/png")
+        link.click()
+      })
     }
   }
 
@@ -319,7 +327,65 @@ export default function ModelEditor() {
   const handleLogoSelect = (index) => {
     setSelectedLogoIndex(index)
     setSelectedTextIndex(null)
-    setActiveTab("logo") // Switch to logo tab when logo is selected
+    setActiveTab("logo")
+
+    if (index !== null) {
+      const element = logoElements[index]
+      setLogoSettings({
+        image: element.image,
+        size: element.size || 1,
+        position: element.position || [0, 0, 0.5],
+        rotation: element.rotation || [0, 0, 0],
+      })
+    }
+  }
+
+  // Handle logo update
+  const handleUpdateLogo = (index, updatedLogo) => {
+    const newLogoElements = [...logoElements]
+    newLogoElements[index] = updatedLogo
+    setLogoElements(newLogoElements)
+  }
+
+  // Handle adding new logo
+  const handleAddLogo = (logoData) => {
+    const newLogoElement = {
+      ...logoSettings,
+      ...logoData,
+    }
+
+    setLogoElements([...logoElements, newLogoElement])
+    setSelectedLogoIndex(logoElements.length)
+    setShowTextureEditor(true)
+  }
+
+  // Handle removing logo
+  const handleRemoveLogo = (index) => {
+    const newElements = [...logoElements]
+    newElements.splice(index, 1)
+    setLogoElements(newElements)
+
+    if (selectedLogoIndex === index) {
+      setSelectedLogoIndex(null)
+    } else if (selectedLogoIndex > index) {
+      setSelectedLogoIndex(selectedLogoIndex - 1)
+    }
+  }
+
+  // Handle logo settings change
+  const handleLogoSettingsChange = (setting, value) => {
+    setLogoSettings({
+      ...logoSettings,
+      [setting]: value,
+    })
+
+    if (selectedLogoIndex !== null) {
+      const updatedLogo = {
+        ...logoElements[selectedLogoIndex],
+        [setting]: value,
+      }
+      handleUpdateLogo(selectedLogoIndex, updatedLogo)
+    }
   }
 
   // Handle logo position update
@@ -342,14 +408,6 @@ export default function ModelEditor() {
     setLogoElements(newLogoElements)
   }
 
-  // Handle logo update
-  const handleUpdateLogo = (index, updatedLogo) => {
-    const newLogoElements = [...logoElements]
-    newLogoElements[index] = updatedLogo
-    setLogoElements(newLogoElements)
-  }
-
-  // Toggle texture editor visibility
   const toggleTextureEditor = () => {
     setShowTextureEditor(!showTextureEditor)
   }
@@ -410,6 +468,9 @@ export default function ModelEditor() {
             canvasTextures={canvasTextures}
             setCanvasTextures={setCanvasTextures}
             setTextures={setTextures}
+            logoElements={logoElements}
+            logoSettings={logoSettings}
+            onLogoSettingsChange={handleLogoSettingsChange}
           />
         )}
       </div>
@@ -436,20 +497,9 @@ export default function ModelEditor() {
         onRemoveText={handleRemoveText}
         logoElements={logoElements}
         selectedLogoIndex={selectedLogoIndex}
-        onAddLogo={(logoElement) => {
-          setLogoElements([...logoElements, logoElement])
-          setSelectedLogoIndex(logoElements.length)
-        }}
-        onRemoveLogo={(index) => {
-          const newElements = [...logoElements]
-          newElements.splice(index, 1)
-          setLogoElements(newElements)
-          if (selectedLogoIndex === index) {
-            setSelectedLogoIndex(null)
-          } else if (selectedLogoIndex > index) {
-            setSelectedLogoIndex(selectedLogoIndex - 1)
-          }
-        }}
+        onLogoSelect={handleLogoSelect}
+        onAddLogo={handleAddLogo}
+        onRemoveLogo={handleRemoveLogo}
         onUpdateLogo={handleUpdateLogo}
         onUpdateLogoPosition={(position) =>
           selectedLogoIndex !== null && handleUpdateLogoPosition(selectedLogoIndex, position)

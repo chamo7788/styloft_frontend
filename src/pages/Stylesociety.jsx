@@ -5,30 +5,26 @@ import PostList from "../components/stylesociety/PostList";
 import AddPost from "../components/stylesociety/AddPost";
 import Feed from "../components/stylesociety/Feed";
 import StyleSearchBar from "../components/stylesociety/StyleSearchBar";
-import ShowPost from "../components/stylesociety/ShowPost";
+import { TrendingCard } from "../components/stylesociety/TrendingCard";
 
-function StyleSociety() {
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-  }, []);
+export default function Stylesociety() {
+
 
   return (
     <div>
+      <TrendingCard />
       <StyleSearchBar />
-      <ShowPost />
+      <AddPost />
+      <PostList />
       <Feed />
-      {/* Pass the user ID to AddPost if needed */}
+      
+      
+      {/* Pass the user ID to AddPost if needed }
       <AddPost userId={user ? user.uid : null} />
       
-      {/* Show PostList only when the user is authenticated */}
-      {user && <PostList userId={user.uid} />}
+      { Show PostList only when the user is authenticated }
+      {user && <PostList userId={user.uid} />*/}
     </div>
   );
 }
-
-export default StyleSociety;

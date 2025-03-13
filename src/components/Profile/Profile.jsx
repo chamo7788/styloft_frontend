@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-import { db, auth } from "../../firebaseConfig";
-import { collection, doc, onSnapshot } from "firebase/firestore";
 import "../../assets/css/Profile/profile.css";
 import defaultProfilePic from "../../assets/images/user-profile.png";
 import defaultCoverPhoto from "../../assets/images/profile-background.jpg";
@@ -14,72 +12,37 @@ const Profile = () => {
   const [modalImage, setModalImage] = useState("");
   const [isEditingAbout, setIsEditingAbout] = useState(false);
   const [aboutText, setAboutText] = useState("Experienced consultant with expertise in fintech and business development.");
-  const [name, setName] = useState("User");
+  const [name, setName] = useState("");
   const [profession, setProfession] = useState("Advisor and Consultant at Stripe Inc.");
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
   const [nameError, setNameError] = useState("");
   const [professionError, setProfessionError] = useState("");
-  const [designs, setDesigns] = useState([]);
+  
   const [selectedImage, setSelectedImage] = useState(null);
   const [crop, setCrop] = useState(null);
   const [imageType, setImageType] = useState(""); 
   const imgRef = useRef(null);
 
-  const user = auth.currentUser;
+  const [designs, setDesigns] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      if (currentUser) {
-        setName(currentUser.displayName || "User");
-        setProfilePic(currentUser.photoURL || defaultProfilePic);
-        setProfession("Advisor and Consultant at Stripe Inc."); // Can be fetched from user data if needed
-        fetchFollowersCount(currentUser.email);
-        fetchFollowingCount(currentUser.email);
-        fetchUserDesigns(currentUser.uid);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const fetchFollowersCount = async (email) => {
-    if (!email) return;
-
-    const userDocRef = doc(db, "users", email);
-    const followersRef = collection(userDocRef, "followers");
-
-    const unsubscribe = onSnapshot(followersRef, (snapshot) => {
-      setFollowersCount(snapshot.size);
-    });
-
-    return () => unsubscribe();
-  };
-
-  const fetchFollowingCount = async (email) => {
-    if (!email) return;
-
-    const userDocRef = doc(db, "users", email);
-    const followingRef = collection(userDocRef, "following");
-
-    const unsubscribe = onSnapshot(followingRef, (snapshot) => {
-      setFollowingCount(snapshot.size);
-    });
-
-    return () => unsubscribe();
-  };
-
-  const fetchUserDesigns = async (userId) => {
-    try {
-      const response = await fetch(`http://localhost:3000/design/user/${userId}`);
-      const data = await response.json();
-      setDesigns(data);
-    } catch (error) {
-      console.error("Error fetching designs:", error);
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user && user.displayName) {
+      setName(user.displayName);
     }
-  };
+    if (user.photoURL) {
+      setProfilePic(user.photoURL);
+    }
+    if (user.aboutText) {
+      setAboutText(user.aboutText);
+    }
+
+    if (user && user.uid) {
+      fetch(`http://localhost:3000/design/user/${user.uid}`)
+        .then((response) => response.json())
+        .then((data) => setDesigns(data))
+        .catch((error) => console.error("Error fetching designs:", error));
+    }
+  }, []);
 
   const handleImageChange = async (event, type) => {
     const file = event.target.files[0];
@@ -166,30 +129,6 @@ const Profile = () => {
     }
   };
 
-  const updateProfilePicture = async (imageUrl) => {
-    if (!user || !user.uid) return;
-  
-    try {
-      const response = await fetch("http://localhost:3000/user/updateProfile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uid: user.uid, photoURL: imageUrl }),
-      });
-  
-      if (response.ok) {
-        user.photoURL = imageUrl;
-        localStorage.setItem("currentUser", JSON.stringify(user));
-      } else {
-        const errorData = await response.json();
-        console.error("Error updating profile picture:", errorData.message);
-      }
-    } catch (error) {
-      console.error("Error updating profile picture:", error);
-    }
-  };
-
   const openModal = (image) => {
     setModalImage(image);
     setIsModalOpen(true);
@@ -221,12 +160,41 @@ const Profile = () => {
     }
   };
 
+  const updateProfilePicture = async (imageUrl) => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user || !user.uid) return;
+  
+    try {
+      const response = await fetch("http://localhost:3000/user/updateProfile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: user.uid, photoURL: imageUrl }),
+      });
+  
+      if (response.ok) {
+        user.photoURL = imageUrl;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating profile picture:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+    }
+  };
+
   return (
     <>
       <div className="profile-container">
         <div className="profile-header">
           <div className="cover-photo">
             <img src={coverPhoto} alt="Cover" className="cover-img" />
+            <label className="edit-button_cover-edit">
+              ✎
+              <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, "cover")} hidden />
+            </label>
           </div>
           <div className="profile-details">
             <div className="profile-pic-container">
@@ -251,12 +219,13 @@ const Profile = () => {
                   <p>{profession}</p>
                 </>
               )}
-              <p className="followers">{followersCount} Followers</p>
-              <p className="following">{followingCount} Following</p>
+              <p className="followers">| 500 followers</p>
+              <div className="profile-actions">
+                <button className="connect-btn">Follow</button>
+              </div>
             </div>
           </div>
         </div>
-
         <div className="profile-sections">
           <div className="about-section">
             <h3>About</h3>
@@ -270,23 +239,22 @@ const Profile = () => {
             </button>
           </div>
         </div>
-
-        <div className="Designs">
-          <div className="profile-sections">
-            <div className="about-section">
-              <h3>Designs</h3>
-              {designs.length > 0 ? (
-                designs.map((design) => (
-                  <div key={design.id} className="DesignCard" onClick={() => openModal(design.fileUrl)}>
-                    <img src={design.fileUrl} alt="Design" className="design-img" />
-                    <h3 className="DesignName">{design.description}</h3>
-                    <p className="DesignReview">⭐ 4.5 (180 reviews)</p>
-                  </div>
-                ))
-              ) : (
-                <p>No designs available.</p>
-              )}
-            </div>
+      </div>
+      <div className="Designs">
+        <div className="profile-sections">
+          <div className="about-section">
+            <h3>Designs</h3>
+            {designs.length > 0 ? (
+              designs.map((design) => (
+                <div key={design.id} className="DesignCard" onClick={() => openModal(design.fileUrl)}>
+                  <img src={design.fileUrl} alt="Design" className="design-img" />
+                  <h3 className="DesignName">{design.description}</h3>
+                  <p className="DesignReview">⭐ 4.5 (180 reviews)</p>
+                </div>
+              ))
+            ) : (
+              <p>No designs available.</p>
+            )}
           </div>
         </div>
       </div>
