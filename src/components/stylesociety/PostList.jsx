@@ -18,13 +18,25 @@ function PostList() {
     const postsQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
     const unsubscribe = onSnapshot(postsQuery, (snapshot) => {
-      const sortedPosts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      let pinnedPosts = [];
+      let normalPosts = [];
+      let unpinnedPosts = [];
 
-      sortedPosts.sort((a, b) => (b.pinned - a.pinned) || b.createdAt - a.createdAt);
-      setPosts(sortedPosts);
+      snapshot.docs.forEach((doc) => {
+        const post = { id: doc.id, ...doc.data() };
+
+        // Categorizing posts
+        if (post.postType === "pinned") {
+          pinnedPosts.push(post);
+        } else if (post.postType === "normal") {
+          normalPosts.push(post);
+        } else {
+          unpinnedPosts.push(post);
+        }
+      });
+
+      // Setting the sorted posts: pinned first, then normal, then unpinned
+      setPosts([...pinnedPosts, ...normalPosts, ...unpinnedPosts]);
     });
 
     return () => unsubscribe();
@@ -59,10 +71,18 @@ function PostList() {
     }
   };
 
-  const handleTogglePin = async (postId, isPinned) => {
+  const handleTogglePin = async (postId, currentType) => {
+    let newType = "normal"; // Default to normal posts
+
+    if (currentType === "pinned") {
+      newType = "unpin"; // If pinned, move it to unpinned
+    } else {
+      newType = "pinned"; // Otherwise, pin the post
+    }
+
     try {
-      await updateDoc(doc(db, "posts", postId), { pinned: !isPinned });
-      alert(isPinned ? "Post unpinned!" : "Post pinned!");
+      await updateDoc(doc(db, "posts", postId), { postType: newType });
+      alert(newType === "pinned" ? "Post pinned!" : "Post unpinned!");
     } catch (error) {
       console.error("Error updating pin status: ", error);
     }
@@ -76,7 +96,7 @@ function PostList() {
     <div className="post-set">
       <div className="post-list">
         {posts.map((post) => (
-          <div key={post.id} className={`post ${post.pinned ? "pinned" : ""}`}>
+          <div key={post.id} className={`post ${post.postType === "pinned" ? "pinned" : ""}`}>
             {/* Post Menu */}
             <div className="post-menu">
               <FontAwesomeIcon icon={faEllipsisV} className="menu-icon" onClick={() => toggleMenu(post.id)} />
@@ -88,8 +108,8 @@ function PostList() {
                   <button className="menu-item" onClick={() => alert("Post saved!")}>
                     <FontAwesomeIcon icon={faSave} /> Save Post
                   </button>
-                  <button className="menu-item" onClick={() => handleTogglePin(post.id, post.pinned)}>
-                    <FontAwesomeIcon icon={faThumbtack} /> {post.pinned ? "Unpin Post" : "Pin Post"}
+                  <button className="menu-item" onClick={() => handleTogglePin(post.id, post.postType)}>
+                    <FontAwesomeIcon icon={faThumbtack} /> {post.postType === "pinned" ? "Unpin Post" : "Pin Post"}
                   </button>
                   <button className="menu-item" onClick={() => handleCopyLink(post.id)}>
                     <FontAwesomeIcon icon={faCopy} /> Copy Link
