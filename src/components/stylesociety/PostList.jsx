@@ -20,23 +20,19 @@ function PostList() {
     const unsubscribe = onSnapshot(postsQuery, (snapshot) => {
       let pinnedPosts = [];
       let normalPosts = [];
-      let unpinnedPosts = [];
 
       snapshot.docs.forEach((doc) => {
         const post = { id: doc.id, ...doc.data() };
 
-        // Categorizing posts
         if (post.postType === "pinned") {
           pinnedPosts.push(post);
-        } else if (post.postType === "normal") {
-          normalPosts.push(post);
         } else {
-          unpinnedPosts.push(post);
+          normalPosts.push(post);
         }
       });
 
-      // Setting the sorted posts: pinned first, then normal, then unpinned
-      setPosts([...pinnedPosts, ...normalPosts, ...unpinnedPosts]);
+      // Merging pinned posts at the top
+      setPosts([...pinnedPosts, ...normalPosts]);
     });
 
     return () => unsubscribe();
@@ -72,13 +68,7 @@ function PostList() {
   };
 
   const handleTogglePin = async (postId, currentType) => {
-    let newType = "normal"; // Default to normal posts
-
-    if (currentType === "pinned") {
-      newType = "unpin"; // If pinned, move it to unpinned
-    } else {
-      newType = "pinned"; // Otherwise, pin the post
-    }
+    let newType = currentType === "pinned" ? "normal" : "pinned";
 
     try {
       await updateDoc(doc(db, "posts", postId), { postType: newType });
@@ -125,25 +115,39 @@ function PostList() {
             <div className="post-user">
               <img src={post.userProfile} alt="User Profile" className="post-user-img" />
               <span className="post-user-name">{post.userName}</span>
-              <small className="post-timestamp">{post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Just now"}</small>
+              <small className="post-timestamp">
+                {post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : "Just now"}
+              </small>
             </div>
 
+            {/* Editable Text Area */}
             {editPostId === post.id ? (
-              <textarea
-                className="edit-input"
-                value={editedText}
-                onChange={(e) => setEditedText(e.target.value)}
-              />
+              <>
+                <textarea className="edit-input" value={editedText} onChange={(e) => setEditedText(e.target.value)} />
+                <button className="save-btn" onClick={() => handleSaveEdit(post.id)}>Save</button>
+              </>
             ) : (
               <p>{post.text}</p>
             )}
 
-            {editPostId === post.id && (
-              <button className="save-btn" onClick={() => handleSaveEdit(post.id)}>
-                Save
-              </button>
+            {/* Display Media (Images/Videos) */}
+            {post.files && post.files.length > 0 && (
+              <div className="post-media">
+                {post.files.map((fileUrl, index) => (
+                  <div key={index} className="file-preview">
+                    {fileUrl.endsWith(".mp4") ? (
+                      <video controls className="post-video">
+                        <source src={fileUrl} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <img src={fileUrl} alt={`Uploaded file ${index}`} className="post-image" />
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
 
+            {/* Post Actions */}
             <div className="p-action">
               <LikeButton post={post} />
               <CommentSection post={post} />

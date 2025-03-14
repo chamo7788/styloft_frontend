@@ -60,7 +60,7 @@ export function StyleSearchBar() {
     };
 
     const handleProfileClick = (userId) => {
-        navigate(`/Profile/${userId}`); // Navigate to the profile page with userId
+        navigate(`Profile/${userId}`); // Navigate to the profile page with userId
         setIsResultVisible(false);
         setSearchQuery("");
     };
