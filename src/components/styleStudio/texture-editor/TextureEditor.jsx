@@ -272,8 +272,19 @@ const TextureEditor = ({
       // Get the DOM canvas element
       const canvasEl = fabricCanvasRef.current.getElement()
       
-      // Create Three.js texture from canvas
-      const texture = new CanvasTexture(canvasEl)
+      // Create a temporary canvas for flipping the texture
+      const tempCanvas = document.createElement('canvas')
+      const tempCtx = tempCanvas.getContext('2d')
+      tempCanvas.width = canvasEl.width
+      tempCanvas.height = canvasEl.height
+      
+      // Draw the original canvas flipped vertically
+      tempCtx.translate(0, canvasEl.height)
+      tempCtx.scale(1, -1)
+      tempCtx.drawImage(canvasEl, 0, 0, canvasEl.width, canvasEl.height)
+      
+      // Create Three.js texture from the flipped canvas
+      const texture = new CanvasTexture(tempCanvas)
       texture.needsUpdate = true
       
       // Update textures
