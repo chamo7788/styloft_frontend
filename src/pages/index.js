@@ -6,3 +6,5 @@ export { default as StyleStudio } from "./StyleStudio";
 export {default as Contest} from "./Contest";
 export { default as Stylemarket } from './Stylemarket';
 export {default as Stylesociety} from './Stylesociety'
+export { default as Subscription } from './Subscription';
+
