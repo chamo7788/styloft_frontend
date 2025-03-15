@@ -7,6 +7,7 @@
 @import "logo-controls.css";
 @import "texture-editor.css";
 @import "lighting-controls.css";
+@import "layer-manager.css";
 
 /* Common animations */
 @keyframes fadeIn {
@@ -25,6 +26,17 @@
   }
   to {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
     opacity: 1;
   }
 }
@@ -50,6 +62,10 @@
   animation: slideUp 0.3s ease;
 }
 
+.animate-slide-in {
+  animation: slideIn 0.3s ease;
+}
+
 .animate-pulse {
   animation: pulse 1s infinite;
 }
@@ -71,5 +87,79 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Interactive elements */
+button,
+.button,
+.toolbar-button,
+.texture-editor-tool,
+.model-button,
+.part-button,
+.color-button,
+.preset-button,
+.palette-type-button {
+  transition: all 0.2s ease;
+}
+
+button:hover,
+.button:hover,
+.toolbar-button:hover,
+.texture-editor-tool:hover,
+.model-button:hover,
+.part-button:hover,
+.color-button:hover,
+.preset-button:hover,
+.palette-type-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:active,
+.button:active,
+.toolbar-button:active,
+.texture-editor-tool:active,
+.model-button:active,
+.part-button:active,
+.color-button:active,
+.preset-button:active,
+.palette-type-button:active {
+  transform: translateY(0);
+}
+
+/* Card hover effects */
+.canvas-card,
+.controls-card,
+.texture-editor-container {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.canvas-card:hover,
+.controls-card:hover,
+.texture-editor-container:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Modern scrollbars for all elements */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
 }
 

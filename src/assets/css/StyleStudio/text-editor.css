@@ -1,291 +1,310 @@
 /* Model View Container */
 .model-view-container {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+.model-view-container.with-editor .canvas-card {
+  width: 50%; /* Changed from 60% to 50% */
+}
+
+/* Texture Editor Container */
+.texture-editor-container {
+  width: 50%; /* Changed from 40% to 50% */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.texture-editor-toolbar {
+  display: flex;
+  padding: 8px;
+  gap: 4px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  align-items: center;
+}
+
+.texture-editor-tool {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.texture-editor-tool:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.texture-editor-tool:active {
+  transform: translateY(0);
+}
+
+.texture-editor-tool.active {
+  background-color: #e0f2fe;
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+}
+
+.texture-editor-tool-spacer {
+  flex: 1;
+}
+
+.texture-editor-canvas-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.texture-editor-canvas {
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  touch-action: none;
+  cursor: default;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.texture-editor-controls {
+  padding: 16px;
+  border-top: 1px solid #ddd;
+  background-color: white;
+  overflow-y: auto;
+  max-height: 40%;
+}
+
+.texture-editor-toggle {
+  margin-bottom: 16px;
+}
+
+.texture-editor-toggle-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.texture-editor-toggle-button:hover {
+  background-color: #1f2937;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.texture-editor-toggle-button:active {
+  transform: translateY(0);
+}
+
+/* Brush Controls */
+.brush-control {
+  margin-bottom: 16px;
+}
+
+.brush-control-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.brush-color-input {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.brush-size-input {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Text Controls */
+.text-input-group {
+  margin-bottom: 16px;
+}
+
+.text-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.text-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.text-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.text-control-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.text-range {
+  width: 100%;
+}
+
+.text-value {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.text-color-input {
+  width: 40px;
+  height: 40px;
+}
+
+.text-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.text-add-button,
+.text-update-button {
+  flex: 1;
+  padding: 10px 16px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+.text-add-button:hover,
+.text-update-button:hover {
+  background-color: #1f2937;
+}
+
+.text-add-button:disabled,
+.text-update-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Text Elements */
+.text-elements {
+  margin-top: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.text-elements-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.text-elements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.text-element {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.text-element:hover {
+  border-color: #d1d5db;
+}
+
+.text-element-selected {
+  border-color: #111827;
+  background-color: #f9fafb;
+}
+
+.text-element-preview {
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.text-element-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.text-element-edit {
+  padding: 4px 8px;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.text-element-remove {
+  padding: 4px 8px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* Responsive styles */
+@media (max-width: 1280px) {
+  .model-view-container {
+    flex-direction: column;
+    height: auto;
   }
-  
-  .model-view-container.with-editor .canvas-card {
-    width: 60%;
-  }
-  
-  /* Texture Editor Container */
+
+  .model-view-container.with-editor .canvas-card,
   .texture-editor-container {
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .texture-editor-toolbar {
-    display: flex;
-    padding: 8px;
-    gap: 4px;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #ddd;
-    align-items: center;
-  }
-  
-  .texture-editor-tool {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .texture-editor-tool:hover {
-    background-color: #f0f0f0;
-    border-color: #ccc;
-  }
-  
-  .texture-editor-tool.active {
-    background-color: #e0f2fe;
-    border-color: #0ea5e9;
-    color: #0ea5e9;
-  }
-  
-  .texture-editor-tool-spacer {
-    flex: 1;
-  }
-  
-  .texture-editor-canvas-container {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background-color: #f9f9f9;
-    min-height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-  }
-  
-  .texture-editor-canvas {
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    touch-action: none;
-    cursor: default;
-  }
-  
-  .texture-editor-controls {
-    padding: 16px;
-    border-top: 1px solid #ddd;
-    background-color: white;
-  }
-  
-  .texture-editor-toggle {
-    margin-bottom: 16px;
-  }
-  
-  .texture-editor-toggle-button {
     width: 100%;
-    padding: 10px;
-    background-color: #111827;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
+    height: 50vh;
   }
-  
-  .texture-editor-toggle-button:hover {
-    background-color: #1f2937;
-  }
-  
-  /* Brush Controls */
-  .brush-control {
-    margin-bottom: 16px;
-  }
-  
-  .brush-control-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 500;
-  }
-  
-  .brush-color-input {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .brush-size-input {
-    width: 100%;
-    margin-top: 4px;
-  }
-  
-  /* Text Controls */
-  .text-input-group {
-    margin-bottom: 16px;
-  }
-  
-  .text-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 14px;
-  }
-  
-  .text-controls-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  
-  .text-control {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .text-control-label {
-    font-size: 14px;
-    font-weight: 500;
-  }
-  
-  .text-range {
-    width: 100%;
-  }
-  
-  .text-value {
-    font-size: 12px;
-    color: #6b7280;
-  }
-  
-  .text-color-input {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .text-actions {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .text-add-button,
-  .text-update-button {
-    flex: 1;
-    padding: 10px 16px;
-    background-color: #111827;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-weight: 500;
-  }
-  
-  .text-add-button:hover,
-  .text-update-button:hover {
-    background-color: #1f2937;
-  }
-  
-  .text-add-button:disabled,
-  .text-update-button:disabled {
-    background-color: #9ca3af;
-    cursor: not-allowed;
-  }
-  
-  /* Text Elements */
-  .text-elements {
-    margin-top: 24px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 16px;
-  }
-  
-  .text-elements-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 16px 0;
-  }
-  
-  .text-elements-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .text-element {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    background-color: white;
-    transition: all 0.2s;
-  }
-  
-  .text-element:hover {
-    border-color: #d1d5db;
-  }
-  
-  .text-element-selected {
-    border-color: #111827;
-    background-color: #f9fafb;
-  }
-  
-  .text-element-preview {
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 150px;
-  }
-  
-  .text-element-actions {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .text-element-edit {
-    padding: 4px 8px;
-    background-color: #111827;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  
-  .text-element-remove {
-    padding: 4px 8px;
-    background-color: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  
-  /* Responsive styles */
-  @media (max-width: 1024px) {
-    .model-view-container {
-      flex-direction: column;
-    }
-  
-    .model-view-container.with-editor .canvas-card,
-    .texture-editor-container {
-      width: 100%;
-    }
-  }
+}
 
 /* Add these styles for better Fabric.js integration */
 .texture-editor-canvas-wrapper {
