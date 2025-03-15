@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { ShoppingBag } from "lucide-react"
 import { loadStripe } from "@stripe/stripe-js"

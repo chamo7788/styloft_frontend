@@ -1,8 +1,7 @@
-"use client"
-
 import { useState } from "react"
-import { ArrowLeft, ShoppingBag, Minus, Plus } from "lucide-react"
+import { ArrowLeft, ShoppingBag, Minus, Plus } from 'lucide-react'
 import Buy from "./buy"
+import "../../assets/css/StyleMarket/buyNow.css"
 
 const BuyNow = ({ product, onBack }) => {
   const [selectedSize, setSelectedSize] = useState("M")

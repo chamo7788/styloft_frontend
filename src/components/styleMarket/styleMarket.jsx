@@ -1,12 +1,10 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { setProducts } from "../../redux/productSlice.js"
 import ProductCard from "./productCard.jsx"
 import BuyNow from "./buyNow.jsx"
 import "../../assets/css/StyleMarket/styleMarket.css"
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 
 const ITEMS_PER_PAGE = 8
 
