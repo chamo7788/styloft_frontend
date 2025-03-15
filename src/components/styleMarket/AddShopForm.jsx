@@ -1,7 +1,6 @@
-"use client"
-
 import { useState, useRef } from "react"
 import { Upload, AlertCircle, Check } from "lucide-react"
+import "../../assets/css/StyleMarket/addShop.css"
 
 export function AddShopForm() {
   const [formData, setFormData] = useState({
