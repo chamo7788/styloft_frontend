@@ -7,6 +7,7 @@ import ControlPanel from "./ControlPanel"
 import Toolbar from "./Toolbar"
 import "../../assets/css/StyleStudio/text-editor.css"
 import "../../assets/css/StyleStudio/main.css"
+import "../../assets/css/StyleStudio/new-features.css"
 
 // Move constants outside component to prevent recreation on each render
 const models = {
@@ -464,6 +465,28 @@ export default function ModelEditor() {
   const toggleTextureEditor = useCallback(() => {
     setShowTextureEditor((prev) => !prev)
   }, [])
+
+  const handleLoadTemplate = useCallback(
+    (templateDesign, templateModel) => {
+      if (templateModel !== selectedModel) {
+        setSelectedModel(templateModel)
+        setModelKey((prevKey) => prevKey + 1)
+      }
+
+      // Load design properties
+      if (templateDesign.colors) setColors(templateDesign.colors)
+      if (templateDesign.materials) setMaterials(templateDesign.materials)
+      if (templateDesign.textElements) setTextElements(templateDesign.textElements)
+      if (templateDesign.logoElements) setLogoElements(templateDesign.logoElements)
+      if (templateDesign.lighting) setLighting(templateDesign.lighting)
+      if (templateDesign.backgroundColor) setBackgroundColor(templateDesign.backgroundColor)
+
+      // Reset history
+      setHistory([{ colors: templateDesign.colors, materials: templateDesign.materials }])
+      setHistoryIndex(0)
+    },
+    [selectedModel],
+  )
 
   return (
     <div className="model-editor-container">

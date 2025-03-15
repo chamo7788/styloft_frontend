@@ -5,10 +5,11 @@ import ModelSelector from "./ModelSelector"
 import PartSelector from "./PartSelector"
 import ColorPicker from "./ColorPicker"
 import FileUploader from "./FileUploader"
-import LogoUploader from "./LogoUploader"
-import LogoPositionControls from "./LogoPositionControls"
 import LightingControls from "./LightingControls"
-import AITextureGenerator from "./AITextureGenerator" // Import the new component
+import PatternGenerator from "./PatternGenerator"
+import MaterialSimulation from "./MaterialSimulation"
+import ColorPaletteSuggestions from "./ColorPaletteSuggestions"
+import DesignTemplates from "./DesignTemplates"
 
 const ControlPanel = ({
   activeTab,
@@ -27,19 +28,10 @@ const ControlPanel = ({
   showTextureEditor,
   toggleTextureEditor,
   textElements,
-  selectedTextIndex,
-  onTextSelect,
-  onRemoveText,
   logoElements,
-  selectedLogoIndex,
-  onLogoSelect,
-  onAddLogo,
-  onRemoveLogo,
-  onUpdateLogo,
-  onUpdateLogoPosition,
-  onUpdateLogoRotation,
   lighting,
   setLighting,
+  onLoadTemplate,
 }) => {
   return (
     <div className="controls-card">
@@ -51,9 +43,11 @@ const ControlPanel = ({
             { id: "model", label: "Model" },
             { id: "color", label: "Color" },
             { id: "texture", label: "Texture" },
-            { id: "text", label: "Text" },
-            { id: "logo", label: "Logo" },
             { id: "lighting", label: "Lighting" },
+            { id: "patterns", label: "Patterns" },
+            { id: "materials", label: "Materials" },
+            { id: "palettes", label: "Palettes" },
+            { id: "templates", label: "Templates" },
           ]}
         >
           <div id="model">
@@ -95,20 +89,19 @@ const ControlPanel = ({
             <div className="sample-materials">
               <h3>Sample Materials</h3>
               <div className="material-grid">
-
                 {[
-                  'Fabrics-Background-PNG-Image.png',
-                  'Fabrics-PNG-Images-HD.png',
-                  'Fabrics-PNG-Photo-Image.png',
-                  'Fabrics-Transparent-Background.png'
+                  "Fabrics-Background-PNG-Image.png",
+                  "Fabrics-PNG-Images-HD.png",
+                  "Fabrics-PNG-Photo-Image.png",
+                  "Fabrics-Transparent-Background.png",
                 ].map((imageName, index) => (
                   <div
                     key={index}
                     className="material-sample"
-                    style={{ 
+                    style={{
                       backgroundImage: `url(/src/assets/images/StyleStudio/${imageName})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
                     }}
                     onClick={() => onMaterialChange(`/src/assets/images/StyleStudio/${imageName}`)}
                   />
@@ -117,77 +110,35 @@ const ControlPanel = ({
             </div>
           </div>
 
-          <div id="text">
-            <div className="text-elements">
-              <h3 className="text-elements-title">Text Elements</h3>
-              <div className="text-elements-list">
-                {textElements.map((element, index) => (
-                  <div
-                    key={index}
-                    className={`text-element ${selectedTextIndex === index ? "text-element-selected" : ""}`}
-                    onClick={() => onTextSelect(index)}
-                  >
-                    <div className="text-element-preview">
-                      <span
-                        style={{
-                          color: element.color,
-                          fontSize: `${Math.min(element.fontSize, 24)}px`,
-                          fontWeight: element.fontWeight || "normal",
-                          fontStyle: element.fontStyle || "normal",
-                          textAlign: element.textAlign || "center",
-                        }}
-                      >
-                        {element.text}
-                      </span>
-                    </div>
-                    <div className="text-element-actions">
-                      <button
-                        className="text-element-edit"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onTextSelect(index)
-                          toggleTextureEditor()
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="text-element-remove"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onRemoveText(index)
-                        }}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div id="logo">
-            <LogoUploader
-              onAddLogo={onAddLogo}
-              logoElements={logoElements}
-              onRemoveLogo={onRemoveLogo}
-              onUpdateLogo={onUpdateLogo}
-              selectedLogoIndex={selectedLogoIndex}
-              onLogoSelect={onLogoSelect}
-            />
-
-            {selectedLogoIndex !== null && (
-              <LogoPositionControls
-                logoElement={logoElements[selectedLogoIndex]}
-                onUpdatePosition={onUpdateLogoPosition}
-                onUpdateRotation={onUpdateLogoRotation}
-              />
-            )}
-          </div>
-
           <div id="lighting">
             <LightingControls lighting={lighting} onChange={setLighting} />
+          </div>
+
+          <div id="patterns">
+            <PatternGenerator onPatternGenerated={onMaterialChange} />
+          </div>
+
+          <div id="materials">
+            <MaterialSimulation onApplyMaterial={onMaterialChange} selectedPart={selectedPart} />
+          </div>
+
+          <div id="palettes">
+            <ColorPaletteSuggestions onColorSelect={onColorChange} />
+          </div>
+
+          <div id="templates">
+            <DesignTemplates
+              currentDesign={{
+                colors,
+                materials,
+                textElements,
+                logoElements,
+                lighting,
+                backgroundColor,
+              }}
+              onLoadTemplate={onLoadTemplate}
+              selectedModel={selectedModel}
+            />
           </div>
         </TabPanel>
       </div>
