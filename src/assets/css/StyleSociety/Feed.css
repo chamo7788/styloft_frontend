@@ -187,4 +187,73 @@
   font-style: italic;
 }
 
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+  .Feed-container {
+    width: 300px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .Feed-container {
+    width: 280px;
+    right: 15px;
+    padding: 15px;
+  }
+
+  .Feed-header {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .Feed-container {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 300px;
+    border-radius: 16px 16px 0 0;
+    z-index: 100;
+  }
+
+  .Feed-header {
+    font-size: 18px;
+  }
+
+  .Feed-item {
+    padding: 10px;
+  }
+
+  .Feed-avatar {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .Feed-container {
+    padding: 12px;
+    height: 250px;
+  }
+
+  .Feed-header {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .Feed-buttons {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .followbtn,
+  .deletebtn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
 
