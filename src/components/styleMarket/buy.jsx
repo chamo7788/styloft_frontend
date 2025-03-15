@@ -1,32 +1,45 @@
-import React, { useState } from "react";
-import { ShoppingBag } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import "../../assets/css/StyleMarket/buy.css";
+"use client"
 
+import { useState } from "react"
+import { ShoppingBag } from "lucide-react"
+import { loadStripe } from "@stripe/stripe-js"
+import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js"
+import "../../assets/css/StyleMarket/buy.css"
+import PaymentSuccess from "../styleMarket/payment-success.jsx"
+import "../../assets/css/StyleMarket/payment-success.css"
 
-const stripePromise = loadStripe("pk_test_51R0PouFKqSRL4Eus1nQLaIYdWsBCGb0rkCZeSXivdL1aI4zxn3bqQOGmXuxZRL9im9UTRmBZnujboCXn2Mwu97aG00QUvxvr91");
+const stripePromise = loadStripe(
+  "pk_test_51R0PouFKqSRL4Eus1nQLaIYdWsBCGb0rkCZeSXivdL1aI4zxn3bqQOGmXuxZRL9im9UTRmBZnujboCXn2Mwu97aG00QUvxvr91",
+)
 
-const CheckoutForm = ({ formData, setShowOrderForm, amount }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+const CheckoutForm = ({
+  formData,
+  setShowOrderForm,
+  amount,
+  product,
+  selectedSize,
+  quantity,
+  setPaymentSuccessful,
+}) => {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) return
 
     try {
       const response = await fetch("http://localhost:3000/payments/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount }),
-      });
+      })
 
-      const { clientSecret } = await response.json();
+      const { clientSecret } = await response.json()
 
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
@@ -44,20 +57,20 @@ const CheckoutForm = ({ formData, setShowOrderForm, amount }) => {
             },
           },
         },
-      });
+      })
 
       if (result.error) {
-        setError(result.error.message);
+        setError(result.error.message)
       } else {
-        alert("Payment successful! Order placed.");
-        setShowOrderForm(false);
+        // Show success component instead of alert
+        setPaymentSuccessful(true)
       }
     } catch (err) {
-      setError("Payment failed. Please try again.");
+      setError("Payment failed. Please try again.")
     }
 
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   return (
     <form onSubmit={handleSubmit} className="order-form">
@@ -70,8 +83,8 @@ const CheckoutForm = ({ formData, setShowOrderForm, amount }) => {
         {loading ? "Processing..." : "Pay Now"}
       </button>
     </form>
-  );
-};
+  )
+}
 
 const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
   const [formData, setFormData] = useState({
@@ -85,14 +98,42 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
     zipCode: "",
     country: "Sri Lanka",
     companyName: "",
-  });
+  })
+
+  const [paymentSuccessful, setPaymentSuccessful] = useState(false)
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
-  const totalAmount = product.price * quantity;
+  const totalAmount = product.price * quantity
+
+  const handleContinueShopping = () => {
+    setShowOrderForm(false)
+  }
+
+  const handleViewOrder = () => {
+    // This would typically navigate to an order details page
+    // For now, we'll just close the payment form
+    setShowOrderForm(false)
+  }
+
+  // If payment is successful, show the success component
+  if (paymentSuccessful) {
+    return (
+      <PaymentSuccess
+        orderDetails={{
+          productName: product.name,
+          size: selectedSize,
+          quantity: quantity,
+          amount: totalAmount,
+        }}
+        onContinueShopping={handleContinueShopping}
+        onViewOrder={handleViewOrder}
+      />
+    )
+  }
 
   return (
     <div className="buy">
@@ -123,7 +164,13 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
               <div className="form-group row">
                 <div>
                   <label>First Name *</label>
-                  <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
                 <div>
                   <label>Last Name *</label>
@@ -170,7 +217,15 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
 
           {/* Stripe Payment Form */}
           <Elements stripe={stripePromise}>
-            <CheckoutForm formData={formData} setShowOrderForm={setShowOrderForm} amount={totalAmount} />
+            <CheckoutForm
+              formData={formData}
+              setShowOrderForm={setShowOrderForm}
+              amount={totalAmount}
+              product={product}
+              selectedSize={selectedSize}
+              quantity={quantity}
+              setPaymentSuccessful={setPaymentSuccessful}
+            />
           </Elements>
 
           {/* Buttons */}
@@ -182,7 +237,8 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Buy;
+export default Buy
+
