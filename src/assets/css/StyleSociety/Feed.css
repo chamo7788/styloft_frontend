@@ -1,16 +1,42 @@
-/* Feed Container */
+/* Feed Container - Right Side Top Positioning */
 .Feed-container {
-  position: absolute;
-  top: 743px;
-  left: 61%;
-  width: 570px;
+  position: relative;
+  bottom: 4025px; /* Distance from top of viewport */
+  left: 870px; /* Distance from right of viewport */
+  width: 500px; /* Narrower width for sidebar style */
   max-width: 90%;
-  height: 550px;
-  background-color: #e6c9e7;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom, #f0e1f1, #5f7fbf);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
+  max-height: calc(100vh - 120px); /* Viewport height minus margins */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.3s ease;
+  
+}
+
+.Feed-container:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom Scrollbar */
+.Feed-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.Feed-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+}
+
+.Feed-container::-webkit-scrollbar-thumb {
+  background: rgba(95, 24, 101, 0.5);
+  border-radius: 10px;
+}
+
+.Feed-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(95, 24, 101, 0.7);
 }
 
 /* Header Section */
@@ -18,69 +44,100 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: bold;
-  font-size: 23px;
-  color: #333;
-  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 20px;
+  color: #5f1865;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(95, 24, 101, 0.2);
 }
 
 /* Notification Items */
 .Feed-item {
   display: flex;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #ccc;
-  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.Feed-item:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .Feed-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .Feed-avatar {
-  position: relative;
   width: 45px;
   height: 45px;
-  top: -1px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.Feed-item:hover .Feed-avatar {
+  transform: scale(1.05);
 }
 
 .Feed-info {
   flex: 1;
+  margin-left: 12px;
+  position: relative;
 }
 
 .Feed-title {
   position: relative;
-  top: 10px;
-  left: 3%;
-  font-size: 15px;
-  font-weight: bold;
- 
-  margin: 0;
+  top: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0;
+  line-height: 1.4;
 }
 
+/* Button Container */
+.Feed-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
 
 /* Follow Button */
 .followbtn {
   position: relative;
-  background-color: white;
-  color:#5f1865;
-  border: 1px solid #5f1865;
-  padding: 5px 10px;
+  left: 200px;
+  top: -18px;
+  background-color: rgb(255, 255, 255);
+  color: #1d1865;
+  border: 1px solid #1d1865;
+  padding: 6px 12px;
   font-size: 13px;
-  font-weight: bold;
-  border-radius: 6px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  left: 64%;
-  top:-18px;
+  transition: all 0.2s ease-in-out;
+  
 }
 
 .followbtn:hover {
-  background-color: #b365c3;
+  background-color: #5f7fbf;
   color: white;
-  border: 1px solid #b365c3;
+  border: 1px solid #5f7fbf;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(179, 101, 195, 0.3);
+}
+
+.followbtn:active {
+  transform: translateY(0);
 }
 
 .followbtn.following {
@@ -89,25 +146,45 @@
   border: 1px solid #5f1865;
 }
 
+.followbtn.following:hover {
+  background-color: #4a1350;
+}
+
+/* Delete Button */
 .deletebtn {
   position: relative;
-  background-color: rgb(199, 174, 215);
+  background-color: #cc92db;
   color: #480667;
-  border: 1px solid  #480667;
-  padding: 5px 10px;
-  font-size: 12px;
-  font-weight: bold;
-  border-radius: 6px;
+  left: 200px;
+  top: -18px;
+  border: 1px solid #480667;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  left: 66%;
-  top:-18px;
-  width: 70px;
+  transition: all 0.2s ease-in-out;
+  margin-left: 6px;
 }
 
 .deletebtn:hover {
-  background-color:  #310645;
+  background-color: #310645;
   color: white;
-  border: 1px solid  #480667;
+  border: 1px solid #480667;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(72, 6, 103, 0.3);
 }
+
+.deletebtn:active {
+  transform: translateY(0);
+}
+
+/* Empty Feed State */
+.Feed-empty {
+  text-align: center;
+  padding: 20px 0;
+  color: #5f1865;
+  font-style: italic;
+}
+
 
