@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Home, StyleSociety, Login, Register, StyleStudio, Stylemarket } from "./pages";
+import { Home, StyleSociety, Login, Register, StyleStudio, Stylemarket,Subscription } from "./pages";
 import { Navbar, Footer } from "./components";
 import { Provider } from "react-redux";  
 import { store } from "./redux/store";  
 import Profile from "./components/Profile/Profile";
 import Contest from "./pages/Contest";
 import { AddShopForm } from "./components/styleMarket/AddShopForm";
+import PaymentPage from "./components/Subscription/PaymentPage";
+
 
 function App() {
   const location = useLocation();
@@ -27,6 +29,8 @@ function App() {
         <Route path="/contest/*" element={<Contest />} />
         <Route path="/styleMarket/add-shop" element={<AddShopForm />} />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/sub-plans" element={<Subscription />} />
+        <Route path="/payment/:planId" element={<PaymentPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {!hideFooterPaths.includes(location.pathname) && <Footer />}
