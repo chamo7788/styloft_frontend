@@ -464,7 +464,17 @@ export default function ModelEditor() {
 
   const toggleTextureEditor = useCallback(() => {
     setShowTextureEditor((prev) => !prev)
-  }, [])
+
+    // If we're opening the texture editor, make sure we have a part selected
+    if (!showTextureEditor && !selectedPart && modelParts[selectedModel].length > 0) {
+      setSelectedPart(modelParts[selectedModel][0])
+    }
+
+    // If we're opening the texture editor, switch to the texture tab
+    if (!showTextureEditor) {
+      setActiveTab("texture")
+    }
+  }, [showTextureEditor, selectedPart, modelParts, selectedModel])
 
   const handleLoadTemplate = useCallback(
     (templateDesign, templateModel) => {

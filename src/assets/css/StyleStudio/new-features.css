@@ -323,17 +323,20 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 0.75rem;
+    width: 100%;
   }
   
   .color-swatch-item {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    
   }
   
   .color-swatch {
     position: relative;
     height: 5rem;
+    width: 100%;
     border-radius: 0.375rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -502,10 +505,25 @@
     box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
   }
   
-  .save-template-button:active {
+.save-template-button:active {
     transform: translateY(0);
     box-shadow: none;
-  }
+}
+
+.template-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.template-name-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+}
   
   .save-template-button:disabled {
     background-color: #9ca3af;

@@ -199,7 +199,7 @@ const PatternGenerator = ({ onPatternGenerated }) => {
 
         <div className="pattern-color-controls">
           <div className="color-control">
-            <label className="control-label">Primary Color</label>
+            <label className="control-label">Primary</label>
             <input
               type="color"
               value={primaryColor}
@@ -209,7 +209,7 @@ const PatternGenerator = ({ onPatternGenerated }) => {
           </div>
 
           <div className="color-control">
-            <label className="control-label">Secondary Color</label>
+            <label className="control-label">Secondary</label>
             <input
               type="color"
               value={secondaryColor}

@@ -1,8 +1,19 @@
 "use client"
 
-import { RotateCcw, RotateCw, Undo, Redo, Download, Save, Upload } from "lucide-react"
+import { RotateCcw, RotateCw, Undo, Redo, Download, Save, Upload, Layers } from "lucide-react"
 
-function Toolbar({ onRotate, onUndo, onRedo, onScreenshot, onSaveDesign, onLoadDesign, canUndo, canRedo }) {
+function Toolbar({
+  onRotate,
+  onUndo,
+  onRedo,
+  onScreenshot,
+  onSaveDesign,
+  onLoadDesign,
+  onToggleLayerManager,
+  canUndo,
+  canRedo,
+  showLayerManager,
+}) {
   return (
     <div className="canvas-toolbar">
       <div className="toolbar-group">
@@ -24,6 +35,13 @@ function Toolbar({ onRotate, onUndo, onRedo, onScreenshot, onSaveDesign, onLoadD
       </div>
 
       <div className="toolbar-group">
+        <button
+          className={`toolbar-button ${showLayerManager ? "active" : ""}`}
+          onClick={onToggleLayerManager}
+          title="Toggle Layer Manager"
+        >
+          <Layers size={16} />
+        </button>
         <button className="toolbar-button" onClick={onScreenshot} title="Take Screenshot">
           <Download size={16} />
         </button>
