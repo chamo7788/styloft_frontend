@@ -128,18 +128,18 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
             <img src={item.avatar || Dp} alt="avatar" className="Feed-avatar" />
             <div className="Feed-info">
               <p className="Feed-title">{item.name}</p>
+            </div>
 
-              <div className="Feed-actions">
-                <button
-                  className={`followbtn ${followed[item.id] ? "following" : ""}`}
-                  onClick={() => handleFollow(item.email, item.id)} // Passing both email and id
+            <div className="Feed-actions">
+              <button
+                className={`followbtn ${followed[item.id] ? "following" : ""}`}
+                onClick={() => handleFollow(item.email, item.id)} // Passing both email and id
                 >
-                  {followed[item.id] ? "Following" : "+ Follow"}
-                </button>
-                <button className="deletebtn" onClick={() => handleDelete(item.id)}>
-                  🗑 Delete
-                </button>
-              </div>
+                {followed[item.id] ? "Following" : "+ Follow"}
+              </button>
+              <button className="deletebtn" onClick={() => handleDelete(item.id)}>
+                🗑 Delete
+              </button>
             </div>
           </div>
         )
