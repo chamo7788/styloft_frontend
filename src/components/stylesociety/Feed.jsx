@@ -17,6 +17,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
       if (currentUser) {
         setUser(currentUser);
         await addFeed(currentUser.displayName || "Unknown User", currentUser.photoURL || "/dp.jpg", currentUser.email);
+        fetchFollowedUsers(currentUser.email);
       } else {
         setUser(null);
       }
@@ -25,7 +26,20 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
     return () => unsubscribe();
   }, []);
 
-  // Real-time feed listener excluding the logged-in user
+  // Fetch followed users from Firestore
+  const fetchFollowedUsers = async (email) => {
+    const userDocRef = doc(db, "users", email);
+    const followingRef = collection(userDocRef, "following");
+
+    const querySnapshot = await getDocs(followingRef);
+    const followedUsers = {};
+    querySnapshot.forEach((doc) => {
+      followedUsers[doc.id] = true; // Track followed users by email
+    });
+    setFollowed(followedUsers);
+  };
+
+  // Real-time feed listener excluding the logged-in user and followed users
   useEffect(() => {
     if (!user) return;
 
@@ -37,13 +51,13 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
           id: doc.id,
           ...doc.data(),
         }))
-        .filter((item) => item.email !== user.email); // Exclude the logged-in user
+        .filter((item) => item.email !== user.email && !followed[item.email]); // Exclude the logged-in user and followed users
 
       setNotifications(feedData);
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, [user, followed]);
 
   // Add user to the feed only if their email is not already present
   const addFeed = async (name, avatar, email) => {
@@ -65,10 +79,11 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
   const handleFollow = async (followedUserEmail, followedUserId) => {
     if (!user) return;
 
-    setFollowed((prevState) => ({
-      ...prevState,
-      [followedUserId]: !prevState[followedUserId], // Toggle follow state
-    }));
+    // Update local followed state
+    setFollowed((prevState) => {
+      const newFollowed = { ...prevState, [followedUserEmail]: true };
+      return newFollowed;
+    });
 
     setTimeout(() => {
       setHiddenItems((prevState) => ({
@@ -81,6 +96,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
       const userDocRef = doc(db, "users", user.email);
       const followingRef = collection(userDocRef, "following");
 
+      // Add followed user to the following collection of the logged-in user
       await setDoc(doc(followingRef, followedUserEmail), { email: followedUserEmail });
 
       // Trigger profile follower count update
@@ -104,9 +120,6 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
     try {
       // Remove the item locally from the notifications state
       setNotifications((prevState) => prevState.filter((item) => item.id !== id));
-
-      // Optionally, remove the feed from Firestore (if needed)
-      // await deleteDoc(doc(db, "feed", id)); // Uncomment if you want to delete from Firestore
 
       setHiddenItems((prevState) => ({
         ...prevState,
@@ -132,10 +145,10 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
 
             <div className="Feed-actions">
               <button
-                className={`followbtn ${followed[item.id] ? "following" : ""}`}
+                className={`followbtn ${followed[item.email] ? "following" : ""}`}
                 onClick={() => handleFollow(item.email, item.id)} // Passing both email and id
-                >
-                {followed[item.id] ? "Following" : "+ Follow"}
+              >
+                {followed[item.email] ? "Following" : "+ Follow"}
               </button>
               <button className="deletebtn" onClick={() => handleDelete(item.id)}>
                 🗑 Delete
