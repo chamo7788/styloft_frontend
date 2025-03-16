@@ -564,6 +564,7 @@ body {
   overflow: hidden;
   box-shadow: var(--shadow-md);
   transition: all var(--transition-normal);
+  cursor: pointer;
 }
 
 .submission-card:hover {
@@ -614,6 +615,12 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.submission-rating {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.25rem;
 }
 
 .no-submissions {
@@ -907,4 +914,10 @@ body {
 .star-icon:hover {
   color: var(--accent-color);
   /* Highlight stars from left to the hovered star */
+}
+
+/* Static Stars (No Hover) */
+.submission-rating .star-icon {
+  transition: none; /* Disable hover transition */
+  pointer-events: none; /* Disable interaction */
 }

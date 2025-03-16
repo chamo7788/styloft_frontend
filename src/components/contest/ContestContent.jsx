@@ -4,6 +4,8 @@ import { doc, getDoc } from "firebase/firestore"
 import { db } from "../../firebaseConfig"
 import "../../assets/css/contest/ContestContent.css"
 import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Star } from "lucide-react"
+import SubmissionCards from "./SubmissionCards";
+import SubmitContest from "./SubmitContest";
 
 export default function ContestContent() {
   const { id } = useParams()
@@ -289,6 +291,21 @@ export default function ContestContent() {
     return stars;
   };
 
+  const renderInteractiveStars = (submissionId, currentRating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          size={24}
+          className={`star-icon ${i <= currentRating ? "filled" : ""}`}
+          onClick={() => handleRatingChange(submissionId, i)}
+        />
+      );
+    }
+    return stars;
+  };
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -381,112 +398,25 @@ export default function ContestContent() {
             </div>
           </div>
         </div>
-
-        <div className="contest-right">
-          {isCreator ? (
-            // Render ContestEdit component for the creator
-            <ContestEdit contest={contest} />
-          ) : (
-            // Render the existing submission form for other users
-            <>
-              {isSubmitted ? (
-                <div className="submission-success">
-                  <CheckCircle size={48} className="success-icon" />
-                  <h3>Submission Successful!</h3>
-                  <p>Your design has been submitted to the contest.</p>
-                </div>
-              ) : (
-                <>
-                  <h2 className="submission-title">Submit Your Design</h2>
-
-                  <div
-                    className={`upload-box ${isDragging ? "dragging" : ""} ${errorMessage ? "error" : ""}`}
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                  >
-                    <input
-                      id="file-upload"
-                      type="file"
-                      onChange={handleImageUpload}
-                      className="file-input"
-                      accept="image/jpeg,image/png,image/jpg"
-                    />
-
-                    {imagePreview ? (
-                      <div className="image-preview-container">
-                        <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="submission-image-preview" />
-                        <button
-                          className="remove-image-btn"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleClearForm()
-                          }}
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="upload-placeholder">
-                        <div className="upload-icon-container">
-                          <Upload size={24} className="upload-icon" />
-                        </div>
-                        <p className="upload-text">Drag and drop your design here</p>
-                        <p className="upload-subtext">or click to browse files</p>
-                        <p className="upload-formats">Supported formats: JPG, PNG</p>
-                      </div>
-                    )}
-
-                    {isUploading && (
-                      <div className="upload-overlay">
-                        <div className="upload-spinner"></div>
-                        <p>Uploading...</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {errorMessage && (
-                    <div className="error-message">
-                      <X size={16} />
-                      <span>{errorMessage}</span>
-                    </div>
-                  )}
-
-                  <div className="message-container">
-                    <label htmlFor="message" className="message-label">
-                      <MessageSquare size={16} />
-                      <span>Add a message with your submission</span>
-                    </label>
-                    <textarea
-                      id="message"
-                      className="message-input"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Describe your design or add any notes for the contest creator..."
-                    />
-                  </div>
-
-                  <div className="button-group">
-                    <button className="submit-btn" onClick={handleSubmit} disabled={isUploading || isDeadlinePassed}>
-                      {isUploading ? "Uploading..." : "Submit Design"}
-                    </button>
-                    <button className="clear-btn" onClick={handleClearForm}>
-                      Clear Form
-                    </button>
-                  </div>
-
-                  {isDeadlinePassed && (
-                    <div className="deadline-passed-message">
-                      <Clock size={16} />
-                      <span>This contest has ended and is no longer accepting submissions.</span>
-                    </div>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </div>
+        <SubmitContest
+          contest={contest}
+          isCreator={isCreator}
+          isSubmitted={isSubmitted}
+          isDragging={isDragging}
+          isUploading={isUploading}
+          imagePreview={imagePreview}
+          errorMessage={errorMessage}
+          newMessage={newMessage}
+          isDeadlinePassed={isDeadlinePassed}
+          handleDragEnter={handleDragEnter}
+          handleDragLeave={handleDragLeave}
+          handleDragOver={handleDragOver}
+          handleDrop={handleDrop}
+          handleImageUpload={handleImageUpload}
+          handleClearForm={handleClearForm}
+          handleSubmit={handleSubmit}
+          setNewMessage={setNewMessage}
+        />
       </div>
 
       <div className="submission-gallery">
@@ -500,27 +430,11 @@ export default function ContestContent() {
             <p>No submissions yet. Be the first to submit your design!</p>
           </div>
         ) : (
-          <div className="submission-cards">
-            {submissions.map((submission) => (
-              <div key={submission.id} className="submission-card" onClick={() => openModal(submission)}>
-                <div className="submission-image-container">
-                  <img src={submission.fileUrl || "/placeholder.svg"} alt="Submission" className="submission-image" />
-                </div>
-                <div className="submission-info">
-                  <div className="submission-user">
-                    <User size={16} className="user-icon" />
-                    <span>{submission.userName}</span>
-                  </div>
-                  {submission.message && <p className="submission-message">{submission.message}</p>}
-
-                  {/* Display Rating */}
-                  <div className="submission-rating">
-                    {renderStaticStars(submission.rating || 0)}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <SubmissionCards
+            submissions={submissions}
+            openModal={openModal}
+            renderStaticStars={renderStaticStars}
+          />
         )}
       </div>
 
@@ -528,7 +442,7 @@ export default function ContestContent() {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={closeModal}>
-              <X size={24} />
+              Close
             </button>
             <div className="modal-body">
               <img
@@ -538,14 +452,14 @@ export default function ContestContent() {
               />
               <div className="modal-info">
                 <h3>{selectedSubmission.userName}</h3>
-                {selectedSubmission.message && <p>{selectedSubmission.message}</p>}
-
-                {/* Rating Section - Only visible to the contest creator */}
+                {selectedSubmission.message && (
+                  <p>{selectedSubmission.message}</p>
+                )}
                 {isCreator && (
                   <div className="rating-section">
                     <label className="rating-label">Rate this submission:</label>
                     <div className="star-rating">
-                      {renderStars(selectedSubmission.id, selectedSubmission.rating || 0)}
+                      {renderInteractiveStars(selectedSubmission.id, selectedSubmission.rating || 0)}
                     </div>
                   </div>
                 )}
