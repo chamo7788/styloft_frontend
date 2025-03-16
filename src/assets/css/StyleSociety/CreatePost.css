@@ -129,6 +129,9 @@
 }
 
 .createUserName {
+  position: relative;
+  top: -15px;
+  left: 10px;
   font-weight: 600;
   font-size: 16px;
   color: #333;
@@ -143,6 +146,7 @@
 }
 
 .addPostInput {
+  top: -10px;
   width: 100%;
   min-height: 120px;
   background: #f8f0fa;
