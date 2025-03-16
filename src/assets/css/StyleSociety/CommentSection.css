@@ -1,16 +1,15 @@
+/* Comment Section Component - LinkedIn Style */
 .comment-container {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  position: relative;
 }
 
 .comment-button-wrapper {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   padding: 8px 12px;
-  cursor: pointer;
   border-radius: 4px;
+  cursor: pointer;
   transition: background-color 0.2s ease;
   color: rgba(0, 0, 0, 0.6);
   border: none;
@@ -18,12 +17,16 @@
 }
 
 .comment-button-wrapper:hover {
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .comment-icon {
   font-size: 18px;
-  
+  transition: transform 0.2s ease;
+}
+
+.comment-button-wrapper:hover .comment-icon {
+  transform: scale(1.1);
 }
 
 .comment-count {
@@ -31,10 +34,24 @@
   font-weight: 600;
 }
 
+/* Comment Section Expanded */
 .comment-section {
-  margin-top: 8px;
+  margin-top: 12px;
   background: white;
   border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .comment-input-container {
@@ -53,9 +70,9 @@
 }
 
 .comment-input-container input:focus {
+  outline: none;
   border-color: #0a66c2;
   box-shadow: 0 0 0 1px #0a66c2;
-  outline: none;
 }
 
 .comment-button {
@@ -66,23 +83,22 @@
   border: none;
   border-radius: 16px;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 14px;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .comment-button:hover {
   background-color: #004182;
 }
 
-.comment-icon{
-  cursor: pointer;
-  
-}
+/* Comment List */
 .comment-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .comment-item {
@@ -101,17 +117,31 @@
   flex: 1;
 }
 
-.comment-content strong {
-  color: rgba(0, 0, 0, 0.9);
+.comment-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.comment-user-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-user-name {
   font-weight: 600;
   font-size: 14px;
-  margin-right: 8px;
+  color: rgba(0, 0, 0, 0.9);
 }
 
 .comment-text {
-  color: rgba(0, 0, 0, 0.9);
   font-size: 14px;
   line-height: 1.4;
+  color: rgba(0, 0, 0, 0.9);
+  margin-left: 40px;
 }
 
 .delete-icon {
@@ -123,8 +153,8 @@
 }
 
 .delete-icon:hover {
-  color: #cc1016;
-  background-color: rgba(204, 16, 22, 0.08);
+  color: #d11124;
+  background-color: rgba(209, 17, 36, 0.08);
 }
 
 /* Responsive Design */
@@ -132,22 +162,34 @@
   .comment-input-container {
     padding: 12px;
   }
-  
+
   .comment-item {
-    padding: 12px;
+    padding: 10px 12px;
+  }
+
+  .comment-button {
+    font-size: 13px;
+    padding: 5px 14px;
   }
 }
 
 @media screen and (max-width: 480px) {
   .comment-input-container {
-    padding: 8px;
+    padding: 10px;
   }
-  
+
   .comment-item {
-    padding: 8px;
+    padding: 8px 10px;
   }
-  
-  .comment-button {
-    width: 100%;
+
+  .comment-text {
+    font-size: 13px;
+    margin-left: 36px;
+  }
+
+  .comment-user-img {
+    width: 28px;
+    height: 28px;
   }
 }
+

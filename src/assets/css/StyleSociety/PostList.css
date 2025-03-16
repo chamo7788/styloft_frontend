@@ -1,16 +1,11 @@
 .post-list {
-  position: relative;
-  width: 52%;
-  margin: 50px auto 60px 1.5%;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08),
-              0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 550px;
+  margin: 50px auto 60px 4.5%;
+  gap: 16px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+  
 }
 
 /* Individual Post */
