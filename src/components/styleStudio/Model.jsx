@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef, useState, useEffect, createRef, useMemo } from "react"
 import { useGLTF, Text } from "@react-three/drei"
 import { TextureLoader } from "three"
@@ -144,24 +142,39 @@ function Model({
 
   // Memoize logo meshes to prevent unnecessary recreations
   const logoMeshes = useMemo(() => {
-    return logoElements
-      .map((logo, index) => {
-        const texture = logoTextures[index]
+    // Sort logo elements by z-index (if available) or by their position[2] value
+    const sortedLogoElements = [...logoElements].sort((a, b) => {
+      const aZIndex = a.zIndex !== undefined ? a.zIndex : a.position[2] || 0
+      const bZIndex = b.zIndex !== undefined ? b.zIndex : b.position[2] || 0
+      return bZIndex - aZIndex // Higher z-index appears in front
+    })
+
+    return sortedLogoElements
+      .map((logo, i) => {
+        const originalIndex = logoElements.findIndex((l) => l === logo)
+        const texture = logoTextures[originalIndex]
         if (!texture) return null
 
         return (
           <mesh
-            key={`logo-${index}`}
+            key={`logo-${originalIndex}`}
             position={logo.position}
             rotation={logo.rotation}
             onClick={(e) => {
               e.stopPropagation()
-              onLogoSelect(index)
+              onLogoSelect(originalIndex)
             }}
             userData={{ isLogo: true }}
+            renderOrder={logo.zIndex || 0}
           >
             <planeGeometry args={[logo.size, logo.size]} />
-            <meshBasicMaterial map={texture} transparent opacity={selectedLogoIndex === index ? 0.8 : 1} />
+            <meshBasicMaterial
+              map={texture}
+              transparent
+              opacity={selectedLogoIndex === originalIndex ? 0.8 : 1}
+              depthTest={true}
+              depthWrite={false} // Set to false to avoid z-fighting
+            />
           </mesh>
         )
       })
@@ -170,51 +183,62 @@ function Model({
 
   // Memoize text elements to prevent unnecessary recreations
   const textElementComponents = useMemo(() => {
-    return textElements.map((element, index) => (
-      <group
-        key={`text-group-${index}`}
-        position={element.position}
-        onClick={(e) => {
-          e.stopPropagation()
-          onTextSelect(index)
-        }}
-      >
-        <Text
-          ref={textRefs.current[index]}
-          color={element.color}
-          fontSize={element.fontSize * 0.02}
-          maxWidth={2}
-          lineHeight={1.2}
-          textAlign={element.textAlign || "center"}
-          anchorX={element.textAlign || "center"}
-          anchorY="middle"
-          fontWeight={element.fontWeight || "normal"}
-          fontStyle={element.fontStyle || "normal"}
-          renderOrder={1}
-          userData={{ isText: true, isSelected: index === selectedTextIndex }}
-          material-toneMapped={false}
-          material-transparent={true}
-          material-depthTest={true}
-          material-depthWrite={true}
-          material-opacity={0.95}
-          outlineWidth={index === selectedTextIndex ? 0.01 : 0}
-          outlineColor="#ffffff"
-        >
-          {element.text}
-        </Text>
+    // Sort text elements by z-index (if available) or by their position[2] value
+    const sortedTextElements = [...textElements].sort((a, b) => {
+      const aZIndex = a.zIndex !== undefined ? a.zIndex : a.position[2] || 0
+      const bZIndex = b.zIndex !== undefined ? b.zIndex : b.position[2] || 0
+      return bZIndex - aZIndex // Higher z-index appears in front
+    })
 
-        {index === selectedTextIndex && (
-          <mesh
-            position={[0, 0, 0.05]}
-            scale={[element.text.length * element.fontSize * 0.0008, element.fontSize * 0.0015, 0.001]}
-            userData={{ isDragHandle: true }}
+    return sortedTextElements.map((element, index) => {
+      const originalIndex = textElements.findIndex((e) => e === element)
+      return (
+        <group
+          key={`text-group-${originalIndex}`}
+          position={element.position}
+          onClick={(e) => {
+            e.stopPropagation()
+            onTextSelect(originalIndex)
+          }}
+          renderOrder={element.zIndex || 0}
+        >
+          <Text
+            ref={textRefs.current[originalIndex]}
+            color={element.color}
+            fontSize={element.fontSize * 0.02}
+            maxWidth={2}
+            lineHeight={1.2}
+            textAlign={element.textAlign || "center"}
+            anchorX={element.textAlign || "center"}
+            anchorY="middle"
+            fontWeight={element.fontWeight || "normal"}
+            fontStyle={element.fontStyle || "normal"}
+            renderOrder={element.zIndex || 1}
+            userData={{ isText: true, isSelected: originalIndex === selectedTextIndex }}
+            material-toneMapped={false}
+            material-transparent={true}
+            material-depthTest={true}
+            material-depthWrite={true}
+            material-opacity={0.95}
+            outlineWidth={originalIndex === selectedTextIndex ? 0.01 : 0}
+            outlineColor="#ffffff"
           >
-            <planeGeometry />
-            <meshBasicMaterial color="#ffffff" transparent opacity={0.2} />
-          </mesh>
-        )}
-      </group>
-    ))
+            {element.text}
+          </Text>
+
+          {originalIndex === selectedTextIndex && (
+            <mesh
+              position={[0, 0, 0.05]}
+              scale={[element.text.length * element.fontSize * 0.0008, element.fontSize * 0.0015, 0.001]}
+              userData={{ isDragHandle: true }}
+            >
+              <planeGeometry />
+              <meshBasicMaterial color="#ffffff" transparent opacity={0.2} />
+            </mesh>
+          )}
+        </group>
+      )
+    })
   }, [textElements, selectedTextIndex, onTextSelect])
 
   return (
