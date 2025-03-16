@@ -1,214 +1,420 @@
+/* Base styles */
 .trending-section {
-    width: 100%;
-    min-height: 100vh;
-    background: linear-gradient(to bottom right, #f9a8d4, #c084fc, #93c5fd);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 4rem 1rem;
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  background-size: 400% 400%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 1rem;
+  animation: gradientFlow 15s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .trending-container {
-    max-width: 1200px;
-    margin: 0 auto;
+  50% {
+    background-position: 100% 50%;
   }
-  
-  .trending-title {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  100% {
+    background-position: 0% 50%;
   }
-  
-  .trending-title-gradient {
-    background: linear-gradient(to right, #6b21a8, #db2777);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  .trending-subtitle {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-bottom: 3rem;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    max-width: 48rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .fashion-card-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  .fashion-card {
-    position: relative;
-    width: 300px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    transition: all 0.5s ease;
-  }
-  
-  .fashion-card:hover {
-    transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-  
-  .like-button-container {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    z-index: 10;
-  }
-  
-  .like-button {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(4px);
-    padding: 0.5rem;
-    border-radius: 9999px;
-    border: none;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .like-button:hover {
-    background: #fce7f3;
-    transform: scale(1.1);
-  }
-  
-  .heart-icon {
-    height: 1.25rem;
-    width: 1.25rem;
-    color: #ec4899;
-  }
-  
-  .image-container {
-    position: relative;
-    height: 300px;
-    overflow: hidden;
-  }
-  
-  .card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.7s ease;
-  }
-  
-  .fashion-card:hover .card-image {
-    transform: scale(1.1);
-  }
-  
-  .image-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+}
+
+.trending-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(20px);
   }
-  
-  .fashion-card:hover .image-overlay {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trending-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: titleReveal 1s ease forwards 0.3s;
+}
+
+@keyframes titleReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trending-title-gradient {
+  background: linear-gradient(to right, #bfdbfe, #dbeafe);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.trending-subtitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 3rem;
+  color: #f3f4f6;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0;
+  animation: fadeIn 0.8s ease forwards 0.6s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
-  
-  .card-content {
-    padding: 1.25rem;
-    text-align: left;
+}
+
+.fashion-card-container {
+  display: grid;
+  flex-wrap: wrap;
+  justify-content: center;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.fashion-card {
+  position: relative;
+  width: 300px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: calc(var(--card-index) * 0.1s);
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .card-title {
+}
+
+.fashion-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+}
+
+.like-button-container {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+}
+
+.like-button {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  padding: 0.625rem;
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.like-button:hover {
+  background: #eff6ff;
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(30, 64, 175, 0.2);
+}
+
+.like-button:active {
+  transform: scale(0.95);
+}
+
+.heart-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #1e40af;
+  transition: transform 0.3s ease;
+}
+
+.like-button:hover .heart-icon {
+  transform: scale(1.1);
+  animation: heartBeat 0.3s ease;
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.image-container {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fashion-card:hover .card-image {
+  transform: scale(1.1);
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(30, 64, 175, 0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.fashion-card:hover .image-overlay {
+  opacity: 1;
+  animation: fadeInOverlay 0.4s ease;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.card-content {
+  padding: 1.5rem;
+  text-align: left;
+  transform: translateY(10px);
+  opacity: 0;
+  animation: slideUp 0.5s ease forwards;
+  animation-delay: calc(var(--card-index) * 0.15s + 0.3s);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  transition: color 0.3s ease;
+}
+
+.fashion-card:hover .card-title {
+  color: #1e40af;
+  animation: titlePop 0.3s ease;
+}
+
+@keyframes titlePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sparkles-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #3b82f6;
+  animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(15deg);
+    opacity: 0.8;
+  }
+}
+
+.card-tagline {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.fashion-card:hover .card-tagline {
+  color: #1e40af;
+  transform: translateX(5px);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-footer::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #1e40af, #3b82f6);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.fashion-card:hover .card-footer::after {
+  transform: translateX(0);
+}
+
+.designer-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563;
+  transition: transform 0.3s ease;
+}
+
+.fashion-card:hover .designer-name {
+  transform: translateY(-2px);
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.star-icon {
+  height: 1rem;
+  width: 1rem;
+  color: #3b82f6;
+  transition: all 0.3s ease;
+}
+
+.fashion-card:hover .star-icon {
+  animation: starPulse 1s ease infinite;
+  animation-delay: calc(var(--star-index) * 0.1s);
+}
+
+@keyframes starPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .trending-title {
+    font-size: 2.5rem;
+  }
+
+  .trending-subtitle {
     font-size: 1.25rem;
-    font-weight: 700;
-    color: #1f2937;
-    transition: color 0.3s ease;
   }
-  
-  .fashion-card:hover .card-title {
-    color: #db2777;
+
+  .trending-section {
+    padding: 3rem 1rem;
   }
-  
-  .sparkles-icon {
-    height: 1.25rem;
-    width: 1.25rem;
-    color: #f59e0b;
+
+  .fashion-card-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards per row on medium screens */
   }
-  
-  .card-tagline {
+}
+
+@media screen and (max-width: 480px) {
+  .trending-title {
+    font-size: 2rem;
+  }
+
+  .trending-subtitle {
     font-size: 1.125rem;
-    font-weight: 500;
-    color: #db2777;
-    margin-bottom: 0.25rem;
   }
-  
-  .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 0.75rem;
+
+  .fashion-card {
+    width: 100%;
+    max-width: 320px;
   }
-  
-  .designer-name {
-    font-size: 0.875rem;
-    color: #4b5563;
+
+  .fashion-card-container {
+    grid-template-columns: repeat(1, 1fr); /* 1 card per row on small screens */
   }
-  
-  .rating {
-    display: flex;
-    align-items: center;
-  }
-  
-  .star-icon {
-    height: 1rem;
-    width: 1rem;
-    fill: #f59e0b;
-    color: #f59e0b;
-  }
-  
-  @media screen and (max-width: 768px) {
-    .trending-title {
-      font-size: 2.5rem;
-    }
-  
-    .trending-subtitle {
-      font-size: 1.25rem;
-    }
-  
-    .trending-section {
-      padding: 3rem 1rem;
-    }
-  }
-  
-  @media screen and (max-width: 480px) {
-    .trending-title {
-      font-size: 2rem;
-    }
-  
-    .trending-subtitle {
-      font-size: 1.125rem;
-    }
-  
-    .fashion-card {
-      width: 100%;
-      max-width: 320px;
-    }
-  }
+}
