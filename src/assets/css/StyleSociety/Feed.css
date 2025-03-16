@@ -1,19 +1,18 @@
-/* Feed Container - Right Side Top Positioning */
 .Feed-container {
-  position: relative;
-  bottom: 4025px; /* Distance from top of viewport */
-  left: 870px; /* Distance from right of viewport */
-  width: 500px; /* Narrower width for sidebar style */
+  position: absolute;
+  top: 1033px;
+  left: 61%;
+  width: 300px;
   max-width: 90%;
-  background: linear-gradient(to bottom, #f0e1f1, #5f7fbf);
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  height: 550px;
+  background-color:  #f3f6f8;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   max-height: calc(100vh - 120px); /* Viewport height minus margins */
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   transition: all 0.3s ease;
-  
 }
 
 .Feed-container:hover {
@@ -46,7 +45,7 @@
   align-items: center;
   font-weight: 700;
   font-size: 20px;
-  color: #5f1865;
+  color: #061e67;
   margin-bottom: 15px;
   padding-bottom: 10px;
   border-bottom: 2px solid rgba(95, 24, 101, 0.2);
@@ -54,10 +53,11 @@
 
 /* Notification Items */
 .Feed-item {
-  display: flex;
+  position: relative;
+  height: 90px;
   align-items: flex-start;
   padding: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -65,7 +65,7 @@
 }
 
 .Feed-item:hover {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(242, 245, 247, 0.893);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
@@ -79,7 +79,6 @@
   height: 45px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
@@ -96,7 +95,8 @@
 
 .Feed-title {
   position: relative;
-  top: 15px;
+  top: -40px;
+  left: 40px;
   font-size: 14px;
   font-weight: 600;
   color: #333;
@@ -104,18 +104,11 @@
   line-height: 1.4;
 }
 
-/* Button Container */
-.Feed-buttons {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
-}
-
 /* Follow Button */
-.followbtn {
+.followbtn { 
   position: relative;
-  left: 200px;
-  top: -18px;
+  top: -35px;
+  left: 48px;
   background-color: rgb(255, 255, 255);
   color: #1d1865;
   border: 1px solid #1d1865;
@@ -125,15 +118,14 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  
 }
 
 .followbtn:hover {
-  background-color: #5f7fbf;
+  background-color: #061e67;
   color: white;
-  border: 1px solid #5f7fbf;
+  border: 1px solid #061e67;
   transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(179, 101, 195, 0.3);
+  box-shadow: 0 3px 8px rgba(72, 6, 103, 0.3);
 }
 
 .followbtn:active {
@@ -153,11 +145,11 @@
 /* Delete Button */
 .deletebtn {
   position: relative;
-  background-color: #cc92db;
-  color: #480667;
-  left: 200px;
-  top: -18px;
-  border: 1px solid #480667;
+  top: -35px;
+  left: 48px;
+  background-color: #5f7fbf;
+  color: #ffffff;
+  border: 1px solid #5f7fbf;
   padding: 5px 12px;
   font-size: 13px;
   font-weight: 600;
@@ -168,9 +160,9 @@
 }
 
 .deletebtn:hover {
-  background-color: #310645;
+  background-color: #061e67;
   color: white;
-  border: 1px solid #480667;
+  border: 1px solid #061e67;
   transform: translateY(-2px);
   box-shadow: 0 3px 8px rgba(72, 6, 103, 0.3);
 }
@@ -244,16 +236,9 @@
     margin-bottom: 10px;
   }
 
-  .Feed-buttons {
-    flex-direction: row;
-    gap: 5px;
-  }
-
   .followbtn,
   .deletebtn {
     padding: 4px 8px;
     font-size: 12px;
   }
 }
-
-
