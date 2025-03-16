@@ -227,6 +227,39 @@ export default function ContestContent() {
     setSelectedSubmission(null)
   }
 
+  const handleRatingChange = async (submissionId, rating) => {
+    try {
+      const response = await fetch(`http://localhost:3000/submission/rate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          submissionId,
+          rating: parseInt(rating, 10),
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to submit rating. Please try again.");
+      }
+  
+      const updatedSubmission = await response.json();
+  
+      // Update the local state with the new rating
+      setSubmissions((prevSubmissions) =>
+        prevSubmissions.map((submission) =>
+          submission.id === submissionId ? { ...submission, rating: updatedSubmission.rating } : submission
+        )
+      );
+  
+      alert("Rating submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+      alert("An error occurred while submitting the rating.");
+    }
+  };
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -450,6 +483,28 @@ export default function ContestContent() {
                     <span>{submission.userName}</span>
                   </div>
                   {submission.message && <p className="submission-message">{submission.message}</p>}
+
+                  {/* Rating Section - Only visible to the contest creator */}
+                  {isCreator && (
+                    <div className="rating-section">
+                      <label htmlFor={`rating-${submission.id}`} className="rating-label">
+                        Rate this submission:
+                      </label>
+                      <select
+                        id={`rating-${submission.id}`}
+                        className="rating-select"
+                        value={submission.rating || ""}
+                        onChange={(e) => handleRatingChange(submission.id, e.target.value)}
+                      >
+                        <option value="">Select Rating</option>
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
