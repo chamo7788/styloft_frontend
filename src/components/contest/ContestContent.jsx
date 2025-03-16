@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "../../firebaseConfig"
 import "../../assets/css/contest/ContestContent.css"
-import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar } from "lucide-react"
+import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Star } from "lucide-react"
 
 export default function ContestContent() {
   const { id } = useParams()
@@ -236,7 +236,7 @@ export default function ContestContent() {
         },
         body: JSON.stringify({
           submissionId,
-          rating: parseInt(rating, 10),
+          rating,
         }),
       });
   
@@ -258,6 +258,35 @@ export default function ContestContent() {
       console.error("Error submitting rating:", error);
       alert("An error occurred while submitting the rating.");
     }
+  };
+
+  const renderStars = (submissionId, currentRating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          size={24}
+          className={`star-icon ${i <= currentRating ? "filled" : ""}`}
+          onClick={() => handleRatingChange(submissionId, i)}
+        />
+      );
+    }
+    return stars;
+  };
+
+  const renderStaticStars = (currentRating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          size={16}
+          className={`star-icon ${i <= currentRating ? "filled" : ""}`}
+        />
+      );
+    }
+    return stars;
   };
 
   if (!contest) {
@@ -484,27 +513,10 @@ export default function ContestContent() {
                   </div>
                   {submission.message && <p className="submission-message">{submission.message}</p>}
 
-                  {/* Rating Section - Only visible to the contest creator */}
-                  {isCreator && (
-                    <div className="rating-section">
-                      <label htmlFor={`rating-${submission.id}`} className="rating-label">
-                        Rate this submission:
-                      </label>
-                      <select
-                        id={`rating-${submission.id}`}
-                        className="rating-select"
-                        value={submission.rating || ""}
-                        onChange={(e) => handleRatingChange(submission.id, e.target.value)}
-                      >
-                        <option value="">Select Rating</option>
-                        <option value="1">1 - Poor</option>
-                        <option value="2">2 - Fair</option>
-                        <option value="3">3 - Good</option>
-                        <option value="4">4 - Very Good</option>
-                        <option value="5">5 - Excellent</option>
-                      </select>
-                    </div>
-                  )}
+                  {/* Display Rating */}
+                  <div className="submission-rating">
+                    {renderStaticStars(submission.rating || 0)}
+                  </div>
                 </div>
               </div>
             ))}
@@ -519,10 +531,24 @@ export default function ContestContent() {
               <X size={24} />
             </button>
             <div className="modal-body">
-              <img src={selectedSubmission.fileUrl || "/placeholder.svg"} alt="Submission" className="modal-image" />
+              <img
+                src={selectedSubmission.fileUrl || "/placeholder.svg"}
+                alt="Submission"
+                className="modal-image"
+              />
               <div className="modal-info">
                 <h3>{selectedSubmission.userName}</h3>
                 {selectedSubmission.message && <p>{selectedSubmission.message}</p>}
+
+                {/* Rating Section - Only visible to the contest creator */}
+                {isCreator && (
+                  <div className="rating-section">
+                    <label className="rating-label">Rate this submission:</label>
+                    <div className="star-rating">
+                      {renderStars(selectedSubmission.id, selectedSubmission.rating || 0)}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

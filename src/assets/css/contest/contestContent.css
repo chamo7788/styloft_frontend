@@ -880,3 +880,31 @@ body {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
+
+/* Star Rating */
+.star-rating {
+  display: flex;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+
+.star-icon {
+  color: var(--border-color);
+  transition: color var(--transition-fast);
+}
+
+.star-icon.filled {
+  color: var(--accent-color);
+}
+
+/* Hover effect: Left-to-right */
+.star-icon:hover,
+.star-icon:hover~.star-icon {
+  color: var(--border-color);
+  /* Reset stars to default color */
+}
+
+.star-icon:hover {
+  color: var(--accent-color);
+  /* Highlight stars from left to the hovered star */
+}
