@@ -1,0 +1,91 @@
+.SocietyProfile-container {
+    position: absolute;
+    bottom: 6980px;
+    width: 20%;
+    left: 40px;
+    max-width: 800px;
+    margin: 2px auto;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+  
+.SocietyProfile-header {
+  position: relative;
+}
+
+.SocietyProfileCover-photo {
+  width: 100%;
+  height: 180px;
+  background-color: #ccc;
+}
+
+.SocietyProfileCover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.SocietyProfile-details {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+}
+
+.SocietyProfile-pic-container {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fff;
+}
+
+.SocietyProfile-pic {
+  width: 100%;
+  height: 100%;
+  left: 20px;
+  object-fit: cover;
+}
+
+.SocietyProfileUser-info h2 {
+  margin-top: 30px;
+  font-size: 20px;
+  color: #333;
+}
+
+.SocietyProfile-about-section {
+  position: relative;
+  top: -20px;
+  padding: 15px;
+  text-align: center;
+}
+
+.SocietyProfile-about-section h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #807c7c;
+}
+
+.SocietyProfile-about-section p {
+  font-size: 14px;
+  color: #666;
+}
+
+textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
