@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useCallback, useMemo } from "react"
 import ModelViewer from "./ModelViewer"
 import TextureEditor from "./texture-editor/TextureEditor"
@@ -8,6 +6,9 @@ import Toolbar from "./Toolbar"
 import "../../assets/css/StyleStudio/text-editor.css"
 import "../../assets/css/StyleStudio/main.css"
 import "../../assets/css/StyleStudio/new-features.css"
+
+// Add LayerManager import at the top of the file
+import LayerManager from "./LayerManager"
 
 // Move constants outside component to prevent recreation on each render
 const models = {
@@ -35,7 +36,7 @@ const uvMappings = {
   shirt: {
     body: { x: 0, y: 0, width: 1, height: 1 },
     collar: { x: 0, y: 0, width: 1, height: 0.2 },
-    sleeves: { x: 0, y: 0.2, width: 1, height: 0.4 },
+    sleeves: { x: 0, y: 0, width: 1, height: 0.4 },
   },
   trouser: {
     main: { x: 0, y: 0, width: 1, height: 1 },
@@ -48,7 +49,7 @@ const uvMappings = {
   },
   frock: {
     body: { x: 0, y: 0, width: 1, height: 1 },
-    sleeves: { x: 0, y: 0.2, width: 1, height: 0.4 },
+    sleeves: { x: 0, y: 0, width: 1, height: 0.4 },
     collar: { x: 0, y: 0, width: 1, height: 0.2 },
   },
 }
@@ -111,8 +112,17 @@ export default function ModelEditor() {
   const [history, setHistory] = useState([{ colors: { main: "#ffffff" }, materials: {} }])
   const [historyIndex, setHistoryIndex] = useState(0)
 
+  // State for canvas objects from texture editor
+  const [canvasObjects, setCanvasObjects] = useState([])
+  const [selectedCanvasObjectIndex, setSelectedCanvasObjectIndex] = useState(null)
+
   // Memoize current model parts to prevent recalculation
   const currentModelParts = useMemo(() => modelParts[selectedModel], [selectedModel])
+
+  // Add state for layer manager visibility
+  const [showLayerManager, setShowLayerManager] = useState(false)
+
+  const textureEditorRef = useRef(null)
 
   // Handle model change - optimized with useCallback
   const handleModelChange = useCallback((model) => {
@@ -498,6 +508,78 @@ export default function ModelEditor() {
     [selectedModel],
   )
 
+  // Handle canvas objects changes from texture editor
+  const handleCanvasObjectsChange = (objects, part) => {
+    if (part === selectedPart) {
+      setCanvasObjects(objects)
+    }
+  }
+
+  // Handle canvas object selection
+  const handleSelectCanvasObject = (index) => {
+    setSelectedCanvasObjectIndex(index)
+    if (textureEditorRef.current) {
+      textureEditorRef.current.selectObject(index)
+    }
+  }
+
+  // Handle moving canvas object forward
+  const handleMoveCanvasObjectForward = (index) => {
+    if (textureEditorRef.current && textureEditorRef.current.moveObjectForward) {
+      textureEditorRef.current.moveObjectForward(index)
+    }
+  }
+
+  // Handle moving canvas object backward
+  const handleMoveCanvasObjectBackward = (index) => {
+    if (textureEditorRef.current && textureEditorRef.current.moveObjectBackward) {
+      textureEditorRef.current.moveObjectBackward(index)
+    }
+  }
+
+  // Handle bringing canvas object to front
+  const handleBringCanvasObjectToFront = (index) => {
+    if (textureEditorRef.current && textureEditorRef.current.bringObjectToFront) {
+      textureEditorRef.current.bringObjectToFront(index)
+    }
+  }
+
+  // Handle sending canvas object to back
+  const handleSendCanvasObjectToBack = (index) => {
+    if (textureEditorRef.current && textureEditorRef.current.sendObjectToBack) {
+      textureEditorRef.current.sendObjectToBack(index)
+    }
+  }
+
+  // Add these functions to handle layer management
+  const handleUpdateTextElement = useCallback((index, updatedText) => {
+    setTextElements((prev) => {
+      const newElements = [...prev]
+      newElements[index] = updatedText
+      return newElements
+    })
+  }, [])
+
+  const handleUpdateLogoElement = useCallback((index, updatedLogo) => {
+    setLogoElements((prev) => {
+      const newElements = [...prev]
+      newElements[index] = updatedLogo
+      return newElements
+    })
+  }, [])
+
+  const handleReorderLayers = useCallback((layer1, layer2) => {
+    // This function is called after the layer positions have been updated
+    // We can use it to trigger a re-render or perform additional actions
+    setModelKey((prevKey) => prevKey + 1) // Force model to re-render
+  }, [])
+
+  // Add toggle function for layer manager
+  const toggleLayerManager = useCallback(() => {
+    setShowLayerManager((prev) => !prev)
+  }, [])
+
+  // Update the return statement to include the LayerManager component
   return (
     <div className="model-editor-container">
       <div className={`model-view-container ${showTextureEditor ? "with-editor" : ""}`}>
@@ -509,8 +591,10 @@ export default function ModelEditor() {
             onScreenshot={handleScreenshot}
             onSaveDesign={handleSaveDesign}
             onLoadDesign={handleLoadDesign}
+            onToggleLayerManager={toggleLayerManager}
             canUndo={historyIndex > 0}
             canRedo={historyIndex < history.length - 1}
+            showLayerManager={showLayerManager}
           />
 
           <div className="canvas-content">
@@ -541,10 +625,62 @@ export default function ModelEditor() {
               Selected part: <span className="part-name">{selectedPart}</span>
             </div>
           )}
+
+          {showLayerManager && (
+            <div className="layer-manager-overlay">
+              <LayerManager
+                textElements={textElements}
+                logoElements={logoElements}
+                materials={materials}
+                colors={colors}
+                selectedPart={selectedPart}
+                onUpdateTextElement={handleUpdateTextElement}
+                onRemoveTextElement={handleRemoveText}
+                onDuplicateTextElement={(index) => {
+                  const element = textElements[index]
+                  setTextElements((prev) => [
+                    ...prev,
+                    {
+                      ...element,
+                      position: [element.position[0], element.position[1] + 0.1, element.position[2] + 0.1],
+                      zIndex: (element.zIndex || 0) + 1,
+                    },
+                  ])
+                }}
+                onUpdateLogoElement={handleUpdateLogoElement}
+                onRemoveLogoElement={handleRemoveLogo}
+                onDuplicateLogoElement={(index) => {
+                  const element = logoElements[index]
+                  setLogoElements((prev) => [
+                    ...prev,
+                    {
+                      ...element,
+                      position: [element.position[0], element.position[1] + 0.1, element.position[2] + 0.1],
+                      zIndex: (element.zIndex || 0) + 1,
+                    },
+                  ])
+                }}
+                onSelectTextElement={handleTextSelect}
+                onSelectLogoElement={handleLogoSelect}
+                selectedTextIndex={selectedTextIndex}
+                selectedLogoIndex={selectedLogoIndex}
+                onReorderLayers={handleReorderLayers}
+                onToggleTextureEditor={toggleTextureEditor}
+                canvasObjects={canvasObjects}
+                onMoveCanvasObjectForward={handleMoveCanvasObjectForward}
+                onMoveCanvasObjectBackward={handleMoveCanvasObjectBackward}
+                onBringCanvasObjectToFront={handleBringCanvasObjectToFront}
+                onSendCanvasObjectToBack={handleSendCanvasObjectToBack}
+                onSelectCanvasObject={handleSelectCanvasObject}
+                selectedCanvasObjectIndex={selectedCanvasObjectIndex}
+              />
+            </div>
+          )}
         </div>
 
         {showTextureEditor && (
           <TextureEditor
+            ref={textureEditorRef}
             selectedModel={selectedModel}
             selectedPart={selectedPart}
             uvMappings={uvMappings}
@@ -557,6 +693,8 @@ export default function ModelEditor() {
             logoElements={logoElements}
             logoSettings={logoSettings}
             onLogoSettingsChange={handleLogoSettingsChange}
+            onClose={toggleTextureEditor}
+            onCanvasObjectsChange={handleCanvasObjectsChange}
           />
         )}
       </div>
@@ -591,6 +729,7 @@ export default function ModelEditor() {
         onUpdateLogoRotation={handleUpdateLogoRotation}
         lighting={lighting}
         setLighting={setLighting}
+        onLoadTemplate={handleLoadTemplate}
       />
     </div>
   )
