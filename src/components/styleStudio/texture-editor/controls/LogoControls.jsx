@@ -1,5 +1,3 @@
-"use client"
-
 export const LogoControls = ({ logoSettings, onLogoSettingsChange, handleApplyLogoToCanvas, selectedLogoIndex, removeLogo }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

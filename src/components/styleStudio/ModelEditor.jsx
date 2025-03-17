@@ -166,12 +166,21 @@ export default function ModelEditor() {
     (material) => {
       setMaterials((prev) => {
         const newMaterials = { ...prev, [selectedPart]: material }
+
         // Add to history
         addToHistory(colors, newMaterials)
+
+        // If we have a texture editor open and a canvas, we need to update it
+        if (showTextureEditor && textureEditorRef.current) {
+          // This will trigger the texture editor to reload with the new material
+          // while preserving any existing canvas objects
+          textureEditorRef.current.loadMaterialAsBackground(material)
+        }
+
         return newMaterials
       })
     },
-    [selectedPart, colors],
+    [selectedPart, colors, showTextureEditor, textureEditorRef],
   )
 
   // Add to history - optimized with useCallback
@@ -229,6 +238,20 @@ export default function ModelEditor() {
 
   // Save design - optimized with useCallback
   const handleSaveDesign = useCallback(() => {
+    // Capture canvas objects from texture editor if available
+    let canvasData = {};
+    let canvasHistoryData = {};
+    
+    if (textureEditorRef.current) {
+      try {
+        // Get all canvas objects data from texture editor
+        canvasData = textureEditorRef.current.getAllCanvasData();
+        canvasHistoryData = textureEditorRef.current.getCanvasHistory();
+      } catch (error) {
+        console.error("Error retrieving canvas data:", error);
+      }
+    }
+  
     const design = {
       model: selectedModel,
       colors,
@@ -237,49 +260,128 @@ export default function ModelEditor() {
       logoElements,
       lighting,
       backgroundColor,
-    }
-
-    const blob = new Blob([JSON.stringify(design)], { type: "application/json" })
-    const link = document.createElement("a")
-    link.download = `${selectedModel}-design.json`
-    link.href = URL.createObjectURL(blob)
-    link.click()
-
+      // Add canvas objects and layer information
+      canvasData,
+      canvasHistory: canvasHistoryData,
+      // Add layer information  
+      layers: {
+        // Store zIndex and visibility states
+        textLayers: textElements.map((element, index) => ({
+          id: `text-${index}`,
+          zIndex: element.zIndex || 200 + index,
+          visible: element.visible !== false,
+          locked: element.locked || false
+        })),
+        logoLayers: logoElements.map((element, index) => ({
+          id: `logo-${index}`,
+          zIndex: element.zIndex || 100 + index,
+          visible: element.visible !== false,
+          locked: element.locked || false
+        })),
+        // Store part visibility states
+        parts: Object.keys(colors).map(part => ({
+          id: part,
+          visible: true // Add part visibility tracking if needed
+        }))
+      }
+    };
+  
+    const blob = new Blob([JSON.stringify(design)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.download = `${selectedModel}-design.json`;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+  
     // Clean up the URL object
-    setTimeout(() => URL.revokeObjectURL(link.href), 100)
-  }, [selectedModel, colors, materials, textElements, logoElements, lighting, backgroundColor])
+    setTimeout(() => URL.revokeObjectURL(link.href), 100);
+  }, [selectedModel, colors, materials, textElements, logoElements, lighting, backgroundColor, textureEditorRef])
 
   // Load design - optimized with useCallback
   const handleLoadDesign = useCallback((event) => {
-    const file = event.target.files[0]
-    if (!file) return
-
-    const reader = new FileReader()
+    const file = event.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const design = JSON.parse(e.target.result)
-
-        setSelectedModel(design.model)
-        setColors(design.colors)
-        setMaterials(design.materials)
-        setTextElements(design.textElements || [])
-        setLogoElements(design.logoElements || [])
-        setLighting(design.lighting || defaultLighting)
-        setBackgroundColor(design.backgroundColor || "#f5f5f5")
-
+        const design = JSON.parse(e.target.result);
+  
+        setSelectedModel(design.model);
+        setColors(design.colors);
+        setMaterials(design.materials);
+        setTextElements(design.textElements || []);
+        setLogoElements(design.logoElements || []);
+        setLighting(design.lighting || defaultLighting);
+        setBackgroundColor(design.backgroundColor || "#f5f5f5");
+  
         // Reset history
-        setHistory([{ colors: design.colors, materials: design.materials }])
-        setHistoryIndex(0)
-
+        setHistory([{ colors: design.colors, materials: design.materials }]);
+        setHistoryIndex(0);
+  
         // Force model reload
-        setModelKey((prevKey) => prevKey + 1)
+        setModelKey((prevKey) => prevKey + 1);
+        
+        // Load texture canvas data if available
+        if (design.canvasData && textureEditorRef.current) {
+          // Schedule this after the component has had time to initialize
+          setTimeout(() => {
+            try {
+              textureEditorRef.current.loadCanvasData(design.canvasData);
+              
+              // Restore canvas history if available
+              if (design.canvasHistory) {
+                textureEditorRef.current.restoreCanvasHistory(design.canvasHistory);
+              }
+            } catch (error) {
+              console.error("Error loading canvas data:", error);
+            }
+          }, 500); // Give time for the texture editor to initialize
+        }
+        
+        // Apply layer properties if available
+        if (design.layers) {
+          // Update text and logo elements with saved layer properties
+          if (design.layers.textLayers) {
+            setTextElements(prev => 
+              prev.map((elem, idx) => {
+                const savedLayer = design.layers.textLayers[idx];
+                if (savedLayer) {
+                  return {
+                    ...elem,
+                    zIndex: savedLayer.zIndex || elem.zIndex,
+                    visible: savedLayer.visible,
+                    locked: savedLayer.locked
+                  };
+                }
+                return elem;
+              })
+            );
+          }
+          
+          if (design.layers.logoLayers) {
+            setLogoElements(prev => 
+              prev.map((elem, idx) => {
+                const savedLayer = design.layers.logoLayers[idx];
+                if (savedLayer) {
+                  return {
+                    ...elem,
+                    zIndex: savedLayer.zIndex || elem.zIndex,
+                    visible: savedLayer.visible,
+                    locked: savedLayer.locked
+                  };
+                }
+                return elem;
+              })
+            );
+          }
+        }
       } catch (error) {
-        console.error("Failed to load design:", error)
-        alert("Failed to load design. The file might be corrupted.")
+        console.error("Failed to load design:", error);
+        alert("Failed to load design. The file might be corrupted.");
       }
-    }
-    reader.readAsText(file)
-  }, [])
+    };
+    reader.readAsText(file);
+  }, [textureEditorRef]);
 
   // Text handling functions - optimized with useCallback
   const handleTextSelect = useCallback(
@@ -476,15 +578,23 @@ export default function ModelEditor() {
     setShowTextureEditor((prev) => !prev)
 
     // If we're opening the texture editor, make sure we have a part selected
-    if (!showTextureEditor && !selectedPart && modelParts[selectedModel].length > 0) {
-      setSelectedPart(modelParts[selectedModel][0])
-    }
-
-    // If we're opening the texture editor, switch to the texture tab
     if (!showTextureEditor) {
+      if (!selectedPart && modelParts[selectedModel].length > 0) {
+        setSelectedPart(modelParts[selectedModel][0])
+      }
+
+      // If we're opening the texture editor, switch to the texture tab
       setActiveTab("texture")
+
+      // Ensure the current material is loaded when opening the editor
+      if (textureEditorRef.current && materials[selectedPart]) {
+        // Small delay to ensure the editor is fully mounted
+        setTimeout(() => {
+          textureEditorRef.current.loadMaterialAsBackground(materials[selectedPart])
+        }, 100)
+      }
     }
-  }, [showTextureEditor, selectedPart, modelParts, selectedModel])
+  }, [showTextureEditor, selectedPart, modelParts, selectedModel, materials, textureEditorRef])
 
   const handleLoadTemplate = useCallback(
     (templateDesign, templateModel) => {

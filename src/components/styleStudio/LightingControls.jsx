@@ -1,5 +1,3 @@
-"use client"
-
 function LightingControls({ onChange, lighting }) {
   return (
     <div className="lighting-controls">

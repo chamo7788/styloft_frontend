@@ -1,5 +1,3 @@
-"use client"
-
 import React, { memo, useMemo } from "react"
 
 const TabPanel = memo(({ activeTab, onTabChange, tabs, children }) => {

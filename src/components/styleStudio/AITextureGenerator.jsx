@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from 'react'
 import { Wand2, Loader } from 'lucide-react'
 

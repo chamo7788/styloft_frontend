@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useEffect } from "react"
 import { Wand2, Repeat, Grid, Palette, RefreshCw, Check } from "lucide-react"
 

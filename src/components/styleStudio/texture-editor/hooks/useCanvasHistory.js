@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 
 export const useCanvasHistory = (selectedPart, canvasRef) => {
@@ -71,6 +69,45 @@ export const useCanvasHistory = (selectedPart, canvasRef) => {
     }
   }
 
+  // Redo canvas change
+  const handleCanvasRedo = () => {
+    const partHistory = canvasHistory[selectedPart] || []
+    const partHistoryIndex = canvasHistoryIndex[selectedPart] || 0
+    const maxIndex = (partHistory.length || 1) - 1
+
+    if (partHistoryIndex < maxIndex) {
+      const newIndex = partHistoryIndex + 1
+      const nextState = partHistory[newIndex]
+
+      // Load next state
+      if (nextState) {
+        const canvas = canvasRef.current
+        if (!canvas) return
+
+        const ctx = canvas.getContext("2d")
+        if (!ctx) return
+
+        const img = new Image()
+        img.crossOrigin = "anonymous"
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        }
+        img.src = nextState
+      }
+
+      // Update index
+      setCanvasHistoryIndex({
+        ...canvasHistoryIndex,
+        [selectedPart]: newIndex,
+      })
+    }
+  }
+
+  // Check if undo/redo are available
+  const canUndo = (canvasHistoryIndex[selectedPart] || 0) > 0
+  const canRedo = (canvasHistoryIndex[selectedPart] || 0) < ((canvasHistory[selectedPart]?.length || 1) - 1)
+
   return {
     canvasHistory,
     setCanvasHistory,
@@ -78,6 +115,9 @@ export const useCanvasHistory = (selectedPart, canvasRef) => {
     setCanvasHistoryIndex,
     saveCanvasState,
     handleCanvasUndo,
+    handleCanvasRedo,
+    canUndo,
+    canRedo,
   }
 }
 

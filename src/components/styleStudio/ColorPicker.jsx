@@ -1,5 +1,3 @@
-"use client"
-
 function ColorPicker({ color, onChange }) {
   const colors = [
     "#ffffff",

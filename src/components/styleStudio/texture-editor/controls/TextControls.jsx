@@ -1,5 +1,3 @@
-"use client"
-
 export const TextControls = ({ textSettings, onTextSettingsChange, handleApplyTextToCanvas }) => {
   return (
     <>

@@ -1,5 +1,3 @@
-"use client"
-
 import { RotateCcw, RotateCw, Undo, Redo, Download, Save, Upload, Layers } from "lucide-react"
 
 function Toolbar({

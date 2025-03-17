@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Save, FolderOpen, Trash2, Star, StarOff, RefreshCw } from "lucide-react"
 
