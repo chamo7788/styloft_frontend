@@ -1,78 +1,127 @@
-import { useState } from "react"
-import { ShoppingBag } from "lucide-react"
-import { loadStripe } from "@stripe/stripe-js"
-import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js"
-import "../../assets/css/StyleMarket/buy.css"
-import PaymentSuccess from "../styleMarket/payment-success.jsx"
-import "../../assets/css/StyleMarket/payment-success.css"
+import { useState, useEffect } from "react";
+import { ShoppingBag } from "lucide-react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import "../../assets/css/StyleMarket/buy.css";
+import PaymentSuccess from "../styleMarket/payment-success.jsx";
+import "../../assets/css/StyleMarket/payment-success.css";
 
-const stripePromise = loadStripe(
-  "pk_test_51R0PouFKqSRL4Eus1nQLaIYdWsBCGb0rkCZeSXivdL1aI4zxn3bqQOGmXuxZRL9im9UTRmBZnujboCXn2Mwu97aG00QUvxvr91",
-)
+const stripePromise = loadStripe("pk_test_51R0PouFKqSRL4Eus1nQLaIYdWsBCGb0rkCZeSXivdL1aI4zxn3bqQOGmXuxZRL9im9UTRmBZnujboCXn2Mwu97aG00QUvxvr91");
 
-const CheckoutForm = ({
-  formData,
-  setShowOrderForm,
-  amount,
-  product,
-  selectedSize,
-  quantity,
-  setPaymentSuccessful,
-}) => {
-  const stripe = useStripe()
-  const elements = useElements()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+const CheckoutForm = ({ formData, setFormData, amount, setPaymentSuccessful }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [clientSecret, setClientSecret] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/payments/shop", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: formData.email,
+        productId: "prod_456",
+        amount: amount,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => setClientSecret(data.clientSecret))
+      .catch((err) => console.error("Error fetching clientSecret:", err));
+  }, [amount, formData.email]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    if (!stripe || !elements) return
+    if (!stripe || !elements || !clientSecret) return;
 
-    try {
-      const response = await fetch("http://localhost:3000/payments/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount }),
-      })
-
-      const { clientSecret } = await response.json()
-
-      const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-            phone: formData.phone,
-            address: {
-              line1: formData.address,
-              city: formData.city,
-              state: formData.state,
-              postal_code: formData.zipCode,
-              country: formData.country,
-            },
+    const result = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          phone: formData.phone,
+          address: {
+            line1: formData.address,
+            city: formData.city,
+            state: formData.state,
+            postal_code: formData.zipCode,
+            country: formData.country,
           },
         },
-      })
+      },
+    });
 
-      if (result.error) {
-        setError(result.error.message)
-      } else {
-        // Show success component instead of alert
-        setPaymentSuccessful(true)
-      }
-    } catch (err) {
-      setError("Payment failed. Please try again.")
+    if (result.error) {
+      setError(result.error.message);
+    } else {
+      setPaymentSuccessful(true);
     }
 
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="order-form">
       <h3>Payment Info</h3>
+
+      <div className="form-group">
+        <label>First Name *</label>
+        <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
+      </div>
+
+      <div className="form-group">
+        <label>Last Name *</label>
+        <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required />
+      </div>
+
+      <div className="form-group">
+        <label>Address *</label>
+        <input type="text" name="address" value={formData.address} onChange={handleInputChange} required />
+      </div>
+
+      <div className="form-group row">
+        <div>
+          <label>City *</label>
+          <input type="text" name="city" value={formData.city} onChange={handleInputChange} required />
+        </div>
+        <div>
+          <label>State *</label>
+          <input type="text" name="state" value={formData.state} onChange={handleInputChange} required />
+        </div>
+      </div>
+
+      <div className="form-group row">
+        <div>
+          <label>ZIP/Postal Code *</label>
+          <input type="text" name="zipCode" value={formData.zipCode} onChange={handleInputChange} required />
+        </div>
+        <div>
+          <label>Country *</label>
+          <select name="country" value={formData.country} onChange={handleInputChange} required>
+            <option value="SL">Sri Lanka</option>
+            <option value="US">United States</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Email Address *</label>
+        <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
+      </div>
+
+      <div className="form-group">
+        <label>Phone *</label>
+        <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required />
+      </div>
+
       <div className="card-element-container">
         <CardElement className="card-input" />
       </div>
@@ -81,8 +130,8 @@ const CheckoutForm = ({
         {loading ? "Processing..." : "Pay Now"}
       </button>
     </form>
-  )
-}
+  );
+};
 
 const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
   const [formData, setFormData] = useState({
@@ -94,30 +143,13 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
     city: "",
     state: "",
     zipCode: "",
-    country: "Sri Lanka",
-    companyName: "",
-  })
+    country: "SL",
+  });
 
-  const [paymentSuccessful, setPaymentSuccessful] = useState(false)
+  const [paymentSuccessful, setPaymentSuccessful] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const totalAmount = product.price * quantity;
 
-  const totalAmount = product.price * quantity
-
-  const handleContinueShopping = () => {
-    setShowOrderForm(false)
-  }
-
-  const handleViewOrder = () => {
-    // This would typically navigate to an order details page
-    // For now, we'll just close the payment form
-    setShowOrderForm(false)
-  }
-
-  // If payment is successful, show the success component
   if (paymentSuccessful) {
     return (
       <PaymentSuccess
@@ -127,10 +159,10 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
           quantity: quantity,
           amount: totalAmount,
         }}
-        onContinueShopping={handleContinueShopping}
-        onViewOrder={handleViewOrder}
+        onContinueShopping={() => setShowOrderForm(false)}
+        onViewOrder={() => setShowOrderForm(false)}
       />
-    )
+    );
   }
 
   return (
@@ -151,82 +183,11 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
             <p className="total-amount">Total: ${totalAmount}</p>
           </div>
 
-          {/* Billing Info */}
-          <form className="order-form">
-            <div className="section">
-              <h3>Billing Info</h3>
-              <div className="form-group">
-                <label>Company Name</label>
-                <input type="text" name="companyName" value={formData.companyName} onChange={handleInputChange} />
-              </div>
-              <div className="form-group row">
-                <div>
-                  <label>First Name *</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <label>Last Name *</label>
-                  <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required />
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Address *</label>
-                <input type="text" name="address" value={formData.address} onChange={handleInputChange} required />
-              </div>
-              <div className="form-group row">
-                <div>
-                  <label>City *</label>
-                  <input type="text" name="city" value={formData.city} onChange={handleInputChange} required />
-                </div>
-                <div>
-                  <label>State *</label>
-                  <input type="text" name="state" value={formData.state} onChange={handleInputChange} required />
-                </div>
-              </div>
-              <div className="form-group row">
-                <div>
-                  <label>ZIP/Postal Code *</label>
-                  <input type="text" name="zipCode" value={formData.zipCode} onChange={handleInputChange} required />
-                </div>
-                <div>
-                  <label>Country *</label>
-                  <select name="country" value={formData.country} onChange={handleInputChange} required>
-                    <option value="SL">Sri Lanka</option>
-                    <option value="US">United States</option>
-                  </select>
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Email Address *</label>
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
-              </div>
-              <div className="form-group">
-                <label>Phone *</label>
-                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required />
-              </div>
-            </div>
-          </form>
-
           {/* Stripe Payment Form */}
           <Elements stripe={stripePromise}>
-            <CheckoutForm
-              formData={formData}
-              setShowOrderForm={setShowOrderForm}
-              amount={totalAmount}
-              product={product}
-              selectedSize={selectedSize}
-              quantity={quantity}
-              setPaymentSuccessful={setPaymentSuccessful}
-            />
+            <CheckoutForm formData={formData} setFormData={setFormData} amount={totalAmount} setPaymentSuccessful={setPaymentSuccessful} />
           </Elements>
 
-          {/* Buttons */}
           <div className="form-buttons">
             <button type="button" onClick={() => setShowOrderForm(false)} className="back-button">
               Back
@@ -235,8 +196,7 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Buy
-
+export default Buy;
