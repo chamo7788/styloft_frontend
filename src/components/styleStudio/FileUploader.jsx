@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef } from "react"
 
 function FileUploader({ label, accept, onChange, preview }) {

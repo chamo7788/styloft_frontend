@@ -1,5 +1,3 @@
-"use client"
-
 import TabPanel from "./TabPanel"
 import ModelSelector from "./ModelSelector"
 import PartSelector from "./PartSelector"

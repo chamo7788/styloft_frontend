@@ -1,5 +1,3 @@
-"use client"
-
 export const BrushControls = ({ isEraser = false, brushColor, setBrushColor, brushSize, setBrushSize }) => {
   return (
     <>
