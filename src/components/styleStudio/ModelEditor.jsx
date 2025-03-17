@@ -294,6 +294,8 @@ export default function ModelEditor() {
   
     // Clean up the URL object
     setTimeout(() => URL.revokeObjectURL(link.href), 100);
+  
+    return design; // Return the design data
   }, [selectedModel, colors, materials, textElements, logoElements, lighting, backgroundColor, textureEditorRef])
 
   // Load design - optimized with useCallback

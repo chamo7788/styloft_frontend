@@ -12,6 +12,39 @@ function Toolbar({
   canRedo,
   showLayerManager,
 }) {
+
+  async function saveDesignToBackend(designData) {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+
+    console.log('Saving design for user:', user);
+    console.log('Design data:', designData);
+
+    try {
+      const response = await fetch('http://localhost:3000/design/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'userId': user.uid, // Fixed variable name from 'uid' to 'userId'
+        },
+        body: JSON.stringify({ designData }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('Design saved successfully:', result);
+    } catch (error) {
+      console.error('Error saving design:', error);
+    }
+  }
+
+  const handleSave = () => {
+    const designData = onSaveDesign();
+    saveDesignToBackend(designData);
+  };
+
   return (
     <div className="canvas-toolbar">
       <div className="toolbar-group">
@@ -43,7 +76,7 @@ function Toolbar({
         <button className="toolbar-button" onClick={onScreenshot} title="Take Screenshot">
           <Download size={16} />
         </button>
-        <button className="toolbar-button" onClick={onSaveDesign} title="Save Design">
+        <button className="toolbar-button" onClick={handleSave} title="Save Design">
           <Save size={16} />
         </button>
         <label className="toolbar-button" title="Load Design">
