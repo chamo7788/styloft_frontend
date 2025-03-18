@@ -1,0 +1,49 @@
+.chat-content-container {
+  display: flex;
+  padding: 20px;
+}
+
+.chat-submissions {
+  width: 30%;
+  margin-right: 20px;
+}
+
+.submission-card {
+  padding: 15px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.chat-container {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-submission-details {
+  margin-bottom: 20px;
+}
+
+.content-message-panel {
+  flex-grow: 1;
+  border: 1px solid #ddd;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+textarea {
+  width: 100%;
+  height: 50px;
+}
+
+button {
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
