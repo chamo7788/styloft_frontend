@@ -345,6 +345,7 @@ export default function ContestContent() {
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
+                onClick={() => document.getElementById("file-upload").click()} // Add this line to trigger file input on click
               >
                 <input
                   id="file-upload"
@@ -352,6 +353,7 @@ export default function ContestContent() {
                   onChange={handleImageUpload}
                   className="file-input"
                   accept="image/jpeg,image/png,image/jpg"
+                  style={{ display: "none" }} // Hide the actual input element
                 />
 
                 {imagePreview ? (
@@ -360,7 +362,7 @@ export default function ContestContent() {
                     <button
                       className="remove-image-btn"
                       onClick={(e) => {
-                        e.stopPropagation()
+                        e.stopPropagation() // Prevent triggering the parent onClick
                         handleClearForm()
                       }}
                     >
