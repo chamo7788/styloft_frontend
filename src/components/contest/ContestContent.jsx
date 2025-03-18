@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import "../../assets/css/contest/ContestContent.css"
-import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar } from "lucide-react"
+import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock } from "lucide-react"
 import SubmissionChatView from "./SubmissionChatView"
 
 export default function ContestContent() {
@@ -21,6 +21,7 @@ export default function ContestContent() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedSubmission, setSelectedSubmission] = useState(null)
   const [isChatModalOpen, setIsChatModalOpen] = useState(false)
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"))
 
   // Fetch contest details
   useEffect(() => {
@@ -231,6 +232,19 @@ export default function ContestContent() {
     setSelectedSubmission(null)
   }
 
+  // Check if user can chat with this submission
+  const canChatWithSubmission = (submission) => {
+    if (!currentUser) return false
+
+    // Contest creator can chat with all submissions
+    const isContestCreator = currentUser.uid === contest?.createdBy
+
+    // Submitter can only chat with their own submissions
+    const isSubmitter = currentUser.uid === submission.userId
+
+    return isContestCreator || isSubmitter
+  }
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -244,7 +258,6 @@ export default function ContestContent() {
     timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
 
   // Check if the current user is the contest creator
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"))
   const isContestCreator = currentUser && currentUser.uid === contest.createdBy
 
   return (
@@ -450,25 +463,48 @@ export default function ContestContent() {
                     <span>{submission.userName}</span>
                   </div>
                   {submission.message && <p className="submission-message">{submission.message}</p>}
-                  <button
-                    className="chat-button"
-                    onClick={() => openChatModal(submission)}
-                    style={{
-                      marginTop: "10px",
-                      padding: "5px 10px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "5px",
-                      background: "#3b82f6",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <MessageSquare size={16} />
-                    <span>Chat</span>
-                  </button>
+
+                  {canChatWithSubmission(submission) ? (
+                    <button
+                      className="chat-button"
+                      onClick={() => openChatModal(submission)}
+                      style={{
+                        marginTop: "10px",
+                        padding: "5px 10px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        background: "#3b82f6",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <MessageSquare size={16} />
+                      <span>Chat</span>
+                    </button>
+                  ) : (
+                    <button
+                      className="chat-button-disabled"
+                      disabled
+                      style={{
+                        marginTop: "10px",
+                        padding: "5px 10px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        background: "#e5e7eb",
+                        color: "#9ca3af",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "not-allowed",
+                      }}
+                    >
+                      <Lock size={16} />
+                      <span>{isContestCreator ? "Chat Unavailable" : "Chat Restricted"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
