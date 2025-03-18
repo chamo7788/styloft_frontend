@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import "../assets/css/Home/home.css"
 import { ReactTyped } from "react-typed"
- 
+
 import Stylemarket from "../assets/images/StyleMarket.jpg"
 import Stylestudio from "../assets/images/StyleStudio.jpg"
 import Stylesociety from "../assets/images/style_society.jpg"
@@ -26,7 +26,6 @@ function HeroSection() {
       <div className="hero-overlay"></div>
 
       <div className="intro">
-       
         <h1>Styloft</h1>
         <div className="hero-divider"></div>
         <ReactTyped
@@ -103,7 +102,7 @@ function AboutSection() {
 }
 
 function StyleSection() {
-  const sectionRef = useRef(null); 
+  const sectionRef = useRef(null)
 
   const styles = [
     {
@@ -122,9 +121,8 @@ function StyleSection() {
       image: Stylesociety,
       description: "Join our community of fashion enthusiasts, share ideas, and collaborate with fellow designers.",
     },
-  ];
+  ]
 
- 
   return (
     <section ref={sectionRef} className="style-section" id="style-section">
       <div className="style-header">
@@ -158,7 +156,7 @@ function StyleSection() {
         ))}
       </div>
     </section>
-  );
+  )
 }
 
 function CTASection() {
