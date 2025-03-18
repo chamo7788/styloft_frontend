@@ -1,9 +1,10 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../../firebaseConfig"
 import "../../assets/css/contest/ContestContent.css"
 import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar } from "lucide-react"
+import SubmissionChatView from "./SubmissionChatView"
 
 export default function ContestContent() {
   const { id } = useParams()
@@ -19,6 +20,7 @@ export default function ContestContent() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedSubmission, setSelectedSubmission] = useState(null)
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false)
 
   // Fetch contest details
   useEffect(() => {
@@ -52,19 +54,19 @@ export default function ContestContent() {
         const response = await fetch(`http://localhost:3000/submission/contest/${id}`)
         if (!response.ok) throw new Error("Failed to fetch submissions")
         const data = await response.json()
-  
+
         // Assuming the backend now includes the username in the submission response
         const submissionsWithUserDetails = data.map((submission) => ({
           ...submission,
           userName: submission.userName || "Unknown User",
         }))
-  
+
         setSubmissions(submissionsWithUserDetails)
       } catch (error) {
         console.error("Error fetching submissions:", error)
       }
     }
-  
+
     fetchSubmissions()
   }, [id, isSubmitted])
 
@@ -219,6 +221,16 @@ export default function ContestContent() {
     setSelectedSubmission(null)
   }
 
+  const openChatModal = (submission) => {
+    setSelectedSubmission(submission)
+    setIsChatModalOpen(true)
+  }
+
+  const closeChatModal = () => {
+    setIsChatModalOpen(false)
+    setSelectedSubmission(null)
+  }
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -230,6 +242,10 @@ export default function ContestContent() {
 
   const isDeadlinePassed =
     timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
+
+  // Check if the current user is the contest creator
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"))
+  const isContestCreator = currentUser && currentUser.uid === contest.createdBy
 
   return (
     <div className="contest-content-page">
@@ -424,8 +440,8 @@ export default function ContestContent() {
         ) : (
           <div className="submission-cards">
             {submissions.map((submission) => (
-              <div key={submission.id} className="submission-card" onClick={() => openModal(submission)}>
-                <div className="submission-image-container">
+              <div key={submission.id} className="submission-card">
+                <div className="submission-image-container" onClick={() => openModal(submission)}>
                   <img src={submission.fileUrl || "/placeholder.svg"} alt="Submission" className="submission-image" />
                 </div>
                 <div className="submission-info">
@@ -434,6 +450,25 @@ export default function ContestContent() {
                     <span>{submission.userName}</span>
                   </div>
                   {submission.message && <p className="submission-message">{submission.message}</p>}
+                  <button
+                    className="chat-button"
+                    onClick={() => openChatModal(submission)}
+                    style={{
+                      marginTop: "10px",
+                      padding: "5px 10px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      background: "#3b82f6",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <MessageSquare size={16} />
+                    <span>Chat</span>
+                  </button>
                 </div>
               </div>
             ))}
@@ -457,6 +492,18 @@ export default function ContestContent() {
           </div>
         </div>
       )}
+
+      {isChatModalOpen && selectedSubmission && (
+        <div className="modal-overlay" onClick={closeChatModal}>
+          <div className="modal-content submission-chat-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeChatModal}>
+              <X size={24} />
+            </button>
+            <SubmissionChatView submission={selectedSubmission} contest={contest} isContestCreator={isContestCreator} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
+
