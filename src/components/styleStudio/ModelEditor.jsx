@@ -299,90 +299,89 @@ export default function ModelEditor() {
   }, [selectedModel, colors, materials, textElements, logoElements, lighting, backgroundColor, textureEditorRef])
 
   // Load design - optimized with useCallback
-  const handleLoadDesign = useCallback((event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-  
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const design = JSON.parse(e.target.result);
-  
-        setSelectedModel(design.model);
-        setColors(design.colors);
-        setMaterials(design.materials);
-        setTextElements(design.textElements || []);
-        setLogoElements(design.logoElements || []);
-        setLighting(design.lighting || defaultLighting);
-        setBackgroundColor(design.backgroundColor || "#f5f5f5");
-  
-        // Reset history
-        setHistory([{ colors: design.colors, materials: design.materials }]);
-        setHistoryIndex(0);
-  
-        // Force model reload
-        setModelKey((prevKey) => prevKey + 1);
-        
-        // Load texture canvas data if available
-        if (design.canvasData && textureEditorRef.current) {
-          // Schedule this after the component has had time to initialize
-          setTimeout(() => {
-            try {
-              textureEditorRef.current.loadCanvasData(design.canvasData);
-              
-              // Restore canvas history if available
-              if (design.canvasHistory) {
-                textureEditorRef.current.restoreCanvasHistory(design.canvasHistory);
-              }
-            } catch (error) {
-              console.error("Error loading canvas data:", error);
-            }
-          }, 500); // Give time for the texture editor to initialize
-        }
-        
-        // Apply layer properties if available
-        if (design.layers) {
-          // Update text and logo elements with saved layer properties
-          if (design.layers.textLayers) {
-            setTextElements(prev => 
-              prev.map((elem, idx) => {
-                const savedLayer = design.layers.textLayers[idx];
-                if (savedLayer) {
-                  return {
-                    ...elem,
-                    zIndex: savedLayer.zIndex || elem.zIndex,
-                    visible: savedLayer.visible,
-                    locked: savedLayer.locked
-                  };
-                }
-                return elem;
-              })
-            );
-          }
-          
-          if (design.layers.logoLayers) {
-            setLogoElements(prev => 
-              prev.map((elem, idx) => {
-                const savedLayer = design.layers.logoLayers[idx];
-                if (savedLayer) {
-                  return {
-                    ...elem,
-                    zIndex: savedLayer.zIndex || elem.zIndex,
-                    visible: savedLayer.visible,
-                    locked: savedLayer.locked
-                  };
-                }
-                return elem;
-              })
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Failed to load design:", error);
-        alert("Failed to load design. The file might be corrupted.");
+  const handleLoadDesign = useCallback((designData) => {
+    try {
+      if (!designData) {
+        console.error("No design data provided");
+        return;
       }
-    };
-    reader.readAsText(file);
+  
+      // Set model and other properties
+      setSelectedModel(designData.model || "shirt");
+      setColors(designData.colors || { main: "#ffffff" });
+      setMaterials(designData.materials || {});
+      setTextElements(designData.textElements || []);
+      setLogoElements(designData.logoElements || []);
+      setLighting(designData.lighting || defaultLighting);
+      setBackgroundColor(designData.backgroundColor || "#f5f5f5");
+  
+      // Reset history with new state
+      setHistory([{ colors: designData.colors || { main: "#ffffff" }, materials: designData.materials || {} }]);
+      setHistoryIndex(0);
+  
+      // Force model reload
+      setModelKey((prevKey) => prevKey + 1);
+      
+      // Load texture canvas data if available
+      if (designData.canvasData && textureEditorRef.current) {
+        // Schedule this after the component has had time to initialize
+        setTimeout(() => {
+          try {
+            textureEditorRef.current.loadCanvasData(designData.canvasData);
+            
+            // Restore canvas history if available
+            if (designData.canvasHistory) {
+              textureEditorRef.current.restoreCanvasHistory(designData.canvasHistory);
+            }
+          } catch (error) {
+            console.error("Error loading canvas data:", error);
+          }
+        }, 500); // Give time for the texture editor to initialize
+      }
+      
+      // Apply layer properties if available
+      if (designData.layers) {
+        // Update text and logo elements with saved layer properties
+        if (designData.layers.textLayers && designData.textElements) {
+          setTextElements(prev => 
+            designData.textElements.map((elem, idx) => {
+              const savedLayer = designData.layers.textLayers[idx];
+              if (savedLayer) {
+                return {
+                  ...elem,
+                  zIndex: savedLayer.zIndex || elem.zIndex || 200 + idx,
+                  visible: savedLayer.visible !== false,
+                  locked: savedLayer.locked || false
+                };
+              }
+              return elem;
+            })
+          );
+        }
+        
+        if (designData.layers.logoLayers && designData.logoElements) {
+          setLogoElements(prev => 
+            designData.logoElements.map((elem, idx) => {
+              const savedLayer = designData.layers.logoLayers[idx];
+              if (savedLayer) {
+                return {
+                  ...elem,
+                  zIndex: savedLayer.zIndex || elem.zIndex || 100 + idx,
+                  visible: savedLayer.visible !== false,
+                  locked: savedLayer.locked || false
+                };
+              }
+              return elem;
+            })
+          );
+        }
+      }
+      
+      console.log("Design loaded successfully");
+    } catch (error) {
+      console.error("Failed to load design:", error);
+      alert("Failed to load design. The file might be corrupted or in an incompatible format.");
+    }
   }, [textureEditorRef]);
 
   // Text handling functions - optimized with useCallback

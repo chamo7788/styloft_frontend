@@ -27,7 +27,6 @@ function App() {
         <Route path="/stylestudio" element={<StyleStudio />} />
         <Route path="/styleMarket" element={<Stylemarket />} />
         <Route path="/contest/*" element={<Contest />} />
-        <Route path="/DashBoard" element={<DashBoard />} />
         <Route path="/styleMarket/add-shop" element={<AddShopForm />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/DashBoard" element={<DashBoard />} />
