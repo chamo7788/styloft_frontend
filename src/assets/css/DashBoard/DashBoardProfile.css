@@ -1,0 +1,112 @@
+.DashBoardProfile-container {
+    position: relative;
+    top: 10px;
+    right: 20px;
+    max-width: 400px;
+    margin: 50 auto;
+    padding: 50px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .DashBoardProfile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .DashBoardProfileCover-photo {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+  }
+  
+  .DashBoardProfileCover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .DashBoardProfile-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -50px;
+  }
+  
+  .DashBoardProfile-pic-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid white;
+  }
+  
+  .DashBoardProfile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .DashBoardProfileUser-info h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .DashBoardProfile-about-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+  }
+  
+  .DashBoardProfile-about-section h3 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .DashBoardProfile-about-section p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .DashBoardTesyarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+  }
+  
+  .DashBoardEdit-button,
+  .DashboardSave-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .DashBoardEdit-button {
+    background-color: #28a745;
+  }
+  
+  .DashBoardEdit-button:hover {
+    background-color: #218838;
+  }
+  
+  .DashboardSave-button {
+    background-color: #007bff;
+  }
+  
+  .DashboardSave-button:hover {
+    background-color: #0056b3;
+  }
+  
