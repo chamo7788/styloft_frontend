@@ -16,7 +16,7 @@
   position: relative;
   overflow: hidden;
   background-color: #f9fafb;
-  min-height: 0; /* Changed from 380px to allow proper flex sizing */
+  min-height: 360px; /* Changed from 380px to allow proper flex sizing */
   display: flex;
   justify-content: center;
   align-items: center;

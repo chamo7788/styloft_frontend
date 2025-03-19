@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useRef, useCallback, useMemo, useEffect } from "react"
 import ModelViewer from "./ModelViewer"
 import TextureEditor from "./texture-editor/TextureEditor"
@@ -11,6 +13,9 @@ import "../../assets/css/StyleStudio/user-guide.css"
 
 // Add LayerManager import at the top of the file
 import LayerManager from "./LayerManager"
+
+// Add this import at the top of the file
+import * as THREE from "three"
 
 // Move constants outside component to prevent recreation on each render
 const models = {
@@ -234,6 +239,12 @@ export default function ModelEditor() {
       setColors(newColors)
       setMaterials(newMaterials)
       setHistoryIndex(newIndex)
+
+      // Force model to update
+      setModelKey((prevKey) => prevKey + 1)
+      console.log("Undo performed, new history index:", newIndex)
+    } else {
+      console.log("Cannot undo: at beginning of history")
     }
   }, [historyIndex, history])
 
@@ -246,6 +257,12 @@ export default function ModelEditor() {
       setColors(newColors)
       setMaterials(newMaterials)
       setHistoryIndex(newIndex)
+
+      // Force model to update
+      setModelKey((prevKey) => prevKey + 1)
+      console.log("Redo performed, new history index:", newIndex)
+    } else {
+      console.log("Cannot redo: at end of history")
     }
   }, [historyIndex, history])
 
@@ -766,13 +783,46 @@ export default function ModelEditor() {
     setShowUserGuide((prev) => !prev)
   }, [])
 
+  // Add this function to the ModelEditor component
+  const optimizeModelQuality = useCallback(() => {
+    // Force a higher quality render
+    if (canvasRef.current) {
+      const renderer = canvasRef.current.gl
+      if (renderer) {
+        renderer.setPixelRatio(window.devicePixelRatio || 2)
+        renderer.shadowMap.enabled = true
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        renderer.outputEncoding = THREE.sRGBEncoding
+        renderer.toneMapping = THREE.ACESFilmicToneMapping
+        renderer.toneMappingExposure = 1.2
+      }
+    }
+  }, [canvasRef])
+
+  // Add this useEffect to apply the optimization
+  useEffect(() => {
+    optimizeModelQuality()
+
+    // Re-optimize when model changes
+    const handleResize = () => {
+      optimizeModelQuality()
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [optimizeModelQuality, modelKey])
+
   // Update the return statement to include the LayerManager component
   return (
     <div className="model-editor-container">
       <div className={`model-view-container ${showTextureEditor ? "with-editor" : ""}`}>
         <div className="canvas-card" style={{ backgroundColor }}>
           <Toolbar
-            onRotate={() => {}} // Will be handled by ModelViewer
+            onRotate={(direction) => {
+              if (canvasRef.current && canvasRef.current.handleRotate) {
+                canvasRef.current.handleRotate(direction)
+              }
+            }}
             onUndo={handleUndo}
             onRedo={handleRedo}
             onScreenshot={handleScreenshot}

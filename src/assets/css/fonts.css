@@ -29,6 +29,13 @@
 }
 
 @font-face {
+    font-family: 'Beauty Mountains';
+    src: url('/fonts/BeautyMountainsPersonalUse-od7z.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+@font-face {
   font-family: 'Beautiful People';
   src: url('/fonts/BeautifulPeoplePersonalUse-dE0g.ttf') format('truetype');
   font-weight: normal;
