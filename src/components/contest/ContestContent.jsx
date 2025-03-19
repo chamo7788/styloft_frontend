@@ -21,6 +21,13 @@ export default function ContestContent() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedSubmission, setSelectedSubmission] = useState(null)
   const [isChatModalOpen, setIsChatModalOpen] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    description: "",
+    prize: "",
+    deadline: ""
+  })
 
   // Fetch contest details
   useEffect(() => {
@@ -69,6 +76,21 @@ export default function ContestContent() {
 
     fetchSubmissions()
   }, [id, isSubmitted])
+
+  useEffect(() => {
+    if (contest) {
+      // Format the date to YYYY-MM-DD for the input type="date"
+      const formattedDeadline = contest.deadline ? 
+        new Date(contest.deadline).toISOString().split('T')[0] : "";
+      
+      setEditFormData({
+        title: contest.title || "",
+        description: contest.description || "",
+        prize: contest.prize || "",
+        deadline: formattedDeadline
+      })
+    }
+  }, [contest])
 
   const calculateTimeLeft = (deadline) => {
     const now = new Date()
@@ -231,6 +253,53 @@ export default function ContestContent() {
     setSelectedSubmission(null)
   }
 
+  const handleEditChange = (e) => {
+    const { name, value } = e.target
+    setEditFormData({
+      ...editFormData,
+      [name]: value
+    })
+  }
+
+  const handleUpdateContest = async () => {
+    try {
+      // Prepare the data for sending to the backend
+      const updatedData = {
+        title: editFormData.title,
+        description: editFormData.description,
+        prize: parseFloat(editFormData.prize),
+        deadline: new Date(editFormData.deadline).toISOString()
+      }
+
+      // Send PATCH request to update the contest
+      const response = await fetch(`http://localhost:3000/contest/${id}`, {
+        method: "PATCH", // Use PATCH instead of PUT as it's more appropriate for partial updates
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData)
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to update contest")
+      }
+      
+      // Update the local contest state with edited data
+      setContest({
+        ...contest,
+        ...updatedData
+      })
+      
+      // Show success message
+      alert("Contest updated successfully!")
+      
+      // Reset error message if there was any
+      setErrorMessage("")
+    } catch (error) {
+      console.error("Error updating contest:", error)
+      setErrorMessage(error.message)
+    }
+  }
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -329,100 +398,188 @@ export default function ContestContent() {
         </div>
 
         <div className="contest-right">
-          {isSubmitted ? (
-            <div className="submission-success">
-              <CheckCircle size={48} className="success-icon" />
-              <h3>Submission Successful!</h3>
-              <p>Your design has been submitted to the contest.</p>
-            </div>
-          ) : (
+          {isContestCreator ? (
+            // Contest Creator View - Edit Form
             <>
-              <h2 className="submission-title">Submit Your Design</h2>
-
-              <div
-                className={`upload-box ${isDragging ? "dragging" : ""} ${errorMessage ? "error" : ""}`}
-                onDragEnter={handleDragEnter}
-                onDragLeave={handleDragLeave}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                onClick={() => document.getElementById("file-upload").click()} // Add this line to trigger file input on click
-              >
-                <input
-                  id="file-upload"
-                  type="file"
-                  onChange={handleImageUpload}
-                  className="file-input"
-                  accept="image/jpeg,image/png,image/jpg"
-                  style={{ display: "none" }} // Hide the actual input element
-                />
-
-                {imagePreview ? (
-                  <div className="image-preview-container">
-                    <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="submission-image-preview" />
-                    <button
-                      className="remove-image-btn"
-                      onClick={(e) => {
-                        e.stopPropagation() // Prevent triggering the parent onClick
-                        handleClearForm()
-                      }}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="upload-placeholder">
-                    <div className="upload-icon-container">
-                      <Upload size={24} className="upload-icon" />
-                    </div>
-                    <p className="upload-text">Drag and drop your design here</p>
-                    <p className="upload-subtext">or click to browse files</p>
-                    <p className="upload-formats">Supported formats: JPG, PNG</p>
-                  </div>
-                )}
-
-                {isUploading && (
-                  <div className="upload-overlay">
-                    <div className="upload-spinner"></div>
-                    <p>Uploading...</p>
-                  </div>
-                )}
-              </div>
-
+              <h2 className="submission-title">Edit Contest Details</h2>
+              
               {errorMessage && (
                 <div className="error-message">
                   <X size={16} />
                   <span>{errorMessage}</span>
                 </div>
               )}
-
-              <div className="message-container">
-                <label htmlFor="message" className="message-label">
-                  <MessageSquare size={16} />
-                  <span>Add a message with your submission</span>
-                </label>
-                <textarea
-                  id="message"
-                  className="message-input"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Describe your design or add any notes for the contest creator..."
-                />
-              </div>
-
-              <div className="button-group">
-                <button className="submit-btn" onClick={handleSubmit} disabled={isUploading || isDeadlinePassed}>
-                  {isUploading ? "Uploading..." : "Submit Design"}
-                </button>
-                <button className="clear-btn" onClick={handleClearForm}>
-                  Clear Form
-                </button>
-              </div>
-
-              {isDeadlinePassed && (
-                <div className="deadline-passed-message">
-                  <Clock size={16} />
-                  <span>This contest has ended and is no longer accepting submissions.</span>
+              
+              <div className="edit-form">
+                <div className="edit-field">
+                  <label htmlFor="title" className="edit-label">Contest Title</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    className="message-input"  // Reusing the submission form styles
+                    value={editFormData.title}
+                    onChange={handleEditChange}
+                    placeholder="Contest title"
+                  />
                 </div>
+                
+                <div className="edit-field">
+                  <label htmlFor="description" className="edit-label">Description</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    className="message-input"
+                    value={editFormData.description}
+                    onChange={handleEditChange}
+                    placeholder="Contest description"
+                    rows={5}
+                  />
+                </div>
+                
+                <div className="edit-field">
+                  <label htmlFor="prize" className="edit-label">Prize Amount ($)</label>
+                  <input
+                    type="number"
+                    id="prize"
+                    name="prize"
+                    className="message-input"
+                    value={editFormData.prize}
+                    onChange={handleEditChange}
+                    placeholder="Prize amount"
+                    min="1"
+                  />
+                </div>
+                
+                <div className="edit-field">
+                  <label htmlFor="deadline" className="edit-label">Deadline</label>
+                  <input
+                    type="date"
+                    id="deadline"
+                    name="deadline"
+                    className="message-input"
+                    value={editFormData.deadline}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                
+                <div className="button-group">
+                  <button 
+                    className="submit-btn" 
+                    onClick={handleUpdateContest}
+                    disabled={isDeadlinePassed}
+                  >
+                    Update Contest
+                  </button>
+                </div>
+                
+                {isDeadlinePassed && (
+                  <div className="deadline-passed-message">
+                    <Clock size={16} />
+                    <span>This contest has ended and can no longer be edited.</span>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            // Regular User View - Submission Form (Keep your existing code)
+            <>
+              {isSubmitted ? (
+                <div className="submission-success">
+                  <CheckCircle size={48} className="success-icon" />
+                  <h3>Submission Successful!</h3>
+                  <p>Your design has been submitted to the contest.</p>
+                </div>
+              ) : (
+                <>
+                  <h2 className="submission-title">Submit Your Design</h2>
+
+                  <div
+                    className={`upload-box ${isDragging ? "dragging" : ""} ${errorMessage ? "error" : ""}`}
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                    onClick={() => document.getElementById("file-upload").click()}
+                  >
+                    <input
+                      id="file-upload"
+                      type="file"
+                      onChange={handleImageUpload}
+                      className="file-input"
+                      accept="image/jpeg,image/png,image/jpg"
+                      style={{ display: "none" }}
+                    />
+
+                    {imagePreview ? (
+                      <div className="image-preview-container">
+                        <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="submission-image-preview" />
+                        <button
+                          className="remove-image-btn"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleClearForm()
+                          }}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="upload-placeholder">
+                        <div className="upload-icon-container">
+                          <Upload size={24} className="upload-icon" />
+                        </div>
+                        <p className="upload-text">Drag and drop your design here</p>
+                        <p className="upload-subtext">or click to browse files</p>
+                        <p className="upload-formats">Supported formats: JPG, PNG</p>
+                      </div>
+                    )}
+
+                    {isUploading && (
+                      <div className="upload-overlay">
+                        <div className="upload-spinner"></div>
+                        <p>Uploading...</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {errorMessage && (
+                    <div className="error-message">
+                      <X size={16} />
+                      <span>{errorMessage}</span>
+                    </div>
+                  )}
+
+                  <div className="message-container">
+                    <label htmlFor="message" className="message-label">
+                      <MessageSquare size={16} />
+                      <span>Add a message with your submission</span>
+                    </label>
+                    <textarea
+                      id="message"
+                      className="message-input"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Describe your design or add any notes for the contest creator..."
+                    />
+                  </div>
+
+                  <div className="button-group">
+                    <button className="submit-btn" onClick={handleSubmit} disabled={isUploading || isDeadlinePassed}>
+                      {isUploading ? "Uploading..." : "Submit Design"}
+                    </button>
+                    <button className="clear-btn" onClick={handleClearForm}>
+                      Clear Form
+                    </button>
+                  </div>
+
+                  {isDeadlinePassed && (
+                    <div className="deadline-passed-message">
+                      <Clock size={16} />
+                      <span>This contest has ended and is no longer accepting submissions.</span>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}
