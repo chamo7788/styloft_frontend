@@ -121,81 +121,115 @@ const fetchUserProfile = async (uid) => {
   try {
     console.log(`Fetching profile data for user ID: ${uid}`);
     
-    // IMPORTANT: Force a fresh fetch of the document
-    const userDoc = await getDoc(doc(db, "users", uid), { source: 'server' });
+    // Force a fresh fetch of the document
+    const userDocRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userDocRef);
     
     if (userDoc.exists()) {
+      // User document exists, use its data
       const userData = userDoc.data();
       console.log("User data retrieved:", userData);
-      console.log("Document ID:", userDoc.id);
       
-      // First log the entire document for debugging
-      console.log("Complete user document:", JSON.stringify(userData, null, 2));
+      // Directly update state with the retrieved data
+      if (userData.displayName) {
+        setName(userData.displayName);
+      } else if (userData.name) {
+        setName(userData.name);
+      } else {
+        setName("User");
+      }
       
-      // Explicitly clear all previous state before setting new data
-      setName("");
-      setProfession("");
-      setAboutText("");
-      setProfilePic(defaultProfilePic);
-      setCoverPhoto(defaultCoverPhoto);
+      setProfession(userData.profession || "");
+      setAboutText(userData.aboutText || userData.about || "");
       
-      // Use timeout to ensure state clears before setting new values
-      setTimeout(() => {
-        // Set fields with explicit priority for values
-        if (userData.displayName) {
-          console.log("Setting name to:", userData.displayName);
-          setName(userData.displayName);
-        } else if (userData.name) {
-          console.log("Setting name to:", userData.name);
-          setName(userData.name);
-        }
-        
-        if (userData.profession) {
-          console.log("Setting profession to:", userData.profession);
-          setProfession(userData.profession);
-        }
-        
-        if (userData.aboutText) {
-          console.log("Setting aboutText to:", userData.aboutText);
-          setAboutText(userData.aboutText);
-        } else if (userData.about) {
-          console.log("Setting aboutText to:", userData.about);
-          setAboutText(userData.about);
-        }
-        
-        // Set followers/following
-        setFollowers(userData.followers || []);
-        setFollowing(userData.following || []);
-        
-        // Handle profile picture with direct approach
-        if (userData.photoURL) {
-          console.log("Setting profile pic directly to:", userData.photoURL);
-          setProfilePic(userData.photoURL);
-        }
-        
-        // Handle cover photo with direct approach 
-        if (userData.coverPhotoURL) {
-          console.log("Setting cover photo directly to:", userData.coverPhotoURL);
-          setCoverPhoto(userData.coverPhotoURL);
-        }
-        
-        // Check if current user is following this profile
-        if (currentUserUid && userData.followers) {
-          setIsFollowing(userData.followers.includes(currentUserUid));
-        }
-      }, 100);
+      // Handle profile picture - make sure we have a fallback
+      if (userData.photoURL && userData.photoURL !== "") {
+        setProfilePic(userData.photoURL);
+      } else {
+        setProfilePic(defaultProfilePic);
+      }
+      
+      // Handle cover photo - make sure we have a fallback
+      if (userData.coverPhotoURL && userData.coverPhotoURL !== "") {
+        setCoverPhoto(userData.coverPhotoURL);
+      } else {
+        setCoverPhoto(defaultCoverPhoto);
+      }
+      
+      // Set followers/following
+      setFollowers(userData.followers || []);
+      setFollowing(userData.following || []);
+      
+      // Check if current user is following this profile
+      if (currentUserUid && userData.followers) {
+        setIsFollowing(userData.followers.includes(currentUserUid));
+      }
     } else {
-      console.error(`No user document found for ID: ${uid}`);
-      // Set default values for missing user
-      setName("User not found");
-      setProfession("");
-      setAboutText("");
-      setProfilePic(defaultProfilePic);
-      setCoverPhoto(defaultCoverPhoto);
+      console.log(`No user document found for ID: ${uid}, attempting to create it`);
+      
+      // Try to get user info from Firebase Auth directly
+      try {
+        // For current user, we can get data directly
+        if (auth.currentUser && auth.currentUser.uid === uid) {
+          const authUser = auth.currentUser;
+          const basicUserData = {
+            displayName: authUser.displayName || "New User",
+            email: authUser.email || "",
+            photoURL: authUser.photoURL || "",
+            uid: authUser.uid,
+            followers: [],
+            following: [],
+            profession: "",
+            aboutText: ""
+          };
+          
+          // Set the user data in state
+          setName(basicUserData.displayName);
+          setProfilePic(basicUserData.photoURL || defaultProfilePic);
+          setProfession("");
+          setAboutText("");
+          setFollowers([]);
+          setFollowing([]);
+          
+          // Create the document in Firestore
+          await setDoc(userDocRef, basicUserData);
+          console.log("Created new user document for current user");
+        } else {
+          // For other users, we need to fetch their info from auth
+          console.log("Fetching user from Firebase Auth Admin (if available)");
+          
+          // Since client-side code can't directly access other users' auth data,
+          // we'll create a minimal placeholder document
+          const placeholderData = {
+            displayName: "User",
+            uid: uid,
+            followers: [],
+            following: [],
+            profession: "",
+            aboutText: "",
+            photoURL: ""
+          };
+          
+          // Set minimal data in state
+          setName(placeholderData.displayName);
+          setProfilePic(defaultProfilePic);
+          setProfession("");
+          setAboutText("");
+          setFollowers([]);
+          setFollowing([]);
+          
+          // Create placeholder document
+          await setDoc(userDocRef, placeholderData);
+          console.log("Created placeholder user document");
+        }
+      } catch (authError) {
+        console.error("Error creating user from auth data:", authError);
+        throw authError;
+      }
     }
   } catch (error) {
-    console.error("Error fetching user profile:", error);
-    // Set default values on error
+    console.error("Error in fetchUserProfile:", error);
+    // Set default error state
     setName("Error loading profile");
     setProfession("");
     setAboutText("");
