@@ -1,5 +1,20 @@
+"use client"
+
 import { useState } from "react"
-import { RotateCcw, RotateCw, Undo, Redo, Download, Save, Upload, Layers, X, Plus, Share2 } from "lucide-react"
+import {
+  RotateCcw,
+  RotateCw,
+  Undo,
+  Redo,
+  Download,
+  Save,
+  Upload,
+  Layers,
+  X,
+  Plus,
+  Share2,
+  HelpCircle,
+} from "lucide-react"
 import CloudinaryService from "../../utils/CloudinaryService"
 
 function Toolbar({
@@ -11,6 +26,7 @@ function Toolbar({
   onSaveDesign,
   onLoadDesign,
   onToggleLayerManager,
+  onShowUserGuide,
   canUndo,
   canRedo,
   showLayerManager,
@@ -202,20 +218,20 @@ function Toolbar({
     try {
       // Take a screenshot if needed or use the existing one from the current design
       let imageUrl
-      
+
       if (currentDesignId) {
         // If we have a current design, use its existing image URL
-        const design = designs.find(d => d.id === currentDesignId)
+        const design = designs.find((d) => d.id === currentDesignId)
         imageUrl = design?.imageUrl
       }
-      
+
       // If no imageUrl from existing design, generate a new screenshot
       if (!imageUrl) {
         const screenshotBlob = await onScreenshot(true)
         if (!screenshotBlob) {
           throw new Error("Failed to capture design preview")
         }
-        
+
         // Upload to Cloudinary
         const uploadResult = await CloudinaryService.uploadImage(screenshotBlob)
         imageUrl = uploadResult.url
@@ -230,7 +246,7 @@ function Toolbar({
         body: JSON.stringify({
           fileUrl: imageUrl,
           userId: user.uid,
-          description: designName || "Style Studio design"
+          description: designName || "Style Studio design",
         }),
       })
 
@@ -301,22 +317,29 @@ function Toolbar({
           {currentDesignId && <span className="update-indicator"></span>}
         </button>
         <button
-          className={`toolbar-button ${isLoading ? "loading" : ""}`}
+          className={`new-design-button ${isLoading ? "loading" : ""}`}
           title="Load Design"
           onClick={handleLoadDesignClick}
           disabled={isLoading}
         >
           <Upload size={16} />
+          Your Designs
         </button>
-        
+
         {/* New Publish button */}
         <button
-          className={`toolbar-button ${publishLoading ? "loading" : ""}`}
+          className={`new-design-button ${publishLoading ? "loading" : ""}`}
           onClick={handlePublish}
           title="Publish to Your Portfolio"
           disabled={publishLoading}
         >
           <Share2 size={16} />
+          Publish Design
+        </button>
+
+        {/* Help button to show user guide */}
+        <button className="toolbar-button" onClick={onShowUserGuide} title="Show User Guide">
+          <HelpCircle size={16} />
         </button>
       </div>
 
