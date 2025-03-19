@@ -301,7 +301,7 @@ export default function ContestContent() {
       console.error("Error updating contest:", error)
       setErrorMessage(error.message)
     }
-
+  }
   // Check if user can chat with this submission
   const canChatWithSubmission = (submission) => {
     if (!currentUser) return false
@@ -701,5 +701,6 @@ export default function ContestContent() {
       )}
     </div>
   )
+  
 }
 

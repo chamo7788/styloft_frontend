@@ -749,7 +749,7 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
-
+}
 .chat-button:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
