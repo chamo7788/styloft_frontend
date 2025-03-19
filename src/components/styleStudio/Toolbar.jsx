@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import {
   RotateCcw,
@@ -278,7 +280,10 @@ function Toolbar({
       <div className="toolbar-group">
         <button
           className={`toolbar-button ${!canUndo ? "disabled" : ""}`}
-          onClick={onUndo}
+          onClick={() => {
+            console.log("Undo button clicked")
+            if (canUndo) onUndo()
+          }}
           disabled={!canUndo}
           title="Undo"
         >
@@ -286,7 +291,10 @@ function Toolbar({
         </button>
         <button
           className={`toolbar-button ${!canRedo ? "disabled" : ""}`}
-          onClick={onRedo}
+          onClick={() => {
+            console.log("Redo button clicked")
+            if (canRedo) onRedo()
+          }}
           disabled={!canRedo}
           title="Redo"
         >

@@ -1,7 +1,10 @@
+"use client"
+
 import { useRef, useState, useEffect, createRef, useMemo } from "react"
 import { useGLTF, Text } from "@react-three/drei"
 import { TextureLoader } from "three"
 import { useFrame } from "@react-three/fiber"
+import * as THREE from "three"
 
 function Model({
   modelPath,
@@ -65,6 +68,33 @@ function Model({
     }
   }, [materials])
 
+  useEffect(() => {
+    if (scene) {
+      // Improve material quality
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          // Enable shadows
+          child.castShadow = true
+          child.receiveShadow = true
+
+          // Improve material quality
+          if (child.material) {
+            child.material.precision = "highp"
+            child.material.roughness = 0.7
+            child.material.envMapIntensity = 1.5
+
+            // Improve texture filtering if textures exist
+            if (child.material.map) {
+              child.material.map.anisotropy = 16
+              child.material.map.minFilter = THREE.LinearMipMapLinearFilter
+              child.material.map.magFilter = THREE.LinearFilter
+            }
+          }
+        }
+      })
+    }
+  }, [scene])
+
   // Handle part selection on click - memoized to reduce function recreations
   const handleClick = useMemo(
     () => (e) => {
@@ -120,12 +150,20 @@ function Model({
         // Apply texture if available from materials
         if (loadedTextures[part]) {
           child.material.map = loadedTextures[part]
+          // Improve texture quality
+          child.material.map.anisotropy = 16
+          child.material.map.minFilter = THREE.LinearMipMapLinearFilter
+          child.material.map.magFilter = THREE.LinearFilter
           child.material.needsUpdate = true
         }
 
         // Apply canvas texture if available
         if (textures && textures[part]) {
           child.material.map = textures[part]
+          // Improve texture quality
+          child.material.map.anisotropy = 16
+          child.material.map.minFilter = THREE.LinearMipMapLinearFilter
+          child.material.map.magFilter = THREE.LinearFilter
           child.material.needsUpdate = true
         }
       }
