@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import "../../assets/css/contest/ContestContent.css"
-import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock } from "lucide-react"
+import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star } from "lucide-react"
 import SubmissionChatView from "./SubmissionChatView"
 
 export default function ContestContent() {
@@ -315,6 +315,65 @@ export default function ContestContent() {
     return isContestCreator || isSubmitter
   }
 
+  // Add this function to handle rating submission
+  const handleRateSubmission = async (submissionId, rating) => {
+    if (!currentUser || !isContestCreator) return
+    
+    try {
+      const response = await fetch(`http://localhost:3000/submission/${submissionId}/rate`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          rating,
+          contestId: id,
+          ratedBy: currentUser.uid
+        })
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to rate submission")
+      }
+      
+      // Update the submission in the local state
+      setSubmissions(submissions.map(sub => 
+        sub.id === submissionId ? { ...sub, rating } : sub
+      ))
+      
+    } catch (error) {
+      console.error("Error rating submission:", error)
+      alert("Failed to save rating. Please try again.")
+    }
+  }
+
+  // Add this StarRating component inside your ContestContent component but before the return statement
+  const StarRating = ({ rating, submissionId, readOnly }) => {
+    const [hoverRating, setHoverRating] = useState(0)
+    
+    const handleClick = (value) => {
+      if (readOnly) return
+      handleRateSubmission(submissionId, value)
+    }
+    
+    return (
+      <div className="star-rating">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            size={18}
+            fill={star <= (hoverRating || rating) ? "#f59e0b" : "none"}
+            stroke={star <= (hoverRating || rating) ? "#f59e0b" : "#9ca3af"}
+            className={readOnly ? "star-readonly" : "star-interactive"}
+            onMouseEnter={() => !readOnly && setHoverRating(star)}
+            onMouseLeave={() => !readOnly && setHoverRating(0)}
+            onClick={() => handleClick(star)}
+          />
+        ))}
+        <span className="rating-value">{rating ? rating.toFixed(1) : "Not rated"}</span>
+      </div>
+    )
+  }
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -622,6 +681,14 @@ export default function ContestContent() {
                     <User size={16} className="user-icon" />
                     <span>{submission.userName}</span>
                   </div>
+                  
+                  {/* Add Star Rating Component */}
+                  <StarRating 
+                    rating={submission.rating || 0} 
+                    submissionId={submission.id} 
+                    readOnly={!isContestCreator} 
+                  />
+                  
                   {submission.message && <p className="submission-message">{submission.message}</p>}
 
                   {canChatWithSubmission(submission) ? (

@@ -5,6 +5,22 @@ import "../../assets/css/Profile/profile.css";
 import defaultProfilePic from "../../assets/images/user-profile.png";
 import defaultCoverPhoto from "../../assets/images/profile-background.jpg";
 
+const StarRating = ({ rating, readOnly = true }) => {
+  return (
+    <div className="star-rating">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span 
+          key={star} 
+          className={star <= Math.round(rating) ? "star filled" : "star empty"}
+        >
+          ★
+        </span>
+      ))}
+      <span className="rating-value">{rating ? rating.toFixed(1) : "0"}</span>
+    </div>
+  );
+};
+
 const Profile = () => {
   const [profilePic, setProfilePic] = useState(defaultProfilePic);
   const [coverPhoto, setCoverPhoto] = useState(defaultCoverPhoto);
@@ -360,7 +376,10 @@ const Profile = () => {
                 <div key={design.id} className="DesignCard" onClick={() => openModal(design.fileUrl)}>
                   <img src={design.fileUrl} alt="Design" className="design-img" />
                   <h3 className="DesignName">{design.description}</h3>
-                  <p className="DesignReview">⭐ 4.5 (180 reviews)</p>
+                  <div className="DesignReview">
+                    <StarRating rating={design.rating || 0} />
+                    <p className="review-count">({design.reviewCount || 0} reviews)</p>
+                  </div>
                 </div>
               ))
             ) : (
