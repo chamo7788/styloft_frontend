@@ -1,0 +1,47 @@
+/* Web safe fonts are already available */
+
+/* For custom fonts, you need to import them */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto&family=Montserrat&display=swap');
+
+/* For the specialty fonts, use the correct path to the public folder */
+@font-face {
+  font-family: 'Vegan Style';
+  src: url('/fonts/VeganStylePersonalUse-5Y58.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JURASICK';
+  src: url('/fonts/Jurasick-K7gnA.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lemon Jelly';
+  src: url('/fonts/LemonJellyPersonalUse-dEqR.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Beautiful People';
+  src: url('/fonts/BeautifulPeoplePersonalUse-dE0g.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Stylish Calligraphy';
+  src: url('/fonts/StylishCalligraphyDemo-XPZZ.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Remove Beauty Mountains since it doesn't exist in your files */

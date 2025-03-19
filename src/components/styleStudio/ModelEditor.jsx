@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useCallback, useMemo, useEffect } from "react"
 import ModelViewer from "./ModelViewer"
 import TextureEditor from "./texture-editor/TextureEditor"
