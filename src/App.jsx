@@ -7,6 +7,7 @@ import Profile from "./components/Profile/Profile";
 import Contest from "./pages/Contest";
 import { AddShopForm } from "./components/styleMarket/AddShopForm";
 import PaymentPage from "./components/Subscription/PaymentPage";
+import './assets/css/fonts.css';
 
 function App() {
   const location = useLocation();

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { X, ChevronLeft, ChevronRight, Shirt, PenIcon, Palette, Grid, Wand2, Sun, Save, Layers } from "lucide-react"
 import welcomeImage from "../../assets/images/StyleStudio/welcome.png"
