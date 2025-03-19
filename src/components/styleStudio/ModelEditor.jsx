@@ -224,7 +224,33 @@ export default function ModelEditor() {
   }, [historyIndex, history])
 
   // Take screenshot - optimized with useCallback
-  const handleScreenshot = useCallback(() => {
+  const handleScreenshot = useCallback(async (returnBlob = false) => {
+    if (canvasRef.current) {
+      return new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          const canvas = canvasRef.current;
+          
+          if (returnBlob) {
+            // Convert canvas to blob and return it
+            canvas.toBlob((blob) => {
+              resolve(blob);
+            }, 'image/png');
+          } else {
+            // Download the screenshot
+            const link = document.createElement("a");
+            link.download = `${selectedModel}-design.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            resolve();
+          }
+        });
+      });
+    }
+    return null;
+  }, [selectedModel]);
+
+  // Take screenshot - optimized with useCallback
+  const handleScreenshotDownload = useCallback(() => {
     if (canvasRef.current) {
       requestAnimationFrame(() => {
         const canvas = canvasRef.current
@@ -252,12 +278,25 @@ export default function ModelEditor() {
       }
     }
   
+    // Process logo elements to save Cloudinary URLs
+    const processedLogoElements = logoElements.map(logo => {
+      // If using a Cloudinary URL, ensure we keep the URL reference
+      if (logo.image && typeof logo.image === 'string' && logo.image.includes('cloudinary.com')) {
+        return {
+          ...logo,
+          // Add a flag to identify this as a Cloudinary image
+          isCloudinaryImage: true
+        };
+      }
+      return logo;
+    });
+  
     const design = {
       model: selectedModel,
       colors,
       materials,
       textElements,
-      logoElements,
+      logoElements: processedLogoElements, // Use processed elements with Cloudinary URLs
       lighting,
       backgroundColor,
       // Add canvas objects and layer information
@@ -700,6 +739,7 @@ export default function ModelEditor() {
             onUndo={handleUndo}
             onRedo={handleRedo}
             onScreenshot={handleScreenshot}
+            onScreenshotDownload={handleScreenshotDownload}
             onSaveDesign={handleSaveDesign}
             onLoadDesign={handleLoadDesign}
             onToggleLayerManager={toggleLayerManager}

@@ -579,68 +579,71 @@ const TextureEditor = forwardRef(
       }
     }
 
-    // Replace your existing handleApplyLogoToCanvas function with this simplified version
-    const handleApplyLogoToCanvas = () => {
-      if (!fabricCanvasRef.current || !logoSettings.image) {
-        console.error("Missing canvas or image data")
-        return
+    // Replace your existing handleApplyLogoToCanvas function with this updated version:
+
+const handleApplyLogoToCanvas = () => {
+  if (!fabricCanvasRef.current || !logoSettings.image) {
+    console.error("Canvas or logo image not available");
+    return;
+  }
+
+  console.log("Adding logo to canvas from URL:", logoSettings.image);
+
+  // Create a new image element
+  const imgElement = new Image();
+  
+  // Add crossOrigin attribute for CORS support with Cloudinary
+  imgElement.crossOrigin = "anonymous";
+
+  imgElement.onload = () => {
+    console.log("Logo image loaded successfully");
+    try {
+      // Create a fabric.js Image object
+      const fabricImage = new fabric.Image(imgElement, {
+        left: fabricCanvasRef.current.width / 2,
+        top: fabricCanvasRef.current.height / 2,
+        originX: 'center',
+        originY: 'center',
+        opacity: logoSettings.opacity || 1.0,
+        scaleX: logoSettings.size,
+        scaleY: logoSettings.size,
+        selectable: true,
+      });
+
+      // Add any additional properties from logoSettings
+      if (logoSettings.lockMovement) fabricImage.lockMovementX = fabricImage.lockMovementY = true;
+      if (logoSettings.lockRotation) fabricImage.lockRotation = true;
+      if (logoSettings.lockScaling) fabricImage.lockScalingX = fabricImage.lockScalingY = true;
+      
+      // Store the original Cloudinary URL with the object
+      fabricImage.set('cloudinaryUrl', logoSettings.image);
+
+      // Add to canvas
+      fabricCanvasRef.current.add(fabricImage);
+      fabricCanvasRef.current.setActiveObject(fabricImage);
+      fabricCanvasRef.current.renderAll();
+      
+      // Save canvas state
+      saveCanvasState();
+      
+      // Update the canvas objects for layer management
+      if (onCanvasObjectsChange) {
+        const objects = fabricCanvasRef.current.getObjects();
+        onCanvasObjectsChange(objects, selectedPart);
       }
-
-      console.log("Adding logo to canvas...")
-
-      // Create a new image element directly
-      const imgElement = new Image()
-
-      imgElement.onload = () => {
-        console.log("Image loaded successfully", imgElement.width, "x", imgElement.height)
-
-        // Create a fabric.Image instance from the loaded HTML Image element
-        const fabricImage = new fabric.Image(imgElement, {
-          left: canvasSize.width / 2,
-          top: canvasSize.height / 2,
-          originX: "center",
-          originY: "center",
-          cornerSize: 10,
-          borderColor: "#1a73e8",
-          cornerColor: "#1a73e8",
-          cornerStrokeColor: "#ffffff",
-          transparentCorners: false,
-        })
-
-        // Apply settings
-        const scale = logoSettings.size || 1
-
-        // Scale the image to a reasonable size if needed
-        const maxSize = 200 // Maximum size in pixels
-        if (fabricImage.width > maxSize || fabricImage.height > maxSize) {
-          const scaleFactor = Math.min(maxSize / fabricImage.width, maxSize / fabricImage.height)
-          fabricImage.scale(scaleFactor * scale)
-        } else {
-          fabricImage.scale(scale)
-        }
-
-        fabricImage.set({
-          opacity: logoSettings.opacity || 1,
-        })
-
-        // Add to canvas
-        fabricCanvasRef.current.add(fabricImage)
-        fabricCanvasRef.current.setActiveObject(fabricImage)
-        fabricCanvasRef.current.renderAll()
-
-        console.log("Image added to canvas")
-
-        // Save canvas state
-        saveCanvasState()
-      }
-
-      imgElement.onerror = (err) => {
-        console.error("Error loading image:", err)
-      }
-
-      // Set source to trigger loading
-      imgElement.src = logoSettings.image
+    } catch (error) {
+      console.error("Error creating fabric image object:", error);
     }
+  };
+
+  imgElement.onerror = (err) => {
+    console.error("Error loading logo image:", err);
+    alert("Failed to load the logo image. Please try a different image.");
+  };
+  
+  // Set source to trigger loading
+  imgElement.src = logoSettings.image;
+};
 
     // Add this function to handle object selection
     const handleObjectSelected = (e) => {

@@ -1,11 +1,13 @@
 import { useState } from "react"
 import { RotateCcw, RotateCw, Undo, Redo, Download, Save, Upload, Layers, X, Plus } from "lucide-react"
+import CloudinaryService from "../../utils/CloudinaryService"
 
 function Toolbar({
   onRotate,
   onUndo,
   onRedo,
   onScreenshot,
+  onScreenshotDownload,
   onSaveDesign,
   onLoadDesign,
   onToggleLayerManager,
@@ -73,6 +75,17 @@ function Toolbar({
     setError(null)
 
     try {
+      // First take a screenshot and upload to Cloudinary
+      const screenshotBlob = await onScreenshot(true) // Pass true to get the blob instead of downloading
+      if (!screenshotBlob) {
+        throw new Error("Failed to capture design preview")
+      }
+
+      // Upload to Cloudinary
+      const uploadResult = await CloudinaryService.uploadImage(screenshotBlob)
+      const imageUrl = uploadResult.url
+
+      // Now save the design with the image URL
       let response
       let url
       let method
@@ -97,6 +110,7 @@ function Toolbar({
         body: JSON.stringify({
           designData,
           designName: name,
+          imageUrl: imageUrl,
         }),
       })
 
@@ -210,7 +224,7 @@ function Toolbar({
         >
           <Layers size={16} />
         </button>
-        <button className="toolbar-button" onClick={onScreenshot} title="Take Screenshot">
+        <button className="toolbar-button" onClick={onScreenshotDownload} title="Take Screenshot">
           <Download size={16} />
         </button>
         <button
