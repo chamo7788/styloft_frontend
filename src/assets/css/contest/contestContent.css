@@ -663,15 +663,6 @@ body {
   position: relative;
 }
 
-.submission-chat-modal {
-  max-width: 90% !important;
-  width: 1200px !important;
-  height: 80vh;
-  max-height: 800px;
-  padding: 0 !important;
-  overflow: hidden;
-}
-
 .modal-close-btn {
   position: absolute;
   top: 1rem;
@@ -680,7 +671,6 @@ body {
   border: none;
   cursor: pointer;
   color: var(--text-primary);
-  z-index: 10;
 }
 
 .modal-body {
@@ -714,19 +704,40 @@ body {
   line-height: 1.5;
 }
 
-/* Error message toast */
-.error-toast {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background-color: var(--error-color);
-  color: white;
-  padding: 1rem;
+/* Chat Button Styles */
+.chat-button-disabled {
+  margin-top: 10px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: var(--border-color);
+  color: var(--text-muted);
+  border: none;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  z-index: 1100;
-  animation: fadeIn 0.3s ease-out;
+  cursor: not-allowed;
+  transition: none;
 }
+
+.chat-button-disabled:hover {
+  background-color: var(--border-color);
+  transform: none;
+}
+
+.chat-button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
 
 @keyframes fadeIn {
   from {
@@ -738,6 +749,10 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+
+.chat-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 /* Responsive Adjustments */
