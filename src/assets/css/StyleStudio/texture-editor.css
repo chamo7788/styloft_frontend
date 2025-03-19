@@ -210,6 +210,44 @@
 .moveable-control .moveable-direction {
   background: var(--moveable-point-color);
 }
+/* Add to your existing CSS file */
+.logo-upload-error {
+  color: #d32f2f;
+  margin-top: 4px;
+  font-size: 0.8rem;
+}
+
+.logo-input-group {
+  margin-bottom: 15px;
+}
+
+.logo-upload-label {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #4285f4;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logo-upload-label:hover {
+  background-color: #3367d6;
+}
+
+.logo-input {
+  display: none;
+}
+
+.logo-add-button {
+  min-width: 150px;
+}
+
+.logo-add-button:disabled,
+.logo-remove-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 /* Responsive adjustments */
 @media (max-width: 1280px) {

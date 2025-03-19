@@ -1,11 +1,13 @@
 import { useState } from "react"
-import { RotateCcw, RotateCw, Undo, Redo, Download, Save, Upload, Layers, X, Plus } from "lucide-react"
+import { RotateCcw, RotateCw, Undo, Redo, Download, Save, Upload, Layers, X, Plus, Share2 } from "lucide-react"
+import CloudinaryService from "../../utils/CloudinaryService"
 
 function Toolbar({
   onRotate,
   onUndo,
   onRedo,
   onScreenshot,
+  onScreenshotDownload,
   onSaveDesign,
   onLoadDesign,
   onToggleLayerManager,
@@ -19,6 +21,8 @@ function Toolbar({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [currentDesignId, setCurrentDesignId] = useState(null)
+  const [publishLoading, setPublishLoading] = useState(false)
+  const [publishError, setPublishError] = useState(null)
 
   async function fetchDesigns() {
     const user = JSON.parse(localStorage.getItem("currentUser"))
@@ -73,6 +77,17 @@ function Toolbar({
     setError(null)
 
     try {
+      // First take a screenshot and upload to Cloudinary
+      const screenshotBlob = await onScreenshot(true) // Pass true to get the blob instead of downloading
+      if (!screenshotBlob) {
+        throw new Error("Failed to capture design preview")
+      }
+
+      // Upload to Cloudinary
+      const uploadResult = await CloudinaryService.uploadImage(screenshotBlob)
+      const imageUrl = uploadResult.url
+
+      // Now save the design with the image URL
       let response
       let url
       let method
@@ -97,6 +112,7 @@ function Toolbar({
         body: JSON.stringify({
           designData,
           designName: name,
+          imageUrl: imageUrl,
         }),
       })
 
@@ -172,6 +188,68 @@ function Toolbar({
     // onResetDesign();
   }
 
+  // Add publish functionality
+  const handlePublish = async () => {
+    const user = JSON.parse(localStorage.getItem("currentUser"))
+    if (!user || !user.uid) {
+      alert("Please login to publish your design")
+      return
+    }
+
+    setPublishLoading(true)
+    setPublishError(null)
+
+    try {
+      // Take a screenshot if needed or use the existing one from the current design
+      let imageUrl
+      
+      if (currentDesignId) {
+        // If we have a current design, use its existing image URL
+        const design = designs.find(d => d.id === currentDesignId)
+        imageUrl = design?.imageUrl
+      }
+      
+      // If no imageUrl from existing design, generate a new screenshot
+      if (!imageUrl) {
+        const screenshotBlob = await onScreenshot(true)
+        if (!screenshotBlob) {
+          throw new Error("Failed to capture design preview")
+        }
+        
+        // Upload to Cloudinary
+        const uploadResult = await CloudinaryService.uploadImage(screenshotBlob)
+        imageUrl = uploadResult.url
+      }
+
+      // Send to backend to publish as a design
+      const response = await fetch("http://localhost:3000/design/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileUrl: imageUrl,
+          userId: user.uid,
+          description: designName || "Style Studio design"
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      console.log("Design published successfully:", result)
+      alert("Design published successfully to your portfolio!")
+    } catch (error) {
+      console.error("Error publishing design:", error)
+      setPublishError("Failed to publish design. Please try again.")
+      alert("Failed to publish design. Please try again.")
+    } finally {
+      setPublishLoading(false)
+    }
+  }
+
   return (
     <div className="canvas-toolbar">
       <div className="toolbar-group">
@@ -210,7 +288,7 @@ function Toolbar({
         >
           <Layers size={16} />
         </button>
-        <button className="toolbar-button" onClick={onScreenshot} title="Take Screenshot">
+        <button className="toolbar-button" onClick={onScreenshotDownload} title="Take Screenshot">
           <Download size={16} />
         </button>
         <button
@@ -229,6 +307,16 @@ function Toolbar({
           disabled={isLoading}
         >
           <Upload size={16} />
+        </button>
+        
+        {/* New Publish button */}
+        <button
+          className={`toolbar-button ${publishLoading ? "loading" : ""}`}
+          onClick={handlePublish}
+          title="Publish to Your Portfolio"
+          disabled={publishLoading}
+        >
+          <Share2 size={16} />
         </button>
       </div>
 
