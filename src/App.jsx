@@ -8,7 +8,6 @@ import Contest from "./pages/Contest";
 import { AddShopForm } from "./components/styleMarket/AddShopForm";
 import PaymentPage from "./components/Subscription/PaymentPage";
 
-
 function App() {
   const location = useLocation();
 
@@ -32,6 +31,8 @@ function App() {
         <Route path="/DashBoard" element={<DashBoard />} />
         <Route path="/sub-plans" element={<Subscription />} />
         <Route path="/payment/:planId" element={<PaymentPage />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:id" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {!hideFooterPaths.includes(location.pathname) && <Footer />}

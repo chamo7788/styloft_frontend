@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, X } from "lucide-react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import "../../assets/css/StyleSociety/styleSearchBar.css";
@@ -48,6 +48,9 @@ export function StyleSearchBar() {
             item.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
+        // Log the results to verify user IDs
+        console.log("Search results:", results);
+
         if (results.length > 0) {
             setSearchResults(results);
             setErrorMessage("");
@@ -59,10 +62,49 @@ export function StyleSearchBar() {
         }
     };
 
+    // Update the handleProfileClick function to verify the user ID before navigation
     const handleProfileClick = (userId) => {
-        navigate(`Profile/${userId}`); // Navigate to the profile page with userId
-        setIsResultVisible(false);
-        setSearchQuery("");
+        console.log("Search result user:", searchResults.find(user => user.id === userId));
+        console.log("Navigating to profile with ID:", userId);
+        
+        // Verify the user exists in the users collection
+        const verifyAndNavigate = async () => {
+            try {
+                // Check if the user document exists
+                const userDoc = await getDoc(doc(db, "users", userId));
+                
+                if (userDoc.exists()) {
+                    console.log("User document found, navigating to profile");
+                    navigate(`/profile/${userId}`);
+                } else {
+                    console.error("User document not found in 'users' collection, checking uid field");
+                    
+                    // If the document doesn't exist directly, it might be that the ID is different
+                    // Try to find the user by checking the 'uid' field in documents
+                    const usersRef = collection(db, "users");
+                    const q = query(usersRef, where("uid", "==", userId));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (!querySnapshot.empty) {
+                        const actualUserId = querySnapshot.docs[0].id;
+                        console.log("Found user by uid field, actual document ID:", actualUserId);
+                        navigate(`/profile/${actualUserId}`);
+                    } else {
+                        console.error("User not found in 'users' collection");
+                        alert("User profile not found");
+                    }
+                }
+            } catch (error) {
+                console.error("Error verifying user:", error);
+                // Navigate anyway as fallback
+                navigate(`/profile/${userId}`);
+            } finally {
+                setIsResultVisible(false);
+                setSearchQuery("");
+            }
+        };
+        
+        verifyAndNavigate();
     };
 
     const handleClose = () => {

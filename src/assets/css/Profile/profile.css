@@ -253,3 +253,83 @@ h3 {
   width: 100%;
   height: auto;
 }
+
+/*new /*
+
+/* Add to your existing CSS file: src/assets/css/Profile/profile.css */
+
+/* Designs section styling */
+
+.follow-stats {
+  display: flex;
+  gap: 15px;
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.followers-count, .following-count {
+  font-weight: 500;
+}
+
+.connect-btn.following {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.designs-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.designs-section h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.designs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.design-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.design-card:hover {
+  transform: translateY(-5px);
+}
+
+.design-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.design-card p {
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+  background-color: #f9f9f9;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.error-message {
+  color: #e53935;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
