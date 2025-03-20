@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../firebaseConfig";
-import { collection, addDoc, doc, setDoc, query, where, getDocs, deleteDoc, onSnapshot } from "firebase/firestore";
+import { 
+  collection, addDoc, doc, setDoc, query, where, getDocs, onSnapshot 
+} from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "../../assets/css/StyleSociety/Feed.css";
 import Dp from "../../assets/images/s-societybackground.jpg"; // Default avatar
@@ -11,7 +13,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
   const [hiddenItems, setHiddenItems] = useState({});
   const [user, setUser] = useState(null);
 
-  // Track the logged-in user and add them to the feed
+  // Track logged-in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -26,32 +28,28 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
     return () => unsubscribe();
   }, []);
 
-  // Fetch followed users from Firestore
+  // Fetch users the current user follows
   const fetchFollowedUsers = async (email) => {
-    const userDocRef = doc(db, "users", email);
-    const followingRef = collection(userDocRef, "following");
-
+    const followingRef = collection(db, "users", email, "following");
     const querySnapshot = await getDocs(followingRef);
+
     const followedUsers = {};
     querySnapshot.forEach((doc) => {
-      followedUsers[doc.id] = true; // Track followed users by email
+      followedUsers[doc.id] = true;
     });
+
     setFollowed(followedUsers);
   };
 
-  // Real-time feed listener excluding the logged-in user and followed users
+  // Real-time listener for feed (excluding user & followed users)
   useEffect(() => {
     if (!user) return;
 
     const feedRef = collection(db, "feed");
-
     const unsubscribe = onSnapshot(feedRef, (snapshot) => {
       const feedData = snapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .filter((item) => item.email !== user.email && !followed[item.email]); // Exclude the logged-in user and followed users
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((item) => item.email !== user.email && !followed[item.email]);
 
       setNotifications(feedData);
     });
@@ -59,10 +57,9 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
     return () => unsubscribe();
   }, [user, followed]);
 
-  // Add user to the feed only if their email is not already present
+  // Add user to feed if not already present
   const addFeed = async (name, avatar, email) => {
     const feedRef = collection(db, "feed");
-
     const q = query(feedRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
 
@@ -70,20 +67,21 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
       try {
         await addDoc(feedRef, { name, avatar, email });
       } catch (error) {
-        console.error("Error adding feed:", error);
+        console.error("Error adding to feed:", error);
       }
     }
   };
 
-  // Handle follow button click, add follower in Firestore and update follower count
+  // Follow user & update Firestore
   const handleFollow = async (followedUserEmail, followedUserId) => {
     if (!user) return;
 
-    // Update local followed state
-    setFollowed((prevState) => {
-      const newFollowed = { ...prevState, [followedUserEmail]: true };
-      return newFollowed;
-    });
+    console.log("Following:", followedUserEmail);
+
+    setFollowed((prevState) => ({
+      ...prevState,
+      [followedUserEmail]: true,
+    }));
 
     setTimeout(() => {
       setHiddenItems((prevState) => ({
@@ -93,40 +91,32 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
     }, 3000);
 
     try {
-      const userDocRef = doc(db, "users", user.email);
-      const followingRef = collection(userDocRef, "following");
+      const followingRef = doc(db, "users", user.email, "following", followedUserEmail);
+      const followerRef = doc(db, "users", followedUserEmail, "followers", user.email);
 
-      // Add followed user to the following collection of the logged-in user
-      await setDoc(doc(followingRef, followedUserEmail), { email: followedUserEmail });
+      // Add to "following" collection of the logged-in user
+      await setDoc(followingRef, { email: followedUserEmail });
 
-      // Trigger profile follower count update
+      // Add to "followers" collection of the followed user
+      await setDoc(followerRef, { email: user.email });
+
+      console.log("✅ Followed:", followedUserEmail);
+
+      // Update counters
       updateFollowingCount(user.email);
-
-      const followedUserDocRef = doc(db, "users", followedUserEmail);
-      const followersRef = collection(followedUserDocRef, "followers");
-
-      // Add current user as a follower
-      await setDoc(doc(followersRef, user.email), { email: user.email });
-
-      // Trigger profile follower count update
-      updateFollowerCount(followedUserEmail); // This will trigger re-fetch of follower count
+      updateFollowerCount(followedUserEmail);
     } catch (error) {
-      console.error("Error following user:", error);
+      console.error("❌ Error following user:", error);
     }
   };
 
-  // Handle feed item deletion - Only remove from the UI (local state), not Firestore
+  // Remove feed item locally
   const handleDelete = async (id) => {
     try {
-      // Remove the item locally from the notifications state
       setNotifications((prevState) => prevState.filter((item) => item.id !== id));
-
-      setHiddenItems((prevState) => ({
-        ...prevState,
-        [id]: true,
-      }));
+      setHiddenItems((prevState) => ({ ...prevState, [id]: true }));
     } catch (error) {
-      console.error("Error deleting feed:", error);
+      console.error("Error deleting feed item:", error);
     }
   };
 
@@ -146,7 +136,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
             <div className="Feed-actions">
               <button
                 className={`followbtn ${followed[item.email] ? "following" : ""}`}
-                onClick={() => handleFollow(item.email, item.id)} // Passing both email and id
+                onClick={() => handleFollow(item.email, item.id)}
               >
                 {followed[item.email] ? "Following" : "+ Follow"}
               </button>
