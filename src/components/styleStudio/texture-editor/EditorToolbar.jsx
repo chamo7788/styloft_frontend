@@ -1,5 +1,3 @@
-"use client"
-
 import { memo } from "react"
 import { Brush, Eraser, Type, ImageIcon, RotateCw, RotateCcw, Trash2, Save } from "lucide-react"
 
@@ -57,7 +55,7 @@ export const EditorToolbar = memo(
           onClick={handleCanvasUndo}
           disabled={!canUndo}
           title="Undo"
-          aria-disabled={!canUndo}
+          
         >
           <RotateCcw size={16} />
         </button>
@@ -67,7 +65,7 @@ export const EditorToolbar = memo(
           onClick={handleCanvasRedo}
           disabled={!canRedo}
           title="Redo"
-          aria-disabled={!canRedo}
+          
         >
           <RotateCw size={16} />
         </button>

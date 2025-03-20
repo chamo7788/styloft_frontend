@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useEffect } from "react"
 import { Wand2, Repeat, Grid, Palette, RefreshCw, Check } from "lucide-react"
 
@@ -12,11 +10,16 @@ const PatternGenerator = ({ onPatternGenerated }) => {
   const [isGenerating, setIsGenerating] = useState(false)
   const canvasRef = useRef(null)
 
+  // Update the patternTypes array to include more pattern options
   const patternTypes = [
     { id: "stripes", name: "Stripes", icon: <Repeat size={16} /> },
     { id: "dots", name: "Polka Dots", icon: <Grid size={16} /> },
     { id: "chevron", name: "Chevron", icon: <Wand2 size={16} /> },
     { id: "checkered", name: "Checkered", icon: <Check size={16} /> },
+    { id: "diagonal", name: "Diagonal", icon: <Repeat size={16} /> },
+    { id: "herringbone", name: "Herringbone", icon: <Wand2 size={16} /> },
+    { id: "houndstooth", name: "Houndstooth", icon: <Grid size={16} /> },
+    { id: "argyle", name: "Argyle", icon: <Wand2 size={16} /> },
   ]
 
   // Generate pattern when parameters change
@@ -50,6 +53,7 @@ const PatternGenerator = ({ onPatternGenerated }) => {
     // Draw pattern based on selected type
     ctx.fillStyle = primaryColor
 
+    // Update the switch statement in the generatePattern function to include the new patterns
     switch (patternType) {
       case "stripes":
         drawStripes(ctx, width, height, patternSize)
@@ -62,6 +66,18 @@ const PatternGenerator = ({ onPatternGenerated }) => {
         break
       case "checkered":
         drawCheckered(ctx, width, height, patternSize)
+        break
+      case "diagonal":
+        drawDiagonal(ctx, width, height, patternSize)
+        break
+      case "herringbone":
+        drawHerringbone(ctx, width, height, patternSize)
+        break
+      case "houndstooth":
+        drawHoundstooth(ctx, width, height, patternSize)
+        break
+      case "argyle":
+        drawArgyle(ctx, width, height, patternSize)
         break
       default:
         drawStripes(ctx, width, height, patternSize)
@@ -129,6 +145,122 @@ const PatternGenerator = ({ onPatternGenerated }) => {
       for (let x = 0; x < width; x += squareSize * 2) {
         ctx.fillRect(x, y, squareSize, squareSize)
         ctx.fillRect(x + squareSize, y + squareSize, squareSize, squareSize)
+      }
+    }
+  }
+
+  // Add these new pattern drawing functions after the existing drawing functions
+
+  const drawDiagonal = (ctx, width, height, size) => {
+    const lineWidth = size / 2
+    const spacing = size * 2
+
+    ctx.lineWidth = lineWidth
+
+    // Draw diagonal lines
+    for (let i = -height; i < width + height; i += spacing) {
+      ctx.beginPath()
+      ctx.moveTo(i, 0)
+      ctx.lineTo(i + height, height)
+      ctx.stroke()
+    }
+  }
+
+  const drawHerringbone = (ctx, width, height, size) => {
+    const lineWidth = size / 3
+    const spacing = size * 1.5
+
+    ctx.lineWidth = lineWidth
+
+    // Draw herringbone pattern
+    for (let y = 0; y < height + spacing; y += spacing) {
+      for (let x = 0; x < width + spacing; x += spacing) {
+        // Draw the V shape
+        ctx.beginPath()
+        ctx.moveTo(x - spacing / 2, y)
+        ctx.lineTo(x, y + spacing / 2)
+        ctx.lineTo(x + spacing / 2, y)
+        ctx.stroke()
+
+        // Draw the inverted V shape
+        ctx.beginPath()
+        ctx.moveTo(x - spacing / 2, y + spacing / 2)
+        ctx.lineTo(x, y)
+        ctx.lineTo(x + spacing / 2, y + spacing / 2)
+        ctx.stroke()
+      }
+    }
+  }
+
+  const drawHoundstooth = (ctx, width, height, size) => {
+    const unitSize = size * 1.5
+
+    for (let y = 0; y < height; y += unitSize * 2) {
+      for (let x = 0; x < width; x += unitSize * 2) {
+        // Draw the houndstooth unit
+        ctx.beginPath()
+
+        // First shape
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + unitSize, y)
+        ctx.lineTo(x + unitSize, y + unitSize)
+        ctx.lineTo(x + unitSize * 2, y + unitSize)
+        ctx.lineTo(x + unitSize * 2, y + unitSize * 2)
+        ctx.lineTo(x + unitSize, y + unitSize * 2)
+        ctx.lineTo(x + unitSize, y + unitSize)
+        ctx.lineTo(x, y + unitSize)
+        ctx.closePath()
+        ctx.fill()
+
+        // Second shape (offset)
+        ctx.beginPath()
+        ctx.moveTo(x + unitSize, y + unitSize)
+        ctx.lineTo(x + unitSize * 2, y + unitSize)
+        ctx.lineTo(x + unitSize * 2, y)
+        ctx.lineTo(x + unitSize, y)
+        ctx.closePath()
+        ctx.fill()
+      }
+    }
+  }
+
+  const drawArgyle = (ctx, width, height, size) => {
+    const diamondSize = size * 3
+
+    // Draw diamonds
+    for (let y = -diamondSize; y < height + diamondSize; y += diamondSize) {
+      for (let x = -diamondSize; x < width + diamondSize; x += diamondSize) {
+        // Main diamond
+        ctx.beginPath()
+        ctx.moveTo(x, y + diamondSize / 2)
+        ctx.lineTo(x + diamondSize / 2, y)
+        ctx.lineTo(x + diamondSize, y + diamondSize / 2)
+        ctx.lineTo(x + diamondSize / 2, y + diamondSize)
+        ctx.closePath()
+        ctx.fill()
+
+        // Draw crossing lines
+        ctx.strokeStyle = secondaryColor
+        ctx.lineWidth = size / 6
+
+        // Horizontal lines
+        for (let i = diamondSize / 4; i < diamondSize; i += diamondSize / 2) {
+          ctx.beginPath()
+          ctx.moveTo(x, y + i)
+          ctx.lineTo(x + diamondSize, y + i)
+          ctx.stroke()
+        }
+
+        // Vertical lines
+        for (let i = diamondSize / 4; i < diamondSize; i += diamondSize / 2) {
+          ctx.beginPath()
+          ctx.moveTo(x + i, y)
+          ctx.lineTo(x + i, y + diamondSize)
+          ctx.stroke()
+        }
+
+        // Reset stroke style
+        ctx.strokeStyle = primaryColor
       }
     }
   }

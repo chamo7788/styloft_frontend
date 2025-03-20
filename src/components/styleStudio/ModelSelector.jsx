@@ -1,5 +1,3 @@
-"use client"
-
 import { Shirt, PenIcon, SubscriptIcon, SaladIcon } from "lucide-react"
 
 function ModelSelector({ selectedModel, onModelChange }) {

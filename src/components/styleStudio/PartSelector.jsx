@@ -1,5 +1,3 @@
-"use client"
-
 function PartSelector({ parts, selectedPart, onPartSelect }) {
   return (
     <div className="part-selector">

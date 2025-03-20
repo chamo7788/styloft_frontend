@@ -1,9 +1,10 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../../firebaseConfig"
 import "../../assets/css/contest/ContestContent.css"
-import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar } from "lucide-react"
+import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock } from "lucide-react"
+import SubmissionChatView from "./SubmissionChatView"
 
 export default function ContestContent() {
   const { id } = useParams()
@@ -19,6 +20,17 @@ export default function ContestContent() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedSubmission, setSelectedSubmission] = useState(null)
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    description: "",
+    prize: "",
+    deadline: ""
+  })
+
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"))
+
 
   // Fetch contest details
   useEffect(() => {
@@ -52,21 +64,36 @@ export default function ContestContent() {
         const response = await fetch(`http://localhost:3000/submission/contest/${id}`)
         if (!response.ok) throw new Error("Failed to fetch submissions")
         const data = await response.json()
-  
+
         // Assuming the backend now includes the username in the submission response
         const submissionsWithUserDetails = data.map((submission) => ({
           ...submission,
           userName: submission.userName || "Unknown User",
         }))
-  
+
         setSubmissions(submissionsWithUserDetails)
       } catch (error) {
         console.error("Error fetching submissions:", error)
       }
     }
-  
+
     fetchSubmissions()
   }, [id, isSubmitted])
+
+  useEffect(() => {
+    if (contest) {
+      // Format the date to YYYY-MM-DD for the input type="date"
+      const formattedDeadline = contest.deadline ? 
+        new Date(contest.deadline).toISOString().split('T')[0] : "";
+      
+      setEditFormData({
+        title: contest.title || "",
+        description: contest.description || "",
+        prize: contest.prize || "",
+        deadline: formattedDeadline
+      })
+    }
+  }, [contest])
 
   const calculateTimeLeft = (deadline) => {
     const now = new Date()
@@ -219,6 +246,75 @@ export default function ContestContent() {
     setSelectedSubmission(null)
   }
 
+  const openChatModal = (submission) => {
+    setSelectedSubmission(submission)
+    setIsChatModalOpen(true)
+  }
+
+  const closeChatModal = () => {
+    setIsChatModalOpen(false)
+    setSelectedSubmission(null)
+  }
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target
+    setEditFormData({
+      ...editFormData,
+      [name]: value
+    })
+  }
+
+  const handleUpdateContest = async () => {
+    try {
+      // Prepare the data for sending to the backend
+      const updatedData = {
+        title: editFormData.title,
+        description: editFormData.description,
+        prize: parseFloat(editFormData.prize),
+        deadline: new Date(editFormData.deadline).toISOString()
+      }
+
+      // Send PATCH request to update the contest
+      const response = await fetch(`http://localhost:3000/contest/${id}`, {
+        method: "PATCH", // Use PATCH instead of PUT as it's more appropriate for partial updates
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData)
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to update contest")
+      }
+      
+      // Update the local contest state with edited data
+      setContest({
+        ...contest,
+        ...updatedData
+      })
+      
+      // Show success message
+      alert("Contest updated successfully!")
+      
+      // Reset error message if there was any
+      setErrorMessage("")
+    } catch (error) {
+      console.error("Error updating contest:", error)
+      setErrorMessage(error.message)
+    }
+  }
+  // Check if user can chat with this submission
+  const canChatWithSubmission = (submission) => {
+    if (!currentUser) return false
+
+    // Contest creator can chat with all submissions
+    const isContestCreator = currentUser.uid === contest?.createdBy
+
+    // Submitter can only chat with their own submissions
+    const isSubmitter = currentUser.uid === submission.userId
+
+    return isContestCreator || isSubmitter
+  }
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -230,6 +326,9 @@ export default function ContestContent() {
 
   const isDeadlinePassed =
     timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
+
+  // Check if the current user is the contest creator
+  const isContestCreator = currentUser && currentUser.uid === contest.createdBy
 
   return (
     <div className="contest-content-page">
@@ -313,98 +412,188 @@ export default function ContestContent() {
         </div>
 
         <div className="contest-right">
-          {isSubmitted ? (
-            <div className="submission-success">
-              <CheckCircle size={48} className="success-icon" />
-              <h3>Submission Successful!</h3>
-              <p>Your design has been submitted to the contest.</p>
-            </div>
-          ) : (
+          {isContestCreator ? (
+            // Contest Creator View - Edit Form
             <>
-              <h2 className="submission-title">Submit Your Design</h2>
-
-              <div
-                className={`upload-box ${isDragging ? "dragging" : ""} ${errorMessage ? "error" : ""}`}
-                onDragEnter={handleDragEnter}
-                onDragLeave={handleDragLeave}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-              >
-                <input
-                  id="file-upload"
-                  type="file"
-                  onChange={handleImageUpload}
-                  className="file-input"
-                  accept="image/jpeg,image/png,image/jpg"
-                />
-
-                {imagePreview ? (
-                  <div className="image-preview-container">
-                    <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="submission-image-preview" />
-                    <button
-                      className="remove-image-btn"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleClearForm()
-                      }}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="upload-placeholder">
-                    <div className="upload-icon-container">
-                      <Upload size={24} className="upload-icon" />
-                    </div>
-                    <p className="upload-text">Drag and drop your design here</p>
-                    <p className="upload-subtext">or click to browse files</p>
-                    <p className="upload-formats">Supported formats: JPG, PNG</p>
-                  </div>
-                )}
-
-                {isUploading && (
-                  <div className="upload-overlay">
-                    <div className="upload-spinner"></div>
-                    <p>Uploading...</p>
-                  </div>
-                )}
-              </div>
-
+              <h2 className="submission-title">Edit Contest Details</h2>
+              
               {errorMessage && (
                 <div className="error-message">
                   <X size={16} />
                   <span>{errorMessage}</span>
                 </div>
               )}
-
-              <div className="message-container">
-                <label htmlFor="message" className="message-label">
-                  <MessageSquare size={16} />
-                  <span>Add a message with your submission</span>
-                </label>
-                <textarea
-                  id="message"
-                  className="message-input"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Describe your design or add any notes for the contest creator..."
-                />
-              </div>
-
-              <div className="button-group">
-                <button className="submit-btn" onClick={handleSubmit} disabled={isUploading || isDeadlinePassed}>
-                  {isUploading ? "Uploading..." : "Submit Design"}
-                </button>
-                <button className="clear-btn" onClick={handleClearForm}>
-                  Clear Form
-                </button>
-              </div>
-
-              {isDeadlinePassed && (
-                <div className="deadline-passed-message">
-                  <Clock size={16} />
-                  <span>This contest has ended and is no longer accepting submissions.</span>
+              
+              <div className="edit-form">
+                <div className="edit-field">
+                  <label htmlFor="title" className="edit-label">Contest Title</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    className="message-input"  // Reusing the submission form styles
+                    value={editFormData.title}
+                    onChange={handleEditChange}
+                    placeholder="Contest title"
+                  />
                 </div>
+                
+                <div className="edit-field">
+                  <label htmlFor="description" className="edit-label">Description</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    className="message-input"
+                    value={editFormData.description}
+                    onChange={handleEditChange}
+                    placeholder="Contest description"
+                    rows={5}
+                  />
+                </div>
+                
+                <div className="edit-field">
+                  <label htmlFor="prize" className="edit-label">Prize Amount ($)</label>
+                  <input
+                    type="number"
+                    id="prize"
+                    name="prize"
+                    className="message-input"
+                    value={editFormData.prize}
+                    onChange={handleEditChange}
+                    placeholder="Prize amount"
+                    min="1"
+                  />
+                </div>
+                
+                <div className="edit-field">
+                  <label htmlFor="deadline" className="edit-label">Deadline</label>
+                  <input
+                    type="date"
+                    id="deadline"
+                    name="deadline"
+                    className="message-input"
+                    value={editFormData.deadline}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                
+                <div className="button-group">
+                  <button 
+                    className="submit-btn" 
+                    onClick={handleUpdateContest}
+                    disabled={isDeadlinePassed}
+                  >
+                    Update Contest
+                  </button>
+                </div>
+                
+                {isDeadlinePassed && (
+                  <div className="deadline-passed-message">
+                    <Clock size={16} />
+                    <span>This contest has ended and can no longer be edited.</span>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            // Regular User View - Submission Form (Keep your existing code)
+            <>
+              {isSubmitted ? (
+                <div className="submission-success">
+                  <CheckCircle size={48} className="success-icon" />
+                  <h3>Submission Successful!</h3>
+                  <p>Your design has been submitted to the contest.</p>
+                </div>
+              ) : (
+                <>
+                  <h2 className="submission-title">Submit Your Design</h2>
+
+                  <div
+                    className={`upload-box ${isDragging ? "dragging" : ""} ${errorMessage ? "error" : ""}`}
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                    onClick={() => document.getElementById("file-upload").click()}
+                  >
+                    <input
+                      id="file-upload"
+                      type="file"
+                      onChange={handleImageUpload}
+                      className="file-input"
+                      accept="image/jpeg,image/png,image/jpg"
+                      style={{ display: "none" }}
+                    />
+
+                    {imagePreview ? (
+                      <div className="image-preview-container">
+                        <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="submission-image-preview" />
+                        <button
+                          className="remove-image-btn"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleClearForm()
+                          }}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="upload-placeholder">
+                        <div className="upload-icon-container">
+                          <Upload size={24} className="upload-icon" />
+                        </div>
+                        <p className="upload-text">Drag and drop your design here</p>
+                        <p className="upload-subtext">or click to browse files</p>
+                        <p className="upload-formats">Supported formats: JPG, PNG</p>
+                      </div>
+                    )}
+
+                    {isUploading && (
+                      <div className="upload-overlay">
+                        <div className="upload-spinner"></div>
+                        <p>Uploading...</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {errorMessage && (
+                    <div className="error-message">
+                      <X size={16} />
+                      <span>{errorMessage}</span>
+                    </div>
+                  )}
+
+                  <div className="message-container">
+                    <label htmlFor="message" className="message-label">
+                      <MessageSquare size={16} />
+                      <span>Add a message with your submission</span>
+                    </label>
+                    <textarea
+                      id="message"
+                      className="message-input"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Describe your design or add any notes for the contest creator..."
+                    />
+                  </div>
+
+                  <div className="button-group">
+                    <button className="submit-btn" onClick={handleSubmit} disabled={isUploading || isDeadlinePassed}>
+                      {isUploading ? "Uploading..." : "Submit Design"}
+                    </button>
+                    <button className="clear-btn" onClick={handleClearForm}>
+                      Clear Form
+                    </button>
+                  </div>
+
+                  {isDeadlinePassed && (
+                    <div className="deadline-passed-message">
+                      <Clock size={16} />
+                      <span>This contest has ended and is no longer accepting submissions.</span>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}
@@ -424,8 +613,8 @@ export default function ContestContent() {
         ) : (
           <div className="submission-cards">
             {submissions.map((submission) => (
-              <div key={submission.id} className="submission-card" onClick={() => openModal(submission)}>
-                <div className="submission-image-container">
+              <div key={submission.id} className="submission-card">
+                <div className="submission-image-container" onClick={() => openModal(submission)}>
                   <img src={submission.fileUrl || "/placeholder.svg"} alt="Submission" className="submission-image" />
                 </div>
                 <div className="submission-info">
@@ -434,6 +623,48 @@ export default function ContestContent() {
                     <span>{submission.userName}</span>
                   </div>
                   {submission.message && <p className="submission-message">{submission.message}</p>}
+
+                  {canChatWithSubmission(submission) ? (
+                    <button
+                      className="chat-button"
+                      onClick={() => openChatModal(submission)}
+                      style={{
+                        marginTop: "10px",
+                        padding: "5px 10px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        background: "#3b82f6",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <MessageSquare size={16} />
+                      <span>Chat</span>
+                    </button>
+                  ) : (
+                    <button
+                      className="chat-button-disabled"
+                      disabled
+                      style={{
+                        marginTop: "10px",
+                        padding: "5px 10px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        background: "#e5e7eb",
+                        color: "#9ca3af",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "not-allowed",
+                      }}
+                    >
+                      <Lock size={16} />
+                      <span>{isContestCreator ? "Chat Unavailable" : "Chat Restricted"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -457,6 +688,19 @@ export default function ContestContent() {
           </div>
         </div>
       )}
+
+      {isChatModalOpen && selectedSubmission && (
+        <div className="modal-overlay" onClick={closeChatModal}>
+          <div className="modal-content submission-chat-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeChatModal}>
+              <X size={24} />
+            </button>
+            <SubmissionChatView submission={selectedSubmission} contest={contest} isContestCreator={isContestCreator} />
+          </div>
+        </div>
+      )}
     </div>
   )
+  
 }
+

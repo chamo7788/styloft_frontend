@@ -7,7 +7,7 @@ import Profile from "./components/Profile/Profile";
 import Contest from "./pages/Contest";
 import { AddShopForm } from "./components/styleMarket/AddShopForm";
 import PaymentPage from "./components/Subscription/PaymentPage";
-
+import './assets/css/fonts.css';
 
 function App() {
   const location = useLocation();
@@ -27,12 +27,13 @@ function App() {
         <Route path="/stylestudio" element={<StyleStudio />} />
         <Route path="/styleMarket" element={<Stylemarket />} />
         <Route path="/contest/*" element={<Contest />} />
-        <Route path="/DashBoard" element={<DashBoard />} />
         <Route path="/styleMarket/add-shop" element={<AddShopForm />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/DashBoard" element={<DashBoard />} />
         <Route path="/sub-plans" element={<Subscription />} />
         <Route path="/payment/:planId" element={<PaymentPage />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:id" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {!hideFooterPaths.includes(location.pathname) && <Footer />}

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react"
-import { CanvasTexture } from "three"
-import * as fabric from "fabric"
+import * as fabric from 'fabric';
+import { CanvasTexture } from 'three';
 import { EditorToolbar } from "./EditorToolbar"
 import { BrushControls } from "./controls/BrushControls"
 import { TextControls } from "./controls/TextControls"
@@ -54,6 +54,153 @@ const TextureEditor = forwardRef(
     // Track canvas objects for layer management
     const [canvasObjects, setCanvasObjects] = useState([])
 
+    // Update texture from canvas - Define this first!
+    const updateTextureFromCanvas = () => {
+      if (!fabricCanvasRef.current) return;
+
+      try {
+        // Get canvas data URL
+        const dataURL = fabricCanvasRef.current.toDataURL({
+          format: "png",
+          quality: 1,
+        });
+
+        // Update canvas textures
+        setCanvasTextures((prev) => ({
+          ...prev,
+          [selectedPart]: dataURL,
+        }));
+
+        // Get the DOM canvas element
+        const canvasEl = fabricCanvasRef.current.getElement();
+
+        // Create a temporary canvas for flipping the texture
+        const tempCanvas = document.createElement("canvas");
+        const tempCtx = tempCanvas.getContext("2d");
+        tempCanvas.width = canvasEl.width;
+        tempCanvas.height = canvasEl.height;
+
+        // Draw the original canvas flipped vertically
+        tempCtx.translate(0, canvasEl.height);
+        tempCtx.scale(1, -1);
+        tempCtx.drawImage(canvasEl, 0, 0, canvasEl.width, canvasEl.height);
+
+        // Create Three.js texture from the flipped canvas
+        const texture = new CanvasTexture(tempCanvas);
+        texture.needsUpdate = true;
+
+        // Update textures
+        setTextures((prev) => ({
+          ...prev,
+          [selectedPart]: texture,
+        }));
+      } catch (error) {
+        console.error("Error updating texture:", error);
+      }
+    };
+
+    // Save current canvas state to history
+    const saveCanvasState = () => {
+      if (!fabricCanvasRef.current) return;
+
+      try {
+        const currentState = JSON.stringify(fabricCanvasRef.current.toJSON());
+        const currentIndex = historyIndex[selectedPart] || 0;
+
+        // Truncate history if we're not at the end
+        const newHistory = [...(canvasHistory[selectedPart] || []).slice(0, currentIndex + 1), currentState];
+
+        setCanvasHistory((prev) => ({
+          ...prev,
+          [selectedPart]: newHistory,
+        }));
+
+        setHistoryIndex((prev) => ({
+          ...prev,
+          [selectedPart]: newHistory.length - 1,
+        }));
+
+        // Update the texture
+        updateTextureFromCanvas();
+      } catch (error) {
+        console.error("Error saving canvas state:", error);
+      }
+    };
+
+    // Move a canvas object forward (bring it one level up)
+    const moveObjectForward = (objectIndex) => {
+      if (!fabricCanvasRef.current) return;
+      
+      const canvas = fabricCanvasRef.current;
+      const objects = canvas.getObjects();
+
+      if (objectIndex >= objects.length - 1) return; // Already at the top
+
+      // Get the object to move and the one above it
+      const object = objects[objectIndex];
+      const upperObject = objects[objectIndex + 1];
+
+      // Swap their indices
+      canvas.moveTo(object, objectIndex + 1);
+      canvas.moveTo(upperObject, objectIndex);
+
+      // Render and save state
+      canvas.renderAll();
+      saveCanvasState();
+    };
+
+    // Move a canvas object backward (send it one level down)
+    const moveObjectBackward = (objectIndex) => {
+      if (!fabricCanvasRef.current) return;
+
+      const canvas = fabricCanvasRef.current;
+      const objects = canvas.getObjects();
+
+      if (objectIndex <= 0) return; // Already at the bottom
+
+      // Get the object to move and the one below it
+      const object = objects[objectIndex];
+      const lowerObject = objects[objectIndex - 1];
+
+      // Swap their indices
+      canvas.moveTo(object, objectIndex - 1);
+      canvas.moveTo(lowerObject, objectIndex);
+
+      // Render and save state
+      canvas.renderAll();
+      saveCanvasState();
+    };
+
+    // Bring a canvas object to the front (top of stack)
+    const bringObjectToFront = (objectIndex) => {
+      if (!fabricCanvasRef.current) return;
+
+      const canvas = fabricCanvasRef.current;
+      const objects = canvas.getObjects();
+
+      if (objectIndex < 0 || objectIndex >= objects.length) return;
+
+      const object = objects[objectIndex];
+      canvas.bringToFront(object);
+      canvas.renderAll();
+      saveCanvasState();
+    };
+
+    // Send a canvas object to the back (bottom of stack)
+    const sendObjectToBack = (objectIndex) => {
+      if (!fabricCanvasRef.current) return;
+
+      const canvas = fabricCanvasRef.current;
+      const objects = canvas.getObjects();
+
+      if (objectIndex < 0 || objectIndex >= objects.length) return;
+
+      const object = objects[objectIndex];
+      canvas.sendToBack(object);
+      canvas.renderAll();
+      saveCanvasState();
+    };
+
     // Expose methods to parent component via ref
     useImperativeHandle(ref, () => ({
       moveObjectForward: (index) => {
@@ -82,7 +229,99 @@ const TextureEditor = forwardRef(
           fabricCanvasRef.current.renderAll()
         }
       },
-    }))
+      // Add this new method
+      loadMaterialAsBackground: (materialUrl) => {
+        console.log("Loading material as background:", materialUrl)
+        if (!fabricCanvasRef.current) return
+
+        const canvas = fabricCanvasRef.current
+
+        // Find and remove any existing base-texture object
+        const existingBaseTexture = canvas.getObjects().find((obj) => obj.name === "base-texture")
+        if (existingBaseTexture) {
+          canvas.remove(existingBaseTexture)
+        }
+
+        // Load the new material as a background image
+        fabric.Image.fromURL(
+          materialUrl,
+          (img) => {
+            // Set as a locked bottom layer
+            img.set({
+              selectable: false,
+              evented: false,
+              lockMovementX: true,
+              lockMovementY: true,
+              lockRotation: true,
+              lockScalingX: true,
+              lockScalingY: true,
+              hasControls: false,
+              hasBorders: false,
+              name: "base-texture",
+              excludeFromExport: false,
+            })
+
+            // Scale to fit canvas
+            img.scaleToWidth(canvas.width)
+            img.scaleToHeight(canvas.height)
+
+            // Add to canvas and send to back
+            canvas.add(img)
+            canvas.sendToBack(img)
+            canvas.renderAll()
+
+            // Save this state to history
+            saveCanvasState()
+
+            // Update the texture
+            updateTextureFromCanvas()
+          },
+          { crossOrigin: "anonymous" },
+        )
+      },
+      // Add this new method to get all canvas data
+      getAllCanvasData: () => {
+        if (!fabricCanvasRef.current) return {};
+        
+        // Create a data structure with canvas objects for each part
+        const canvasData = {
+          [selectedPart]: fabricCanvasRef.current.toJSON()
+        };
+        
+        return canvasData;
+      },
+      
+      // Add this new method to get canvas history
+      getCanvasHistory: () => {
+        return {
+          canvasHistory,
+          historyIndex
+        };
+      },
+      // Add this method to load canvas data
+      loadCanvasData: (canvasObjects) => {
+        if (!fabricCanvasRef.current) return;
+        
+        const partData = canvasObjects[selectedPart];
+        if (partData) {
+          fabricCanvasRef.current.loadFromJSON(partData, () => {
+            fabricCanvasRef.current.renderAll();
+            // Update texture after loading
+            updateTextureFromCanvas();
+          });
+        }
+      },
+      
+      // Add this method to restore canvas history
+      restoreCanvasHistory: (historyData) => {
+        if (historyData.canvasHistory) {
+          setCanvasHistory(historyData.canvasHistory);
+        }
+        if (historyData.historyIndex) {
+          setHistoryIndex(historyData.historyIndex);
+        }
+      }
+    }), [selectedPart, canvasHistory, historyIndex, updateTextureFromCanvas])
 
     // Function to expose canvas objects to parent component
     useEffect(() => {
@@ -230,34 +469,6 @@ const TextureEditor = forwardRef(
       }
     }
 
-    // Save current canvas state to history
-    const saveCanvasState = () => {
-      if (!fabricCanvasRef.current) return
-
-      try {
-        const currentState = JSON.stringify(fabricCanvasRef.current.toJSON())
-        const currentIndex = historyIndex[selectedPart] || 0
-
-        // Truncate history if we're not at the end
-        const newHistory = [...(canvasHistory[selectedPart] || []).slice(0, currentIndex + 1), currentState]
-
-        setCanvasHistory((prev) => ({
-          ...prev,
-          [selectedPart]: newHistory,
-        }))
-
-        setHistoryIndex((prev) => ({
-          ...prev,
-          [selectedPart]: newHistory.length - 1,
-        }))
-
-        // Update the texture
-        updateTextureFromCanvas()
-      } catch (error) {
-        console.error("Error saving canvas state:", error)
-      }
-    }
-
     // Handle undo
     const handleCanvasUndo = () => {
       if (!fabricCanvasRef.current) return
@@ -313,60 +524,26 @@ const TextureEditor = forwardRef(
       if (!fabricCanvasRef.current) return
 
       try {
+        // Find the base texture object
+        const baseTexture = fabricCanvasRef.current.getObjects().find((obj) => obj.name === "base-texture")
+
         // Remove all objects
         fabricCanvasRef.current.clear()
-        fabricCanvasRef.current.backgroundColor = "#ffffff"
+
+        // Restore the base texture if it existed
+        if (baseTexture) {
+          fabricCanvasRef.current.add(baseTexture)
+        } else {
+          // If no base texture, just set background color
+          fabricCanvasRef.current.backgroundColor = "#ffffff"
+        }
+
         fabricCanvasRef.current.renderAll()
 
         // Save this state
         saveCanvasState()
       } catch (error) {
         console.error("Error clearing canvas:", error)
-      }
-    }
-
-    // Update texture from canvas
-    const updateTextureFromCanvas = () => {
-      if (!fabricCanvasRef.current) return
-
-      try {
-        // Get canvas data URL
-        const dataURL = fabricCanvasRef.current.toDataURL({
-          format: "png",
-          quality: 1,
-        })
-
-        // Update canvas textures
-        setCanvasTextures((prev) => ({
-          ...prev,
-          [selectedPart]: dataURL,
-        }))
-
-        // Get the DOM canvas element
-        const canvasEl = fabricCanvasRef.current.getElement()
-
-        // Create a temporary canvas for flipping the texture
-        const tempCanvas = document.createElement("canvas")
-        const tempCtx = tempCanvas.getContext("2d")
-        tempCanvas.width = canvasEl.width
-        tempCanvas.height = canvasEl.height
-
-        // Draw the original canvas flipped vertically
-        tempCtx.translate(0, canvasEl.height)
-        tempCtx.scale(1, -1)
-        tempCtx.drawImage(canvasEl, 0, 0, canvasEl.width, canvasEl.height)
-
-        // Create Three.js texture from the flipped canvas
-        const texture = new CanvasTexture(tempCanvas)
-        texture.needsUpdate = true
-
-        // Update textures
-        setTextures((prev) => ({
-          ...prev,
-          [selectedPart]: texture,
-        }))
-      } catch (error) {
-        console.error("Error updating texture:", error)
       }
     }
 
@@ -402,68 +579,71 @@ const TextureEditor = forwardRef(
       }
     }
 
-    // Replace your existing handleApplyLogoToCanvas function with this simplified version
-    const handleApplyLogoToCanvas = () => {
-      if (!fabricCanvasRef.current || !logoSettings.image) {
-        console.error("Missing canvas or image data")
-        return
+    // Replace your existing handleApplyLogoToCanvas function with this updated version:
+
+const handleApplyLogoToCanvas = () => {
+  if (!fabricCanvasRef.current || !logoSettings.image) {
+    console.error("Canvas or logo image not available");
+    return;
+  }
+
+  console.log("Adding logo to canvas from URL:", logoSettings.image);
+
+  // Create a new image element
+  const imgElement = new Image();
+  
+  // Add crossOrigin attribute for CORS support with Cloudinary
+  imgElement.crossOrigin = "anonymous";
+
+  imgElement.onload = () => {
+    console.log("Logo image loaded successfully");
+    try {
+      // Create a fabric.js Image object
+      const fabricImage = new fabric.Image(imgElement, {
+        left: fabricCanvasRef.current.width / 2,
+        top: fabricCanvasRef.current.height / 2,
+        originX: 'center',
+        originY: 'center',
+        opacity: logoSettings.opacity || 1.0,
+        scaleX: logoSettings.size,
+        scaleY: logoSettings.size,
+        selectable: true,
+      });
+
+      // Add any additional properties from logoSettings
+      if (logoSettings.lockMovement) fabricImage.lockMovementX = fabricImage.lockMovementY = true;
+      if (logoSettings.lockRotation) fabricImage.lockRotation = true;
+      if (logoSettings.lockScaling) fabricImage.lockScalingX = fabricImage.lockScalingY = true;
+      
+      // Store the original Cloudinary URL with the object
+      fabricImage.set('cloudinaryUrl', logoSettings.image);
+
+      // Add to canvas
+      fabricCanvasRef.current.add(fabricImage);
+      fabricCanvasRef.current.setActiveObject(fabricImage);
+      fabricCanvasRef.current.renderAll();
+      
+      // Save canvas state
+      saveCanvasState();
+      
+      // Update the canvas objects for layer management
+      if (onCanvasObjectsChange) {
+        const objects = fabricCanvasRef.current.getObjects();
+        onCanvasObjectsChange(objects, selectedPart);
       }
-
-      console.log("Adding logo to canvas...")
-
-      // Create a new image element directly
-      const imgElement = new Image()
-
-      imgElement.onload = () => {
-        console.log("Image loaded successfully", imgElement.width, "x", imgElement.height)
-
-        // Create a fabric.Image instance from the loaded HTML Image element
-        const fabricImage = new fabric.Image(imgElement, {
-          left: canvasSize.width / 2,
-          top: canvasSize.height / 2,
-          originX: "center",
-          originY: "center",
-          cornerSize: 10,
-          borderColor: "#1a73e8",
-          cornerColor: "#1a73e8",
-          cornerStrokeColor: "#ffffff",
-          transparentCorners: false,
-        })
-
-        // Apply settings
-        const scale = logoSettings.size || 1
-
-        // Scale the image to a reasonable size if needed
-        const maxSize = 200 // Maximum size in pixels
-        if (fabricImage.width > maxSize || fabricImage.height > maxSize) {
-          const scaleFactor = Math.min(maxSize / fabricImage.width, maxSize / fabricImage.height)
-          fabricImage.scale(scaleFactor * scale)
-        } else {
-          fabricImage.scale(scale)
-        }
-
-        fabricImage.set({
-          opacity: logoSettings.opacity || 1,
-        })
-
-        // Add to canvas
-        fabricCanvasRef.current.add(fabricImage)
-        fabricCanvasRef.current.setActiveObject(fabricImage)
-        fabricCanvasRef.current.renderAll()
-
-        console.log("Image added to canvas")
-
-        // Save canvas state
-        saveCanvasState()
-      }
-
-      imgElement.onerror = (err) => {
-        console.error("Error loading image:", err)
-      }
-
-      // Set source to trigger loading
-      imgElement.src = logoSettings.image
+    } catch (error) {
+      console.error("Error creating fabric image object:", error);
     }
+  };
+
+  imgElement.onerror = (err) => {
+    console.error("Error loading logo image:", err);
+    alert("Failed to load the logo image. Please try a different image.");
+  };
+  
+  // Set source to trigger loading
+  imgElement.src = logoSettings.image;
+};
 
     // Add this function to handle object selection
     const handleObjectSelected = (e) => {
@@ -541,80 +721,6 @@ const TextureEditor = forwardRef(
       }
     }
 
-    // Move a canvas object forward (bring it one level up)
-    const moveObjectForward = (objectIndex) => {
-      if (!fabricCanvasRef.current) return
-
-      const canvas = fabricCanvasRef.current
-      const objects = canvas.getObjects()
-
-      if (objectIndex >= objects.length - 1) return // Already at the top
-
-      // Get the object to move and the one above it
-      const object = objects[objectIndex]
-      const upperObject = objects[objectIndex + 1]
-
-      // Swap their indices
-      canvas.moveTo(object, objectIndex + 1)
-      canvas.moveTo(upperObject, objectIndex)
-
-      // Render and save state
-      canvas.renderAll()
-      saveCanvasState()
-    }
-
-    // Move a canvas object backward (send it one level down)
-    const moveObjectBackward = (objectIndex) => {
-      if (!fabricCanvasRef.current) return
-
-      const canvas = fabricCanvasRef.current
-      const objects = canvas.getObjects()
-
-      if (objectIndex <= 0) return // Already at the bottom
-
-      // Get the object to move and the one below it
-      const object = objects[objectIndex]
-      const lowerObject = objects[objectIndex - 1]
-
-      // Swap their indices
-      canvas.moveTo(object, objectIndex - 1)
-      canvas.moveTo(lowerObject, objectIndex)
-
-      // Render and save state
-      canvas.renderAll()
-      saveCanvasState()
-    }
-
-    // Bring a canvas object to the front (top of stack)
-    const bringObjectToFront = (objectIndex) => {
-      if (!fabricCanvasRef.current) return
-
-      const canvas = fabricCanvasRef.current
-      const objects = canvas.getObjects()
-
-      if (objectIndex < 0 || objectIndex >= objects.length) return
-
-      const object = objects[objectIndex]
-      canvas.bringToFront(object)
-      canvas.renderAll()
-      saveCanvasState()
-    }
-
-    // Send a canvas object to the back (bottom of stack)
-    const sendObjectToBack = (objectIndex) => {
-      if (!fabricCanvasRef.current) return
-
-      const canvas = fabricCanvasRef.current
-      const objects = canvas.getObjects()
-
-      if (objectIndex < 0 || objectIndex >= objects.length) return
-
-      const object = objects[objectIndex]
-      canvas.sendToBack(object)
-      canvas.renderAll()
-      saveCanvasState()
-    }
-
     // Your canvas initialization function - replace with this more robust version
     const initializeCanvas = () => {
       if (!canvasRef.current) return
@@ -671,13 +777,36 @@ const TextureEditor = forwardRef(
 
         // Load existing texture if available
         if (canvasTextures[selectedPart]) {
+          // Important: Load the existing texture as background image
           fabric.Image.fromURL(
             canvasTextures[selectedPart],
             (img) => {
-              canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                scaleX: canvas.width / img.width,
-                scaleY: canvas.height / img.height,
+              // Instead of setting as background, add as a locked bottom layer
+              img.set({
+                selectable: false,
+                evented: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                hasControls: false,
+                hasBorders: false,
+                name: "base-texture",
+                excludeFromExport: false, // Make sure it's included in export
               })
+
+              // Scale to fit canvas
+              img.scaleToWidth(canvas.width)
+              img.scaleToHeight(canvas.height)
+
+              // Add to canvas and send to back
+              canvas.add(img)
+              canvas.sendToBack(img)
+              canvas.renderAll()
+
+              // Save this state to history
+              saveCanvasState()
             },
             { crossOrigin: "anonymous" },
           )

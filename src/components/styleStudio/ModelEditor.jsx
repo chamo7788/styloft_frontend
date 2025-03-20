@@ -1,14 +1,21 @@
-import { useState, useRef, useCallback, useMemo } from "react"
+"use client"
+
+import { useState, useRef, useCallback, useMemo, useEffect } from "react"
 import ModelViewer from "./ModelViewer"
 import TextureEditor from "./texture-editor/TextureEditor"
 import ControlPanel from "./ControlPanel"
 import Toolbar from "./Toolbar"
+import UserGuide from "./UserGuide"
 import "../../assets/css/StyleStudio/text-editor.css"
 import "../../assets/css/StyleStudio/main.css"
 import "../../assets/css/StyleStudio/new-features.css"
+import "../../assets/css/StyleStudio/user-guide.css"
 
 // Add LayerManager import at the top of the file
 import LayerManager from "./LayerManager"
+
+// Add this import at the top of the file
+import * as THREE from "three"
 
 // Move constants outside component to prevent recreation on each render
 const models = {
@@ -91,6 +98,10 @@ export default function ModelEditor() {
   const [showTextureEditor, setShowTextureEditor] = useState(false)
   const [backgroundColor, setBackgroundColor] = useState("#f5f5f5")
 
+  // User guide state
+  const [showUserGuide, setShowUserGuide] = useState(false)
+  const [showGuideOnStartup, setShowGuideOnStartup] = useState(true)
+
   // Feature states
   const [colors, setColors] = useState({ main: "#ffffff" })
   const [materials, setMaterials] = useState({})
@@ -123,6 +134,26 @@ export default function ModelEditor() {
   const [showLayerManager, setShowLayerManager] = useState(false)
 
   const textureEditorRef = useRef(null)
+
+  // Check if it's the first visit and show user guide
+  useEffect(() => {
+    // Check localStorage for user preference
+    const hasSeenGuide = localStorage.getItem("styleStudio_hasSeenGuide")
+
+    if (hasSeenGuide === null) {
+      // First visit, show the guide
+      setShowUserGuide(true)
+      setShowGuideOnStartup(true)
+    } else {
+      // Not first visit, respect user preference
+      setShowGuideOnStartup(hasSeenGuide !== "false")
+    }
+  }, [])
+
+  // Save user preference when it changes
+  useEffect(() => {
+    localStorage.setItem("styleStudio_hasSeenGuide", showGuideOnStartup.toString())
+  }, [showGuideOnStartup])
 
   // Handle model change - optimized with useCallback
   const handleModelChange = useCallback((model) => {
@@ -166,12 +197,21 @@ export default function ModelEditor() {
     (material) => {
       setMaterials((prev) => {
         const newMaterials = { ...prev, [selectedPart]: material }
+
         // Add to history
         addToHistory(colors, newMaterials)
+
+        // If we have a texture editor open and a canvas, we need to update it
+        if (showTextureEditor && textureEditorRef.current) {
+          // This will trigger the texture editor to reload with the new material
+          // while preserving any existing canvas objects
+          textureEditorRef.current.loadMaterialAsBackground(material)
+        }
+
         return newMaterials
       })
     },
-    [selectedPart, colors],
+    [selectedPart, colors, showTextureEditor, textureEditorRef],
   )
 
   // Add to history - optimized with useCallback
@@ -199,6 +239,12 @@ export default function ModelEditor() {
       setColors(newColors)
       setMaterials(newMaterials)
       setHistoryIndex(newIndex)
+
+      // Force model to update
+      setModelKey((prevKey) => prevKey + 1)
+      console.log("Undo performed, new history index:", newIndex)
+    } else {
+      console.log("Cannot undo: at beginning of history")
     }
   }, [historyIndex, history])
 
@@ -211,11 +257,46 @@ export default function ModelEditor() {
       setColors(newColors)
       setMaterials(newMaterials)
       setHistoryIndex(newIndex)
+
+      // Force model to update
+      setModelKey((prevKey) => prevKey + 1)
+      console.log("Redo performed, new history index:", newIndex)
+    } else {
+      console.log("Cannot redo: at end of history")
     }
   }, [historyIndex, history])
 
   // Take screenshot - optimized with useCallback
-  const handleScreenshot = useCallback(() => {
+  const handleScreenshot = useCallback(
+    async (returnBlob = false) => {
+      if (canvasRef.current) {
+        return new Promise((resolve) => {
+          requestAnimationFrame(() => {
+            const canvas = canvasRef.current
+
+            if (returnBlob) {
+              // Convert canvas to blob and return it
+              canvas.toBlob((blob) => {
+                resolve(blob)
+              }, "image/png")
+            } else {
+              // Download the screenshot
+              const link = document.createElement("a")
+              link.download = `${selectedModel}-design.png`
+              link.href = canvas.toDataURL("image/png")
+              link.click()
+              resolve()
+            }
+          })
+        })
+      }
+      return null
+    },
+    [selectedModel],
+  )
+
+  // Take screenshot - optimized with useCallback
+  const handleScreenshotDownload = useCallback(() => {
     if (canvasRef.current) {
       requestAnimationFrame(() => {
         const canvas = canvasRef.current
@@ -229,14 +310,65 @@ export default function ModelEditor() {
 
   // Save design - optimized with useCallback
   const handleSaveDesign = useCallback(() => {
+    // Capture canvas objects from texture editor if available
+    let canvasData = {}
+    let canvasHistoryData = {}
+
+    if (textureEditorRef.current) {
+      try {
+        // Get all canvas objects data from texture editor
+        canvasData = textureEditorRef.current.getAllCanvasData()
+        canvasHistoryData = textureEditorRef.current.getCanvasHistory()
+      } catch (error) {
+        console.error("Error retrieving canvas data:", error)
+      }
+    }
+
+    // Process logo elements to save Cloudinary URLs
+    const processedLogoElements = logoElements.map((logo) => {
+      // If using a Cloudinary URL, ensure we keep the URL reference
+      if (logo.image && typeof logo.image === "string" && logo.image.includes("cloudinary.com")) {
+        return {
+          ...logo,
+          // Add a flag to identify this as a Cloudinary image
+          isCloudinaryImage: true,
+        }
+      }
+      return logo
+    })
+
     const design = {
       model: selectedModel,
       colors,
       materials,
       textElements,
-      logoElements,
+      logoElements: processedLogoElements, // Use processed elements with Cloudinary URLs
       lighting,
       backgroundColor,
+      // Add canvas objects and layer information
+      canvasData,
+      canvasHistory: canvasHistoryData,
+      // Add layer information
+      layers: {
+        // Store zIndex and visibility states
+        textLayers: textElements.map((element, index) => ({
+          id: `text-${index}`,
+          zIndex: element.zIndex || 200 + index,
+          visible: element.visible !== false,
+          locked: element.locked || false,
+        })),
+        logoLayers: logoElements.map((element, index) => ({
+          id: `logo-${index}`,
+          zIndex: element.zIndex || 100 + index,
+          visible: element.visible !== false,
+          locked: element.locked || false,
+        })),
+        // Store part visibility states
+        parts: Object.keys(colors).map((part) => ({
+          id: part,
+          visible: true, // Add part visibility tracking if needed
+        })),
+      },
     }
 
     const blob = new Blob([JSON.stringify(design)], { type: "application/json" })
@@ -247,39 +379,98 @@ export default function ModelEditor() {
 
     // Clean up the URL object
     setTimeout(() => URL.revokeObjectURL(link.href), 100)
-  }, [selectedModel, colors, materials, textElements, logoElements, lighting, backgroundColor])
+
+    return design // Return the design data
+  }, [selectedModel, colors, materials, textElements, logoElements, lighting, backgroundColor, textureEditorRef])
 
   // Load design - optimized with useCallback
-  const handleLoadDesign = useCallback((event) => {
-    const file = event.target.files[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
+  const handleLoadDesign = useCallback(
+    (designData) => {
       try {
-        const design = JSON.parse(e.target.result)
+        if (!designData) {
+          console.error("No design data provided")
+          return
+        }
 
-        setSelectedModel(design.model)
-        setColors(design.colors)
-        setMaterials(design.materials)
-        setTextElements(design.textElements || [])
-        setLogoElements(design.logoElements || [])
-        setLighting(design.lighting || defaultLighting)
-        setBackgroundColor(design.backgroundColor || "#f5f5f5")
+        // Set model and other properties
+        setSelectedModel(designData.model || "shirt")
+        setColors(designData.colors || { main: "#ffffff" })
+        setMaterials(designData.materials || {})
+        setTextElements(designData.textElements || [])
+        setLogoElements(designData.logoElements || [])
+        setLighting(designData.lighting || defaultLighting)
+        setBackgroundColor(designData.backgroundColor || "#f5f5f5")
 
-        // Reset history
-        setHistory([{ colors: design.colors, materials: design.materials }])
+        // Reset history with new state
+        setHistory([{ colors: designData.colors || { main: "#ffffff" }, materials: designData.materials || {} }])
         setHistoryIndex(0)
 
         // Force model reload
         setModelKey((prevKey) => prevKey + 1)
+
+        // Load texture canvas data if available
+        if (designData.canvasData && textureEditorRef.current) {
+          // Schedule this after the component has had time to initialize
+          setTimeout(() => {
+            try {
+              textureEditorRef.current.loadCanvasData(designData.canvasData)
+
+              // Restore canvas history if available
+              if (designData.canvasHistory) {
+                textureEditorRef.current.restoreCanvasHistory(designData.canvasHistory)
+              }
+            } catch (error) {
+              console.error("Error loading canvas data:", error)
+            }
+          }, 500) // Give time for the texture editor to initialize
+        }
+
+        // Apply layer properties if available
+        if (designData.layers) {
+          // Update text and logo elements with saved layer properties
+          if (designData.layers.textLayers && designData.textElements) {
+            setTextElements((prev) =>
+              designData.textElements.map((elem, idx) => {
+                const savedLayer = designData.layers.textLayers[idx]
+                if (savedLayer) {
+                  return {
+                    ...elem,
+                    zIndex: savedLayer.zIndex || elem.zIndex || 200 + idx,
+                    visible: savedLayer.visible !== false,
+                    locked: savedLayer.locked || false,
+                  }
+                }
+                return elem
+              }),
+            )
+          }
+
+          if (designData.layers.logoLayers && designData.logoElements) {
+            setLogoElements((prev) =>
+              designData.logoElements.map((elem, idx) => {
+                const savedLayer = designData.layers.logoLayers[idx]
+                if (savedLayer) {
+                  return {
+                    ...elem,
+                    zIndex: savedLayer.zIndex || elem.zIndex || 100 + idx,
+                    visible: savedLayer.visible !== false,
+                    locked: savedLayer.locked || false,
+                  }
+                }
+                return elem
+              }),
+            )
+          }
+        }
+
+        console.log("Design loaded successfully")
       } catch (error) {
         console.error("Failed to load design:", error)
-        alert("Failed to load design. The file might be corrupted.")
+        alert("Failed to load design. The file might be corrupted or in an incompatible format.")
       }
-    }
-    reader.readAsText(file)
-  }, [])
+    },
+    [textureEditorRef],
+  )
 
   // Text handling functions - optimized with useCallback
   const handleTextSelect = useCallback(
@@ -476,15 +667,23 @@ export default function ModelEditor() {
     setShowTextureEditor((prev) => !prev)
 
     // If we're opening the texture editor, make sure we have a part selected
-    if (!showTextureEditor && !selectedPart && modelParts[selectedModel].length > 0) {
-      setSelectedPart(modelParts[selectedModel][0])
-    }
-
-    // If we're opening the texture editor, switch to the texture tab
     if (!showTextureEditor) {
+      if (!selectedPart && modelParts[selectedModel].length > 0) {
+        setSelectedPart(modelParts[selectedModel][0])
+      }
+
+      // If we're opening the texture editor, switch to the texture tab
       setActiveTab("texture")
+
+      // Ensure the current material is loaded when opening the editor
+      if (textureEditorRef.current && materials[selectedPart]) {
+        // Small delay to ensure the editor is fully mounted
+        setTimeout(() => {
+          textureEditorRef.current.loadMaterialAsBackground(materials[selectedPart])
+        }, 100)
+      }
     }
-  }, [showTextureEditor, selectedPart, modelParts, selectedModel])
+  }, [showTextureEditor, selectedPart, modelParts, selectedModel, materials, textureEditorRef])
 
   const handleLoadTemplate = useCallback(
     (templateDesign, templateModel) => {
@@ -579,19 +778,59 @@ export default function ModelEditor() {
     setShowLayerManager((prev) => !prev)
   }, [])
 
+  // Add function to toggle user guide
+  const toggleUserGuide = useCallback(() => {
+    setShowUserGuide((prev) => !prev)
+  }, [])
+
+  // Add this function to the ModelEditor component
+  const optimizeModelQuality = useCallback(() => {
+    // Force a higher quality render
+    if (canvasRef.current) {
+      const renderer = canvasRef.current.gl
+      if (renderer) {
+        renderer.setPixelRatio(window.devicePixelRatio || 2)
+        renderer.shadowMap.enabled = true
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        renderer.outputEncoding = THREE.sRGBEncoding
+        renderer.toneMapping = THREE.ACESFilmicToneMapping
+        renderer.toneMappingExposure = 1.2
+      }
+    }
+  }, [canvasRef])
+
+  // Add this useEffect to apply the optimization
+  useEffect(() => {
+    optimizeModelQuality()
+
+    // Re-optimize when model changes
+    const handleResize = () => {
+      optimizeModelQuality()
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [optimizeModelQuality, modelKey])
+
   // Update the return statement to include the LayerManager component
   return (
     <div className="model-editor-container">
       <div className={`model-view-container ${showTextureEditor ? "with-editor" : ""}`}>
         <div className="canvas-card" style={{ backgroundColor }}>
           <Toolbar
-            onRotate={() => {}} // Will be handled by ModelViewer
+            onRotate={(direction) => {
+              if (canvasRef.current && canvasRef.current.handleRotate) {
+                canvasRef.current.handleRotate(direction)
+              }
+            }}
             onUndo={handleUndo}
             onRedo={handleRedo}
             onScreenshot={handleScreenshot}
+            onScreenshotDownload={handleScreenshotDownload}
             onSaveDesign={handleSaveDesign}
             onLoadDesign={handleLoadDesign}
             onToggleLayerManager={toggleLayerManager}
+            onShowUserGuide={toggleUserGuide}
             canUndo={historyIndex > 0}
             canRedo={historyIndex < history.length - 1}
             showLayerManager={showLayerManager}
@@ -730,7 +969,17 @@ export default function ModelEditor() {
         lighting={lighting}
         setLighting={setLighting}
         onLoadTemplate={handleLoadTemplate}
+        onShowUserGuide={toggleUserGuide}
       />
+
+      {/* User Guide Modal */}
+      {showUserGuide && (
+        <UserGuide
+          onClose={() => setShowUserGuide(false)}
+          showOnStartup={showGuideOnStartup}
+          setShowOnStartup={setShowGuideOnStartup}
+        />
+      )}
     </div>
   )
 }

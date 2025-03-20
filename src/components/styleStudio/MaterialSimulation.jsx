@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Shirt, Droplet, Wind, Sun, Sparkles } from "lucide-react"
 
