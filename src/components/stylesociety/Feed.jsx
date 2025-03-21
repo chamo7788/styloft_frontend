@@ -5,7 +5,7 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "../../assets/css/StyleSociety/Feed.css";
-import Dp from "../../assets/images/s-societybackground.jpg"; // Default avatar
+import Dp from "../../assets/images/user-profile.png"; // Default avatar
 
 const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
   const [notifications, setNotifications] = useState([]);
@@ -18,7 +18,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        await addFeed(currentUser.displayName || "Unknown User", currentUser.photoURL || "/dp.jpg", currentUser.email);
+        await addFeed(currentUser.displayName || "Unknown User", currentUser.photoURL || Dp, currentUser.email);
         fetchFollowedUsers(currentUser.email);
       } else {
         setUser(null);
@@ -128,7 +128,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
       {notifications.map((item) =>
         hiddenItems[item.id] ? null : (
           <div key={item.id} className="Feed-item">
-            <img src={item.avatar || Dp} alt="avatar" className="Feed-avatar" />
+            <img src={item.avatar || Dp} className="Feed-avatar" />
             <div className="Feed-info">
               <p className="Feed-title">{item.name}</p>
             </div>

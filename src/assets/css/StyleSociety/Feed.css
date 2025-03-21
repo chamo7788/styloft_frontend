@@ -1,6 +1,6 @@
 .Feed-container {
   position: absolute;
-  top: 1033px;
+  top: 952px;
   left: 75%;
   width: 300px;
   max-width: 90%;
@@ -70,21 +70,12 @@
   transform: translateY(-2px);
 }
 
-.Feed-item:last-child {
-  margin-bottom: 0;
-}
-
 .Feed-avatar {
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  object-fit: cover;
+  overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.Feed-item:hover .Feed-avatar {
-  transform: scale(1.05);
 }
 
 .Feed-info {
@@ -96,7 +87,7 @@
 .Feed-title {
   position: relative;
   top: -40px;
-  left: 40px;
+  left: 44px;
   font-size: 14px;
   font-weight: 600;
   color: #333;
@@ -108,7 +99,7 @@
 .followbtn { 
   position: relative;
   top: -35px;
-  left: 48px;
+  left: 50px;
   background-color: rgb(255, 255, 255);
   color: #1d1865;
   border: 1px solid #1d1865;
@@ -146,7 +137,7 @@
 .deletebtn {
   position: relative;
   top: -35px;
-  left: 48px;
+  left: 50px;
   background-color: #5f7fbf;
   color: #ffffff;
   border: 1px solid #5f7fbf;
