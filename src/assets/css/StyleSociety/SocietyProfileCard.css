@@ -13,68 +13,90 @@
 }
 
 .SocietyProfile-header {
-position: relative;
+  position: relative;
 }
 
 .SocietyProfileCover-photo {
-width: 100%;
-height: 180px;
-background-color: #ccc;
+  width: 100%;
+  height: 180px;
+  background-color: #ccc;
 }
 
 .SocietyProfileCover-img {
-width: 100%;
-height: 100%;
-object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .SocietyProfile-details {
-position: relative;
-text-align: center;
-padding: 20px;
+  position: relative;
+  text-align: center;
+  padding: 20px;
 }
 
 .SocietyProfile-pic-container {
-position: absolute;
-top: -50px;
-left: 50%;
-transform: translateX(-50%);
-width: 100px;
-height: 100px;
-border-radius: 50%;
-overflow: hidden;
-border: 4px solid #fff;
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fff;
 }
 
 .SocietyProfile-pic {
-width: 100%;
-height: 100%;
-left: 20px;
-object-fit: cover;
+  width: 100%;
+  height: 100%;
+  left: 20px;
+  object-fit: cover;
 }
 
-.SocietyProfileUser-info h2 {
-margin-top: 30px;
-font-size: 20px;
-color: #333;
+.SocietyProfile-info {
+  margin-top: 30px; /* Make room for the profile pic above */
 }
 
+.SocietyProfile-info h3 {
+  margin-top: 10px;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.society-profession {
+  color: #666;
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+/* About section styles */
 .SocietyProfile-about-section {
-position: relative;
-top: -20px;
-padding: 15px;
-text-align: center;
+  margin-top: -40px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.566);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.SocietyProfile-about-section h3 {
-font-size: 15px;
-margin-bottom: 10px;
-color: #807c7c;
+.SocietyProfile-about-section h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
 }
 
-.SocietyProfile-about-section p {
-font-size: 14px;
-color: #666;
+.SocietyProfile-about-content {
+  padding: 5px 0;
+}
+
+.SocietyProfile-about-content p {
+  color: #555;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 
