@@ -1,6 +1,6 @@
 .SocietyProfile-container {
   position: absolute;
-  top: 952px;
+  top: 982px;
   width: 20%;
   left: 40px;
   max-width: 800px;
@@ -99,4 +99,87 @@
   font-size: 0.95rem;
 }
 
+/* Responsive Design for SocietyProfileCard */
+@media screen and (max-width: 1200px) {
+  .SocietyProfile-container {
+    width: 25%;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .SocietyProfile-container {
+    width: 30%;
+    left: 20px;
+  }
+  
+  .SocietyProfile-info h3 {
+    font-size: 18px;
+  }
+  
+  .society-profession {
+    font-size: 0.85rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .SocietyProfile-container {
+    position: relative;
+    top: 850px;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 20px;
+  }
+  
+  .SocietyProfileCover-photo {
+    height: 150px;
+  }
+  
+  .SocietyProfile-pic-container {
+    width: 90px;
+    height: 90px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .SocietyProfile-container {
+    width: 95%;
+    top: 800px;
+  }
+  
+  .SocietyProfileCover-photo {
+    height: 120px;
+  }
+  
+  .SocietyProfile-pic-container {
+    width: 80px;
+    height: 80px;
+    top: -40px;
+  }
+  
+  .SocietyProfile-info {
+    margin-top: 25px;
+  }
+  
+  .SocietyProfile-info h3 {
+    font-size: 16px;
+  }
+  
+  .society-profession {
+    font-size: 0.8rem;
+  }
+  
+  .SocietyProfile-about-section {
+    margin-top: -30px;
+    padding: 10px;
+  }
+  
+  .SocietyProfile-about-section h4 {
+    font-size: 1rem;
+  }
+  
+  .SocietyProfile-about-content p {
+    font-size: 0.85rem;
+  }
+}
 
