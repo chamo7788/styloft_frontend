@@ -7,6 +7,7 @@ import { updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import NotifiRequest from "./NotifiRequest";
 
 
 // Default images
@@ -588,6 +589,9 @@ const Profile = () => {
             </div>
           </div>
         </div>
+
+        {/* Add NotifiRequest component here - Only show for current user's profile */}
+        {isCurrentUserProfile && <NotifiRequest />}
 
         {/* Profile Sections */}
         <div className="profile-sections">
