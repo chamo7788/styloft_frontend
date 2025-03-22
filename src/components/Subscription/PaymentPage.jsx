@@ -18,12 +18,14 @@ const CheckoutForm = ({ plan, buyerDetails, setBuyerDetails, setPaymentSuccessfu
   const [error, setError] = useState(null)
   const [focused, setFocused] = useState(null)
 
+  const user=JSON.parse(localStorage.getItem('currentUser'))
+
   useEffect(() => {
     fetch("http://localhost:3000/payments/subscription", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        userId: buyerDetails.email, // Use email as unique identifier
+        userId: user.uid,
         planName: plan.name,
         amount: plan.price,
       }),
@@ -40,7 +42,7 @@ const CheckoutForm = ({ plan, buyerDetails, setBuyerDetails, setPaymentSuccessfu
         console.error("Error fetching clientSecret:", err)
         setError("Payment service unavailable.")
       })
-  }, [plan, buyerDetails.email])
+  }, [plan, user.uid])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

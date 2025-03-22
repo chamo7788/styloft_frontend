@@ -6,6 +6,7 @@ import "../../assets/css/StyleMarket/buy.css";
 import PaymentSuccess from "../styleMarket/payment-success.jsx";
 import "../../assets/css/StyleMarket/payment-success.css";
 
+// Load Stripe
 const stripePromise = loadStripe("pk_test_51R0PouFKqSRL4Eus1nQLaIYdWsBCGb0rkCZeSXivdL1aI4zxn3bqQOGmXuxZRL9im9UTRmBZnujboCXn2Mwu97aG00QUvxvr91");
 
 const CheckoutForm = ({ formData, setFormData, amount, setPaymentSuccessful }) => {
@@ -16,19 +17,27 @@ const CheckoutForm = ({ formData, setFormData, amount, setPaymentSuccessful }) =
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/payments/shop", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: formData.email,
-        productId: "prod_456",
-        amount: amount,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret))
-      .catch((err) => console.error("Error fetching clientSecret:", err));
-  }, [amount, formData.email]);
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (!user || !user.uid) {
+      console.error("Authentication error: User must be logged in to buy a product.");
+      return;
+    }
+
+    if (!clientSecret) {  // Prevent duplicate API calls
+      fetch("http://localhost:3000/payments/shop", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.uid,
+          productId: "prod_456",
+          amount: amount,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => setClientSecret(data.clientSecret))
+        .catch((err) => console.error("Error fetching clientSecret:", err));
+    }
+  }, [amount, clientSecret]);  // Runs only if `amount` changes and `clientSecret` is null
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

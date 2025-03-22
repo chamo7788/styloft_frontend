@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Search, Plus, Award, Loader } from "lucide-react"
+import { Search, Plus, Award, Loader, Lock } from "lucide-react"
 import { Link } from "react-router-dom"
 import "../../assets/css/contest/contest.css"
 import ContestCards from "./ContestCard"
@@ -18,8 +18,44 @@ const DesignContestPage = () => {
   const [isBannerFixed, setIsBannerFixed] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const [subscriptionPlan, setSubscriptionPlan] = useState('Free')
+  const [showPremiumFeatureMsg, setShowPremiumFeatureMsg] = useState(false)
   const contestCardsRef = useRef(null)
   const searchInputRef = useRef(null)
+
+  useEffect(() => {
+    checkSubscriptionStatus()
+  }, [])
+
+  const checkSubscriptionStatus = () => {
+    try {
+      // Get subscription data from localStorage
+      const subscriptionDataString = localStorage.getItem('subscriptionData')
+      if (subscriptionDataString) {
+        const subscriptionData = JSON.parse(subscriptionDataString)
+        setSubscriptionPlan(subscriptionData.planName || 'Free')
+      } else {
+        setSubscriptionPlan('Free')
+      }
+    } catch (error) {
+      console.error("Error checking subscription status:", error)
+      setSubscriptionPlan('Free')
+    }
+  }
+
+  const isGoldUser = subscriptionPlan === "Gold Plan"
+
+  const showPremiumFeatureAlert = () => {
+    setShowPremiumFeatureMsg(true)
+    setTimeout(() => setShowPremiumFeatureMsg(false), 3000)
+  }
+
+  const handleCreateContestClick = (e) => {
+    if (!isGoldUser) {
+      e.preventDefault()
+      showPremiumFeatureAlert()
+    }
+  }
 
   const fetchContests = async (query = "") => {
     setIsLoading(true)
@@ -72,6 +108,12 @@ const DesignContestPage = () => {
 
   return (
     <div className="contest-page">
+      {showPremiumFeatureMsg && (
+        <div className="premium-feature-alert">
+          Creating contests requires a Gold Plan subscription. Please upgrade to access.
+        </div>
+      )}
+      
       <div className={`contest-banner-container ${isBannerFixed ? "fixed" : ""}`}>
         <header className="contest-banner">
           <div className="contest-banner-content">
@@ -113,9 +155,14 @@ const DesignContestPage = () => {
           )}
         </div>
 
-        <Link to="/contest/add-contest" className="contest-add-button">
+        <Link 
+          to={isGoldUser ? "/contest/add-contest" : "#"} 
+          className={`contest-add-button ${!isGoldUser ? "premium-locked" : ""}`}
+          onClick={handleCreateContestClick}
+        >
           <Plus size={18} />
           <span>Create Contest</span>
+          {!isGoldUser && <Lock size={12} className="lock-icon" />}
         </Link>
       </div>
 

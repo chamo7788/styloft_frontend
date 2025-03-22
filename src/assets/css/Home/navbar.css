@@ -400,3 +400,46 @@
   background: #a8a8a8;
 }
 
+.subscription-badge {
+  background-color: #4caf50;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subscription-info {
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+}
+
+.subscription-label {
+  font-weight: bold;
+  margin-right: 5px;
+  color: #333;
+}
+
+.subscription-value {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+/* Premium plan styling */
+.subscription-badge:has(.Premium) {
+  background-color: #f5a623;
+}
+
+/* Pro plan styling */
+.subscription-badge:has(.Pro) {
+  background-color: #9c27b0;
+}
+
+/* Free plan styling */
+.subscription-badge:has(.Free) {
+  background-color: #2196f3;
+}

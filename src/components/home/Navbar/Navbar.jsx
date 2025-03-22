@@ -11,6 +11,7 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [subscriptionPlan, setSubscriptionPlan] = useState(null);
 
   useEffect(() => {
     setLastScrollY(window.scrollY);
@@ -20,8 +21,68 @@ const Navbar = () => {
     if (token) {
       setIsLoggedIn(true);
       setProfilePicture(profilePic || `https://robohash.org/${token}.png?set=set5`);
+      // Fetch subscription status when user is logged in
+      fetchSubscriptionStatus();
     }
   }, []);
+
+  const fetchSubscriptionStatus = async () => {
+    try {
+      // Get current user from localStorage
+      const currentUserString = localStorage.getItem("currentUser");
+      
+      // Parse the user data properly, ensuring it exists
+      let userId;
+      if (currentUserString) {
+        try {
+          // If it's stored as JSON string
+          const currentUser = JSON.parse(currentUserString);
+          userId = currentUser.uid;
+        } catch (e) {
+          // If it's not JSON, try to use it directly
+          if (typeof currentUserString === 'string' && currentUserString.length > 0) {
+            userId = currentUserString;
+          }
+        }
+      }
+      
+      // If no valid userId, use the auth token as a fallback
+      if (!userId) {
+        userId = localStorage.getItem("authToken");
+      }
+      
+      // Exit if no userId is found
+      if (!userId) {
+        console.log("No user ID found, cannot fetch subscription status");
+        setSubscriptionPlan('Free');
+        return;
+      }
+      
+      console.log("Fetching subscription for user:", userId);
+      
+      const response = await fetch(`http://localhost:3000/payments/subscription-status/${userId}`);
+      const data = await response.json();
+      
+      console.log("Subscription data:", data);
+      // Save subscription data to localStorage for future use
+      if (data) {
+        localStorage.setItem('subscriptionData', JSON.stringify({
+          status: data.status,
+          planName: data.planName || 'Free',
+          lastUpdated: new Date().toISOString()
+        }));
+      }
+      
+      if (data && data.status === 'active') {
+        setSubscriptionPlan(data.planName);
+      } else {
+        setSubscriptionPlan('Free');
+      }
+    } catch (error) {
+      console.error("Error fetching subscription status:", error);
+      setSubscriptionPlan('Free');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -140,7 +201,7 @@ const Navbar = () => {
                 {showLogout && (
                   <div className="logout-dropdown">
                     <div className="dropdown-header">
-                      <NavLink to="/profile" className="profile-link">
+                      <NavLink to={subscriptionPlan === "Gold Plan" ? "/dashboard" : "/profile"} className="profile-link">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="profile-icon"
@@ -155,8 +216,14 @@ const Navbar = () => {
                             d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
                           />
                         </svg>
-                        Your Profile
+                        {subscriptionPlan === "Gold Plan" ? "Your Dashboard" : "Your Profile"}
                       </NavLink>
+                      {subscriptionPlan && (
+                        <div className="subscription-info">
+                          <span className="subscription-label">Plan:</span>
+                          <span className="subscription-value">{subscriptionPlan}</span>
+                        </div>
+                      )}
                     </div>
                     <button onClick={handleLogout} className="logout-button">
                       <svg

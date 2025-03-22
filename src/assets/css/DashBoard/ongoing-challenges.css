@@ -1,130 +1,208 @@
 .ongoing-challenges {
-    height: 100%;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    padding: 1.5rem;
+  height: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.ongoing-challenges:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.view-all-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.card-content {
+  margin-top: 1rem;
+}
+
+.challenge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.challenge-item {
+  padding: 1rem;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.challenge-item:hover {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+}
+
+.challenge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.challenge-title {
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.challenge-prize {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.challenge-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.challenge-deadline,
+.challenge-days-left {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.challenge-days-left {
+  font-weight: 500;
+}
+
+.challenge-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.progress-bar-container {
+  height: 0.5rem;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #3b82f6;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+.continue-btn {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continue-btn:hover {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.loading-content,
+.error-content,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  text-align: center;
+  color: #6b7280;
+}
+
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  
-  .card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-  }
-  
-  .view-all-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: none;
-    border: none;
-    color: #6b7280;
-    font-size: 0.875rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-  }
-  
-  .view-all-btn:hover {
-    background-color: #f3f4f6;
-    color: #111827;
-  }
-  
-  .challenge-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .challenge-item {
-    padding: 1rem;
-    border-radius: 0.375rem;
-    background-color: #f9fafb;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .challenge-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .challenge-title {
-    font-weight: 600;
-    color: #111827;
-  }
-  
-  .challenge-prize {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-weight: 600;
-    color: #f59e0b;
-  }
-  
-  .challenge-info {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  .challenge-deadline,
-  .challenge-days-left {
-    font-size: 0.875rem;
-    color: #6b7280;
-  }
-  
-  .challenge-progress {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .progress-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: #6b7280;
-  }
-  
-  .progress-bar-container {
-    height: 0.5rem;
-    background-color: #e5e7eb;
-    border-radius: 9999px;
-    overflow: hidden;
-  }
-  
-  .progress-bar {
-    height: 100%;
-    background-color: #3b82f6;
-    border-radius: 9999px;
-  }
-  
-  .continue-btn {
-    align-self: flex-start;
-    margin-top: 0.25rem;
-    padding: 0.5rem 1rem;
-    background-color: white;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #4b5563;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .continue-btn:hover {
-    background-color: #f3f4f6;
-  }
-  
+}
+
+.explore-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.explore-btn:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
