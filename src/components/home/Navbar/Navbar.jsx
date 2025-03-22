@@ -64,6 +64,14 @@ const Navbar = () => {
       const data = await response.json();
       
       console.log("Subscription data:", data);
+      // Save subscription data to localStorage for future use
+      if (data) {
+        localStorage.setItem('subscriptionData', JSON.stringify({
+          status: data.status,
+          planName: data.planName || 'Free',
+          lastUpdated: new Date().toISOString()
+        }));
+      }
       
       if (data && data.status === 'active') {
         setSubscriptionPlan(data.planName);
@@ -193,7 +201,7 @@ const Navbar = () => {
                 {showLogout && (
                   <div className="logout-dropdown">
                     <div className="dropdown-header">
-                      <NavLink to="/profile" className="profile-link">
+                      <NavLink to={subscriptionPlan === "Gold Plan" ? "/dashboard" : "/profile"} className="profile-link">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="profile-icon"
@@ -208,7 +216,7 @@ const Navbar = () => {
                             d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
                           />
                         </svg>
-                        Your Profile
+                        {subscriptionPlan === "Gold Plan" ? "Your Dashboard" : "Your Profile"}
                       </NavLink>
                       {subscriptionPlan && (
                         <div className="subscription-info">
