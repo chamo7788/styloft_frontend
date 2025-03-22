@@ -1,9 +1,7 @@
-"use client"
-
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import "../../assets/css/contest/ContestContent.css"
-import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star } from "lucide-react"
+import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star, Heart } from "lucide-react"
 import SubmissionChatView from "./SubmissionChatView"
 
 export default function ContestContent() {
@@ -28,9 +26,10 @@ export default function ContestContent() {
     prize: "",
     deadline: ""
   })
+  const [favoriteSubmissions, setFavoriteSubmissions] = useState([])
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false)
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"))
-
 
   // Fetch contest details
   useEffect(() => {
@@ -79,6 +78,27 @@ export default function ContestContent() {
 
     fetchSubmissions()
   }, [id, isSubmitted])
+
+  // Fetch favorite submissions
+  useEffect(() => {
+    // Only fetch favorites if the current user is the contest creator
+    if (contest && currentUser && currentUser.uid === contest.createdBy) {
+      const fetchFavorites = async () => {
+        setIsFavoriteLoading(true)
+        try {
+          const response = await fetch(`http://localhost:3000/submission/contest/${id}/favorites`)
+          if (!response.ok) throw new Error("Failed to fetch favorite submissions")
+          const data = await response.json()
+          setFavoriteSubmissions(data)
+        } catch (error) {
+          console.error("Error fetching favorite submissions:", error)
+        } finally {
+          setIsFavoriteLoading(false)
+        }
+      }
+      fetchFavorites()
+    }
+  }, [id, contest, currentUser])
 
   useEffect(() => {
     if (contest) {
@@ -346,7 +366,51 @@ export default function ContestContent() {
     }
   }
 
-  // Add this StarRating component inside your ContestContent component but before the return statement
+  // Add this function to handle favorite toggle
+  const handleToggleFavorite = async (submissionId) => {
+    if (!currentUser || !isContestCreator) return
+    
+    try {
+      console.log(`Toggling favorite for submission ${submissionId}`);
+      const response = await fetch(`http://localhost:3000/submission/${submissionId}/favorite`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" }
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to toggle favorite status")
+      }
+      
+      const updatedSubmission = await response.json();
+      console.log('Updated submission:', updatedSubmission);
+      
+      // Update submissions in state
+      setSubmissions(submissions.map(sub => 
+        sub.id === submissionId ? { ...sub, favorite: updatedSubmission.favorite } : sub
+      ))
+      
+      // If the submission has been marked as favorite, add it to favorites
+      // If it has been unmarked, remove it from favorites
+      if (updatedSubmission.favorite) {
+        // Check if it's already in the favorites
+        if (!favoriteSubmissions.find(fav => fav.id === submissionId)) {
+          // Find the full submission object from submissions array
+          const fullSubmission = submissions.find(sub => sub.id === submissionId);
+          setFavoriteSubmissions([...favoriteSubmissions, fullSubmission]);
+        }
+      } else {
+        // Remove from favorites
+        setFavoriteSubmissions(favoriteSubmissions.filter(fav => fav.id !== submissionId));
+      }
+      
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      alert("Failed to update favorite status. Please try again.");
+    }
+  }
+
+  
   const StarRating = ({ rating, submissionId, readOnly }) => {
     const [hoverRating, setHoverRating] = useState(0)
     
@@ -660,10 +724,33 @@ export default function ContestContent() {
       </div>
 
       <div className="submission-gallery">
-        <h2 className="gallery-title">
-          <Image size={20} />
-          <span>Submissions ({submissions.length})</span>
-        </h2>
+        <div className="gallery-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h2 className="gallery-title">
+            <Image size={20} />
+            <span>Submissions ({submissions.length})</span>
+          </h2>
+          
+          {isContestCreator && (
+            <Link 
+              to={`/contest/${id}/favorites`} 
+              className="favorites-button"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                background: "#3b82f6",
+                color: "white",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                textDecoration: "none",
+                fontSize: "14px"
+              }}
+            >
+              <Heart size={16} />
+              <span>Favorites</span>
+            </Link>
+          )}
+        </div>
 
         {submissions.length === 0 ? (
           <div className="no-submissions">
@@ -732,6 +819,27 @@ export default function ContestContent() {
                       <span>{isContestCreator ? "Chat Unavailable" : "Chat Restricted"}</span>
                     </button>
                   )}
+                  {isContestCreator && (
+                    <button
+                      className="favorite-button"
+                      onClick={() => handleToggleFavorite(submission.id)}
+                      style={{
+                        marginTop: "10px",
+                        padding: "5px 10px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                        background: "#3b82f6",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Heart size={16} />
+                      <span>{submission.favorite ? "Unfavorite" : "Favorite"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -770,4 +878,3 @@ export default function ContestContent() {
   )
   
 }
-
