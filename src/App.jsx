@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Home, StyleSociety, Login, Register, StyleStudio, Stylemarket,Subscription,DashBoard } from "./pages";
+import { Home, StyleSociety, Login, Register, StyleStudio, Stylemarket,Subscription,DashBoard,RequestForm } from "./pages";
 import { Navbar, Footer } from "./components";
 import { Provider } from "react-redux";  
 import { store } from "./redux/store";  
@@ -30,6 +30,7 @@ function App() {
         <Route path="/styleMarket/add-shop" element={<AddShopForm />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/DashBoard" element={<DashBoard />} />
+        <Route path="/RequestForm" element={<RequestForm />} />
         <Route path="/sub-plans" element={<Subscription />} />
         <Route path="/payment/:planId" element={<PaymentPage />} />
         <Route path="/profile" element={<Profile />} />

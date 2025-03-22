@@ -8,5 +8,6 @@ export { default as Stylemarket } from './Stylemarket';
 export {default as Stylesociety} from './Stylesociety'
 export { default as Subscription } from './Subscription';
 export { default as DashBoard } from './DashBoard';
+export { default as RequestForm } from './RequestForm';
 
 
