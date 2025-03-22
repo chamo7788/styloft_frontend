@@ -1,135 +1,235 @@
-/* General Styling */
+/* Modern Login Page Styling */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #333;
+}
+
 .login {
   display: flex;
-  justify-content: right;
-  align-items: center;
   min-height: 100vh;
-  background: #f9f9f9;
-  margin-right: 100px;
+  background: #ffffff;
+  width: 50%;
+  float: right;
 }
 
 .wrapper {
-  position: absolute;
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 400px;
-  width: 100%;
-  margin-left: 500px;
-  margin-bottom: 1450px;
+  max-width: 440px;
+  width: 85%;
+  margin: auto;
+  padding: 2.5rem 0;
 }
 
 .image-section {
+  position: fixed;
+  top: 0;
+  left: 0;
   background-image: url('../images/login-img.jpg');
   background-size: cover;
   background-position: center;
   height: 100vh;
   width: 50%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 .heading {
-  text-align: center;
-  color: #333;
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1rem;
+}
+
+.form p {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
 }
 
 .error-msg {
-  color: red;
+  background-color: #fff0f0;
+  color: #e53e3e;
+  padding: 0.75rem;
+  border-radius: 8px;
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  border-left: 3px solid #e53e3e;
 }
 
 input[type="email"],
 input[type="password"] {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  outline: none;
+  padding: 0.9rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 1rem;
+  background-color: #f8fafc;
+  transition: all 0.3s ease;
 }
 
 input[type="email"]:focus,
 input[type="password"]:focus {
   border-color: #7f56d9;
-  box-shadow: 0 0 3px rgba(127, 86, 217, 0.3);
+  box-shadow: 0 0 0 3px rgba(127, 86, 217, 0.2);
+  background-color: #ffffff;
+  outline: none;
+}
+
+.forgot-link {
+  text-align: right;
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
+}
+
+.forgot-link a {
+  color: #7f56d9;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-link a:hover {
+  color: #6b46c1;
+  text-decoration: underline;
 }
 
 .sign-in-button {
   background-color: #7f56d9;
   color: white;
-  padding: 12px;
+  padding: 0.9rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 6px rgba(127, 86, 217, 0.15);
 }
 
 .sign-in-button:hover {
-  background-color: #6b4acb;
+  background-color: #6b46c1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(127, 86, 217, 0.2);
+}
+
+.sign-in-button:active {
+  transform: translateY(0);
+}
+
+.sign-in-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .divider {
   text-align: center;
-  color: #aaa;
-  margin: 1rem 0;
+  color: #a0aec0;
+  margin: 1.5rem 0;
   font-size: 0.9rem;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .divider::before,
 .divider::after {
   content: "";
-  position: absolute;
+  flex: 1;
   height: 1px;
-  background: #ddd;
-  width: 40%;
-  top: 50%;
-}
-
-.divider::before {
-  left: 0;
-}
-
-.divider::after {
-  right: 0;
+  background: #e2e8f0;
+  margin: 0 1rem;
 }
 
 .google-sign-in-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  gap: 10px;
+  transition: all 0.3s ease;
+  color: #1a1a1a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .google-sign-in-button:hover {
-  background: #f3f3f3;
+  background: #f8fafc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.forgot-link {
-  margin-top: 5px;
-  text-align: right;
-  font-size: 0.7rem;
+.google-logo {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
 }
 
 .link {
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
 }
 
 .link a {
   color: #7f56d9;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.link a:hover {
+  color: #6b46c1;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .wrapper {
+    width: 90%;
+    padding: 2rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .login {
+    width: 100%;
+    float: none;
+  }
+  
+  .image-section {
+    display: none;
+  }
+  
+  .wrapper {
+    margin: auto;
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heading {
+    font-size: 1.75rem;
+  }
+  
+  .wrapper {
+    width: 95%;
+    padding: 1.5rem 1rem;
+  }
+  
+  .position-radio-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }

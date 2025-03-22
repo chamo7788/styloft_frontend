@@ -109,4 +109,52 @@
   .DashboardSave-button:hover {
     background-color: #0056b3;
   }
+
+  .add-shop-page {
+    margin-top: 50px;
+  }
+  
+  .back-button {
+    position: absolute;
+    padding: 8px 16px;
+    margin: 20px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    margin-top: 30px; /* Added more top margin to move down */
+  }
+  
+  .back-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .add-marketplace-button-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+    margin-top: 70px; /* Increased from 50px to move down further */
+  }
+  
+  .add-marketplace-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.2s, transform 0.1s;
+  }
+  
+  .add-marketplace-button:hover {
+    background-color: #45a049;
+  }
+  
+  .add-marketplace-button:active {
+    transform: translateY(1px);
+  }
   

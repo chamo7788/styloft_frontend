@@ -503,3 +503,159 @@
   background-color: #dc2626;
 }
 
+/* Text controls styling */
+.text-input-group {
+  margin-bottom: 1rem;
+}
+
+.text-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.text-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.text-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-control-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.text-range {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e5e7eb;
+  outline: none;
+  border-radius: 3px;
+}
+
+.text-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #4f46e5;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.text-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.text-value {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.text-color-input {
+  width: 100%;
+  height: 2.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+/* Improved font select styling */
+.font-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  max-height: 300px;
+}
+
+.font-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.font-select optgroup {
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+.font-select option {
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Enhanced font preview */
+.text-font-preview {
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9fafb;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  transition: all 0.3s ease;
+}
+
+.text-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.text-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.text-add-button:hover:not(:disabled) {
+  background-color: #4338ca;
+}
+
+.text-add-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+
+

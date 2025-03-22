@@ -1,4 +1,4 @@
-import { forwardRef, useRef, Suspense, memo } from "react"
+import { forwardRef, useRef, Suspense, memo, useImperativeHandle } from "react"
 import { Canvas } from "@react-three/fiber"
 import { PerspectiveCamera, Environment, OrbitControls } from "@react-three/drei"
 import { Vector3 } from "three"
@@ -40,7 +40,8 @@ const ModelViewer = forwardRef(
   ) => {
     const cameraRef = useRef(null)
 
-    // Handle camera rotation
+    // Update the ModelViewer component to expose the handleRotate method through the ref
+    // First, modify the handleRotate function to make it accessible
     const handleRotate = (direction) => {
       if (!cameraRef.current) return
 
@@ -59,11 +60,40 @@ const ModelViewer = forwardRef(
       cameraRef.current.lookAt(0, 0, 0)
     }
 
+    // Then, expose the handleRotate method through the ref
+    // Add this after the handleRotate function and before the return statement
+    // This makes the handleRotate function accessible from the ref
+    useImperativeHandle(
+      ref,
+      () => ({
+        handleRotate,
+      }),
+      [],
+    )
+
     return (
-      <Canvas shadows className="canvas" ref={ref} dpr={[1, 2]} performance={{ min: 0.5 }}>
+      <Canvas
+        shadows
+        className="canvas"
+        ref={ref}
+        dpr={[1, 2]}
+        gl={{
+          antialias: true,
+          preserveDrawingBuffer: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        }}
+        camera={{ position: [0, 0, 10], fov: 45 }}
+        performance={{ min: 0.5 }}
+      >
         <PerspectiveCamera makeDefault position={[0, 0, 10]} ref={cameraRef} />
         <ambientLight intensity={lighting.intensity} />
-        <directionalLight position={lighting.direction} intensity={lighting.intensity} castShadow />
+        <directionalLight
+          position={lighting.direction}
+          intensity={lighting.intensity}
+          castShadow
+          shadow-mapSize={[2048, 2048]}
+        />
         <Environment preset={lighting.environment} />
 
         <Suspense fallback={<LoadingFallback />}>
@@ -87,7 +117,7 @@ const ModelViewer = forwardRef(
           />
         </Suspense>
 
-        <OrbitControls enableZoom={true} enableDamping={false} />
+        <OrbitControls enableZoom={true} enableDamping={true} dampingFactor={0.25} />
       </Canvas>
     )
   },

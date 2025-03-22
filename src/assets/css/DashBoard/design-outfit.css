@@ -1,0 +1,72 @@
+.designOutfit {
+    text-align: center;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .description {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  .optionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .optionCard {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .optionCard:hover {
+    transform: scale(1.05);
+  }
+  
+  .optionIcon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .optionTitle {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .optionDescription {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  .startButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .startButton:hover {
+    background-color: #0056b3;
+  }
+  
