@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   RotateCcw,
   RotateCw,
@@ -12,6 +12,7 @@ import {
   Plus,
   Share2,
   HelpCircle,
+  Lock,
 } from "lucide-react"
 import CloudinaryService from "../../utils/CloudinaryService"
 
@@ -37,8 +38,43 @@ function Toolbar({
   const [currentDesignId, setCurrentDesignId] = useState(null)
   const [publishLoading, setPublishLoading] = useState(false)
   const [publishError, setPublishError] = useState(null)
+  const [subscriptionPlan, setSubscriptionPlan] = useState(null)
+  const [showPremiumFeatureMsg, setShowPremiumFeatureMsg] = useState(false)
+
+  // Check subscription status on component mount
+  useEffect(() => {
+    checkSubscriptionStatus();
+  }, []);
+
+  const checkSubscriptionStatus = () => {
+    try {
+      // Get subscription data from localStorage
+      const subscriptionDataString = localStorage.getItem('subscriptionData');
+      if (subscriptionDataString) {
+        const subscriptionData = JSON.parse(subscriptionDataString);
+        setSubscriptionPlan(subscriptionData.planName || 'Free');
+      } else {
+        setSubscriptionPlan('Free');
+      }
+    } catch (error) {
+      console.error("Error checking subscription status:", error);
+      setSubscriptionPlan('Free');
+    }
+  };
+
+  const isPremiumUser = subscriptionPlan === "Silver Plan";
+
+  const showPremiumFeatureAlert = () => {
+    setShowPremiumFeatureMsg(true);
+    setTimeout(() => setShowPremiumFeatureMsg(false), 3000);
+  };
 
   async function fetchDesigns() {
+    if (!isPremiumUser) {
+      showPremiumFeatureAlert();
+      return;
+    }
+
     const user = JSON.parse(localStorage.getItem("currentUser"))
     if (!user || !user.uid) {
       setError("Please login to view your designs")
@@ -74,6 +110,11 @@ function Toolbar({
   }
 
   async function saveDesignToBackend(designData) {
+    if (!isPremiumUser) {
+      showPremiumFeatureAlert();
+      return;
+    }
+
     const user = JSON.parse(localStorage.getItem("currentUser"))
     if (!user || !user.uid) {
       alert("Please login to save your design")
@@ -153,11 +194,21 @@ function Toolbar({
   }
 
   const handleSave = () => {
+    if (!isPremiumUser) {
+      showPremiumFeatureAlert();
+      return;
+    }
+    
     const designData = onSaveDesign()
     saveDesignToBackend(designData)
   }
 
   const handleLoadDesignClick = () => {
+    if (!isPremiumUser) {
+      showPremiumFeatureAlert();
+      return;
+    }
+    
     fetchDesigns()
   }
 
@@ -204,6 +255,11 @@ function Toolbar({
 
   // Add publish functionality
   const handlePublish = async () => {
+    if (!isPremiumUser) {
+      showPremiumFeatureAlert();
+      return;
+    }
+    
     const user = JSON.parse(localStorage.getItem("currentUser"))
     if (!user || !user.uid) {
       alert("Please login to publish your design")
@@ -264,8 +320,23 @@ function Toolbar({
     }
   }
 
+  const handleScreenshotDownload = () => {
+    if (!isPremiumUser) {
+      showPremiumFeatureAlert();
+      return;
+    }
+    
+    onScreenshotDownload();
+  }
+
   return (
     <div className="canvas-toolbar">
+      {showPremiumFeatureMsg && (
+        <div className="premium-feature-alert">
+          This feature requires a Silver Plan subscription. Please upgrade to access.
+        </div>
+      )}
+      
       <div className="toolbar-group">
         <button className="toolbar-button" onClick={() => onRotate("left")} title="Rotate Left">
           <RotateCcw size={16} />
@@ -308,37 +379,45 @@ function Toolbar({
         >
           <Layers size={16} />
         </button>
-        <button className="toolbar-button" onClick={onScreenshotDownload} title="Take Screenshot">
+        <button 
+          className={`toolbar-button ${!isPremiumUser ? "premium-locked" : ""}`} 
+          onClick={handleScreenshotDownload} 
+          title={isPremiumUser ? "Take Screenshot" : "Premium Feature - Take Screenshot"}
+        >
           <Download size={16} />
+          {!isPremiumUser && <Lock size={10} className="lock-icon" />}
         </button>
         <button
-          className={`toolbar-button ${isLoading ? "loading" : ""} ${currentDesignId ? "has-update" : ""}`}
+          className={`toolbar-button ${isLoading ? "loading" : ""} ${currentDesignId ? "has-update" : ""} ${!isPremiumUser ? "premium-locked" : ""}`}
           onClick={handleSave}
-          title={currentDesignId ? "Update Design" : "Save Design"}
-          disabled={isLoading}
+          title={isPremiumUser ? (currentDesignId ? "Update Design" : "Save Design") : "Premium Feature - Save Design"}
+          disabled={isLoading || !isPremiumUser}
         >
           <Save size={16} />
           {currentDesignId && <span className="update-indicator"></span>}
+          {!isPremiumUser && <Lock size={10} className="lock-icon" />}
         </button>
         <button
-          className={`new-design-button ${isLoading ? "loading" : ""}`}
-          title="Load Design"
+          className={`new-design-button ${isLoading ? "loading" : ""} ${!isPremiumUser ? "premium-locked" : ""}`}
+          title={isPremiumUser ? "Load Design" : "Premium Feature - Load Design"}
           onClick={handleLoadDesignClick}
-          disabled={isLoading}
+          disabled={isLoading || !isPremiumUser}
         >
           <Upload size={16} />
           Your Designs
+          {!isPremiumUser && <Lock size={10} className="lock-icon" />}
         </button>
 
-        {/* New Publish button */}
+        {/* Publish button */}
         <button
-          className={`new-design-button ${publishLoading ? "loading" : ""}`}
+          className={`new-design-button ${publishLoading ? "loading" : ""} ${!isPremiumUser ? "premium-locked" : ""}`}
           onClick={handlePublish}
-          title="Publish to Your Portfolio"
-          disabled={publishLoading}
+          title={isPremiumUser ? "Publish to Your Portfolio" : "Premium Feature - Publish to Portfolio"}
+          disabled={publishLoading || !isPremiumUser}
         >
           <Share2 size={16} />
           Publish Design
+          {!isPremiumUser && <Lock size={10} className="lock-icon" />}
         </button>
 
         {/* Help button to show user guide */}
@@ -347,7 +426,7 @@ function Toolbar({
         </button>
       </div>
 
-      {currentDesignId && (
+      {currentDesignId && isPremiumUser && (
         <div className="current-design-indicator">
           <span className="design-name-label">Editing:</span>
           <span className="design-name-value">{designName}</span>
