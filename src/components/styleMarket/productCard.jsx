@@ -42,7 +42,7 @@ const ProductCard = ({ product, onExplore }) => {
       </div>
 
       <div className="product-details">
-        <h3 className="product-name">{product.name || "Unnamed Product"}</h3>
+        <h3 className="product-name">{product.description || "Unnamed Product"}</h3>
         <p className="product-price">{formattedPrice}</p>
       </div>
 

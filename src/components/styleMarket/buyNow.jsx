@@ -82,7 +82,7 @@ const BuyNow = ({ product, onBack }) => {
 
           {/* Product Info */}
           <div className="product-info">
-            <h1 className="product-title">{product.name}</h1>
+            <h1 className="product-title">{product.description}</h1>
             <p className="product-price">${product.price}</p>
 
             {/* Size Selection */}
