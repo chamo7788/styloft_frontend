@@ -1,6 +1,6 @@
 .Feed-container {
   position: absolute;
-  top: 952px;
+  top: 982px;
   left: 75%;
   width: 300px;
   max-width: 90%;
@@ -173,63 +173,84 @@
 /* Responsive Design */
 @media screen and (max-width: 1200px) {
   .Feed-container {
-    width: 300px;
+    left: 70%;
+    width: 280px;
   }
 }
 
 @media screen and (max-width: 992px) {
   .Feed-container {
-    width: 280px;
-    right: 15px;
-    padding: 15px;
-  }
-
-  .Feed-header {
-    font-size: 18px;
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    height: auto;
+    max-height: 500px;
   }
 }
 
 @media screen and (max-width: 768px) {
   .Feed-container {
-    position: fixed;
-    top: auto;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    height: 300px;
-    border-radius: 16px 16px 0 0;
-    z-index: 100;
+    max-width: 90%;
+    padding: 15px;
+    margin: 15px auto;
   }
-
+  
   .Feed-header {
     font-size: 18px;
   }
-
+  
   .Feed-item {
+    height: auto;
+    min-height: 80px;
     padding: 10px;
   }
-
-  .Feed-avatar {
-    width: 40px;
-    height: 40px;
+  
+  .Feed-title {
+    top: -38px;
+    left: 42px;
+    font-size: 13px;
+  }
+  
+  .followbtn, .deletebtn {
+    padding: 4px 10px;
+    font-size: 12px;
+    top: -32px;
+    left: 45px;
   }
 }
 
 @media screen and (max-width: 480px) {
   .Feed-container {
     padding: 12px;
-    height: 250px;
   }
-
+  
   .Feed-header {
     font-size: 16px;
     margin-bottom: 10px;
   }
-
-  .followbtn,
-  .deletebtn {
-    padding: 4px 8px;
+  
+  .Feed-avatar {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .Feed-title {
+    top: -36px;
+    left: 40px;
     font-size: 12px;
+  }
+  
+  .followbtn, .deletebtn {
+    padding: 3px 8px;
+    font-size: 11px;
+    top: -30px;
+    left: 40px;
+  }
+  
+  .deletebtn {
+    margin-left: 4px;
   }
 }

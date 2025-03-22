@@ -1,20 +1,26 @@
-import { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import "../../assets/css/RequestForm/GarmentRequestForm.css";
-import brandixImage from "../../assets/images/brandix.png";
-import Hirdaramani from "../../assets/images/Hirdaramani.png";
-import MAS from "../../assets/images/MAS.png";
-import EAM from "../../assets/images/EAM.png";
-import StarGarments from "../../assets/images/StarGarments.png";
-import { auth } from "../../firebaseConfig";
+"use client"
 
+import { useState, useEffect } from "react"
+import { onAuthStateChanged } from "firebase/auth"
+import "../../assets/css/RequestForm/GarmentRequestForm.css"
+import ViewSentRequests from "./ViewSentRequests"
+import { db, auth } from "../../firebaseConfig"; 
+import brandixImage from "../../assets/images/brandix.png"; 
+import Hirdaramani from "../../assets/images/Hirdaramani.png"; 
+import MAS from "../../assets/images/MAS.png"; 
+import EAM from "../../assets/images/EAM.png"; 
+import StarGarments from "../../assets/images/StarGarments.png";
+
+// Keep the actual image imports and remove redundant image definitions
 const GarmentRequestForm = () => {
-  const [selectedGarment, setSelectedGarment] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [requestText, setRequestText] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const [selectedGarment, setSelectedGarment] = useState("")
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [requestText, setRequestText] = useState("")
+  const [submitted, setSubmitted] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [currentUserId, setCurrentUserId] = useState(null)
+  const [sentRequests, setSentRequests] = useState([])
+  const [showSentRequests, setShowSentRequests] = useState(false)
 
   // Fetch authenticated user details
   useEffect(() => {
@@ -24,16 +30,16 @@ const GarmentRequestForm = () => {
           uid: user.uid, // Store user ID
           displayName: user.displayName || "Anonymous",
           photoURL: user.photoURL || "/placeholder.svg",
-        });
-        setCurrentUserId(user.uid);
+        })
+        setCurrentUserId(user.uid)
       } else {
-        setCurrentUser(null);
-        setCurrentUserId(null);
+        setCurrentUser(null)
+        setCurrentUserId(null)
       }
-    });
+    })
 
-    return () => unsubscribe();
-  }, []);
+    return () => unsubscribe()
+  }, [])
 
   // Garment options with images
   const garments = [
@@ -42,18 +48,40 @@ const GarmentRequestForm = () => {
     { value: "jacket", label: "MAS Holdings", image: MAS },
     { value: "dress", label: "EAM Maliban Textile", image: EAM },
     { value: "sweater", label: "Star Garments", image: StarGarments },
-  ];
+  ]
 
   const handleGarmentSelect = (garment) => {
-    setSelectedGarment(garment);
-    setIsDropdownOpen(false);
-  };
+    setSelectedGarment(garment)
+    setIsDropdownOpen(false)
+  }
 
   const handleSubmit = () => {
-    if (selectedGarment && requestText) {
-      setSubmitted(true);
+    if (selectedGarment && requestText && currentUser) {
+      // Create a new request object
+      const newRequest = {
+        id: Date.now(), // Use timestamp as a simple unique ID
+        userId: currentUser.uid,
+        userName: currentUser.displayName,
+        userPhoto: currentUser.photoURL,
+        garment: selectedGarment,
+        garmentLabel: garments.find((g) => g.value === selectedGarment)?.label,
+        garmentImage: garments.find((g) => g.value === selectedGarment)?.image,
+        requestText: requestText,
+        date: new Date().toISOString(),
+      }
+
+      // Get existing requests from localStorage
+      const existingRequests = JSON.parse(localStorage.getItem("garmentRequests") || "[]")
+
+      // Add new request to the array
+      const updatedRequests = [newRequest, ...existingRequests]
+
+      // Save to localStorage for persistence
+      localStorage.setItem("garmentRequests", JSON.stringify(updatedRequests))
+
+      setSubmitted(true)
     }
-  };
+  }
 
   return (
     <div className="garment-form-container">
@@ -64,9 +92,7 @@ const GarmentRequestForm = () => {
           <label className="Garmentform-label">Select a Garment</label>
           <div className="Garmentcustom-select">
             <button className="Garmentselect-button" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-              {selectedGarment
-                ? garments.find((g) => g.value === selectedGarment)?.label
-                : "Select garment..."}
+              {selectedGarment ? garments.find((g) => g.value === selectedGarment)?.label : "Select garment..."}
               <span className="Garmentdropdown-icon">▼</span>
             </button>
 
@@ -81,7 +107,7 @@ const GarmentRequestForm = () => {
                       onClick={() => handleGarmentSelect(garment.value)}
                     >
                       <div className="Garmentdropdown-item-content">
-                        <img src={garment.image || "/placeholder.svg"} alt={garment.label} className="garment-image" />
+                        <img src={garment.image} alt={garment.label} className="garment-image" />
                         {garment.label}
                       </div>
                       {selectedGarment === garment.value && <span className="Garmentcheck-icon">✓</span>}
@@ -108,47 +134,11 @@ const GarmentRequestForm = () => {
         </button>
       </div>
 
-      {submitted && currentUser && (
-        <div className="Garmentresult-container">
-          <p className="Garmentdetail-label">Dashboard Profile:</p>
-          <br />
-          <div className="Garmentuser-info">
-            <div className="Garmentavatar">
-              <img src={currentUser.photoURL} alt={currentUser.displayName} className="garment-user-image" />
-            </div>
-            <div className="Garmentusername">
-              <p>{currentUser.displayName}</p>
-            </div>
-          </div>
-
-          <div className="Garmentrequest-details">
-            <p className="Garmentdetail-label">Request:</p>
-            <p className="Garmentrequest-text">{requestText}</p>
-          </div>
-        </div>
-      )}
-
-      {submitted && currentUser && (
-        <div className="Garmentresult-container">
-          <p className="Garmentdetail-label">Designer Profile:</p>
-          <br />
-          <div className="Garmentrequest-details">
-            <p className="Garmentdetail-label">Selected Garment:</p>
-            <div className="Garmentselected-garment">
-              <img
-                src={garments.find((g) => g.value === selectedGarment)?.image || "/placeholder.svg"}
-                alt={selectedGarment}
-                className="garment-image"
-              />
-              <span>{garments.find((g) => g.value === selectedGarment)?.label}</span>
-            </div>
-            <p className="Garmentdetail-label">Request:</p>
-            <p className="Garmentrequest-text">{requestText}</p>
-          </div>
-        </div>
-      )}
+      <div className="Garmentview-requests-container">
+        <ViewSentRequests />
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default GarmentRequestForm;
+export default GarmentRequestForm
