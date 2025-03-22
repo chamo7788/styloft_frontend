@@ -1,9 +1,6 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { onAuthStateChanged } from "firebase/auth"
 import "../../assets/css/RequestForm/GarmentRequestForm.css"
-import ViewSentRequests from "./ViewSentRequests"
 import { db, auth } from "../../firebaseConfig"; 
 import brandixImage from "../../assets/images/brandix.png"; 
 import Hirdaramani from "../../assets/images/Hirdaramani.png"; 
@@ -18,9 +15,7 @@ const GarmentRequestForm = () => {
   const [requestText, setRequestText] = useState("")
   const [submitted, setSubmitted] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
-  const [currentUserId, setCurrentUserId] = useState(null)
-  const [sentRequests, setSentRequests] = useState([])
-  const [showSentRequests, setShowSentRequests] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState({ text: "", type: "" })
 
   // Fetch authenticated user details
   useEffect(() => {
@@ -56,31 +51,57 @@ const GarmentRequestForm = () => {
   }
 
   const handleSubmit = () => {
-    if (selectedGarment && requestText && currentUser) {
-      // Create a new request object
-      const newRequest = {
-        id: Date.now(), // Use timestamp as a simple unique ID
-        userId: currentUser.uid,
-        userName: currentUser.displayName,
-        userPhoto: currentUser.photoURL,
-        garment: selectedGarment,
-        garmentLabel: garments.find((g) => g.value === selectedGarment)?.label,
-        garmentImage: garments.find((g) => g.value === selectedGarment)?.image,
-        requestText: requestText,
-        date: new Date().toISOString(),
-      }
-
-      // Get existing requests from localStorage
-      const existingRequests = JSON.parse(localStorage.getItem("garmentRequests") || "[]")
-
-      // Add new request to the array
-      const updatedRequests = [newRequest, ...existingRequests]
-
-      // Save to localStorage for persistence
-      localStorage.setItem("garmentRequests", JSON.stringify(updatedRequests))
-
-      setSubmitted(true)
+    if (!currentUser) {
+      setSubmitMessage({ text: "Please log in to submit a request", type: "error" });
+      return;
     }
+    
+    if (!selectedGarment) {
+      setSubmitMessage({ text: "Please select a garment", type: "error" });
+      return;
+    }
+    
+    if (!requestText.trim()) {
+      setSubmitMessage({ text: "Please enter request details", type: "error" });
+      return;
+    }
+
+    // Create a new request object
+    const newRequest = {
+      id: Date.now(), // Use timestamp as a simple unique ID
+      userId: currentUser.uid,
+      userName: currentUser.displayName,
+      userPhoto: currentUser.photoURL,
+      garment: selectedGarment,
+      garmentLabel: garments.find((g) => g.value === selectedGarment)?.label,
+      garmentImage: garments.find((g) => g.value === selectedGarment)?.image,
+      requestText: requestText,
+      date: new Date().toISOString(),
+      status: "pending" // Adding a status field for tracking
+    }
+
+    // Get existing requests from localStorage
+    const existingRequests = JSON.parse(localStorage.getItem("garmentRequests") || "[]")
+
+    // Add new request to the array
+    const updatedRequests = [newRequest, ...existingRequests]
+
+    // Save to localStorage for persistence
+    localStorage.setItem("garmentRequests", JSON.stringify(updatedRequests))
+    
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event("storage"));
+
+    // Reset form
+    setSelectedGarment("");
+    setRequestText("");
+    setSubmitMessage({ text: "Request submitted successfully!", type: "success" });
+    setSubmitted(true);
+    
+    // Clear success message after 3 seconds
+    setTimeout(() => {
+      setSubmitMessage({ text: "", type: "" });
+    }, 3000);
   }
 
   return (
@@ -129,13 +150,15 @@ const GarmentRequestForm = () => {
           />
         </div>
 
+        {submitMessage.text && (
+          <div className={`submit-message ${submitMessage.type}`}>
+            {submitMessage.text}
+          </div>
+        )}
+
         <button className="Garmentsubmit-button" onClick={handleSubmit}>
           Submit Request
         </button>
-      </div>
-
-      <div className="Garmentview-requests-container">
-        <ViewSentRequests />
       </div>
     </div>
   )
