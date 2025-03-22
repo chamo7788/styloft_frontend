@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef, useState, useEffect, createRef, useMemo } from "react"
 import { useGLTF, Text } from "@react-three/drei"
 import { TextureLoader } from "three"
