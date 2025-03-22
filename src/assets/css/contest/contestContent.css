@@ -750,9 +750,37 @@ body {
     transform: translateY(0);
   }
 }
+
 .chat-button:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
+}
+
+/* Star Rating Styles */
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin: 8px 0;
+}
+
+.star-interactive {
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.star-interactive:hover {
+  transform: scale(1.2);
+}
+
+.star-readonly {
+  cursor: default;
+}
+
+.rating-value {
+  margin-left: 5px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
 }
 
 /* Responsive Adjustments */
