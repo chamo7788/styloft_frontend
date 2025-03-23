@@ -9,7 +9,7 @@ import "../../assets/css/StyleMarket/payment-success.css";
 // Load Stripe
 const stripePromise = loadStripe("pk_test_51R0PouFKqSRL4Eus1nQLaIYdWsBCGb0rkCZeSXivdL1aI4zxn3bqQOGmXuxZRL9im9UTRmBZnujboCXn2Mwu97aG00QUvxvr91");
 
-const CheckoutForm = ({ formData, setFormData, amount, setPaymentSuccessful }) => {
+const CheckoutForm = ({ formData, setFormData, amount, setPaymentSuccessful, product, selectedSize, quantity }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [clientSecret, setClientSecret] = useState(null);
@@ -29,15 +29,22 @@ const CheckoutForm = ({ formData, setFormData, amount, setPaymentSuccessful }) =
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.uid,
-          productId: "prod_456",
+          productId: product.id.toString(), // Use the actual product ID
           amount: amount,
+          size: selectedSize,
+          quantity: quantity,
+          shippingAddress: formData.address,
+          shippingCity: formData.city,
+          shippingState: formData.state,
+          shippingZip: formData.zipCode,
+          shippingCountry: formData.country
         }),
       })
         .then((res) => res.json())
         .then((data) => setClientSecret(data.clientSecret))
         .catch((err) => console.error("Error fetching clientSecret:", err));
     }
-  }, [amount, clientSecret]);  // Runs only if `amount` changes and `clientSecret` is null
+  }, [amount, clientSecret, product, selectedSize, quantity, formData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -194,7 +201,15 @@ const Buy = ({ product, selectedSize, quantity, setShowOrderForm }) => {
 
           {/* Stripe Payment Form */}
           <Elements stripe={stripePromise}>
-            <CheckoutForm formData={formData} setFormData={setFormData} amount={totalAmount} setPaymentSuccessful={setPaymentSuccessful} />
+            <CheckoutForm 
+              formData={formData} 
+              setFormData={setFormData} 
+              amount={totalAmount} 
+              setPaymentSuccessful={setPaymentSuccessful}
+              product={product}
+              selectedSize={selectedSize}
+              quantity={quantity}
+            />
           </Elements>
 
           <div className="form-buttons">
