@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useRef, useCallback, useMemo, useEffect } from "react"
 import ModelViewer from "./ModelViewer"
 import TextureEditor from "./texture-editor/TextureEditor"
@@ -817,8 +819,11 @@ export default function ModelEditor() {
         <div className="canvas-card" style={{ backgroundColor }}>
           <Toolbar
             onRotate={(direction) => {
+              console.log("Rotate called with direction:", direction)
               if (canvasRef.current && canvasRef.current.handleRotate) {
                 canvasRef.current.handleRotate(direction)
+              } else {
+                console.error("Rotation handler not available on canvas ref")
               }
             }}
             onUndo={handleUndo}

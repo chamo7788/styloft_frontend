@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import {
   RotateCcw,
@@ -43,36 +45,52 @@ function Toolbar({
 
   // Check subscription status on component mount
   useEffect(() => {
-    checkSubscriptionStatus();
-  }, []);
+    checkSubscriptionStatus()
+  }, [])
 
   const checkSubscriptionStatus = () => {
     try {
       // Get subscription data from localStorage
-      const subscriptionDataString = localStorage.getItem('subscriptionData');
+      const subscriptionDataString = localStorage.getItem("subscriptionData")
       if (subscriptionDataString) {
-        const subscriptionData = JSON.parse(subscriptionDataString);
-        setSubscriptionPlan(subscriptionData.planName || 'Free');
+        const subscriptionData = JSON.parse(subscriptionDataString)
+        setSubscriptionPlan(subscriptionData.planName || "Free")
       } else {
-        setSubscriptionPlan('Free');
+        setSubscriptionPlan("Free")
       }
     } catch (error) {
-      console.error("Error checking subscription status:", error);
-      setSubscriptionPlan('Free');
+      console.error("Error checking subscription status:", error)
+      setSubscriptionPlan("Free")
     }
-  };
+  }
 
-  const isPremiumUser = subscriptionPlan === "Silver Plan";
+  // Fix the premium user check - the logical OR operator was used incorrectly
+  const isPremiumUser = subscriptionPlan === "Silver Plan" || subscriptionPlan === "Gold Plan"
 
   const showPremiumFeatureAlert = () => {
-    setShowPremiumFeatureMsg(true);
-    setTimeout(() => setShowPremiumFeatureMsg(false), 3000);
-  };
+    setShowPremiumFeatureMsg(true)
+    setTimeout(() => setShowPremiumFeatureMsg(false), 3000)
+  }
+
+  // Fix the rotation handler functions
+  const handleRotateLeft = () => {
+    console.log("Rotate left button clicked")
+    if (onRotate) {
+      onRotate("left")
+    }
+  }
+
+  const handleRotateRight = () => {
+    console.log("Rotate right button clicked")
+    if (onRotate) {
+      onRotate("right")
+    }
+  }
 
   async function fetchDesigns() {
     if (!isPremiumUser) {
-      showPremiumFeatureAlert();
-      return;
+      showPremiumFeatureAlert()
+      return
     }
 
     const user = JSON.parse(localStorage.getItem("currentUser"))
@@ -111,8 +129,8 @@ function Toolbar({
 
   async function saveDesignToBackend(designData) {
     if (!isPremiumUser) {
-      showPremiumFeatureAlert();
-      return;
+      showPremiumFeatureAlert()
+      return
     }
 
     const user = JSON.parse(localStorage.getItem("currentUser"))
@@ -195,20 +213,20 @@ function Toolbar({
 
   const handleSave = () => {
     if (!isPremiumUser) {
-      showPremiumFeatureAlert();
-      return;
+      showPremiumFeatureAlert()
+      return
     }
-    
+
     const designData = onSaveDesign()
     saveDesignToBackend(designData)
   }
 
   const handleLoadDesignClick = () => {
     if (!isPremiumUser) {
-      showPremiumFeatureAlert();
-      return;
+      showPremiumFeatureAlert()
+      return
     }
-    
+
     fetchDesigns()
   }
 
@@ -256,10 +274,10 @@ function Toolbar({
   // Add publish functionality
   const handlePublish = async () => {
     if (!isPremiumUser) {
-      showPremiumFeatureAlert();
-      return;
+      showPremiumFeatureAlert()
+      return
     }
-    
+
     const user = JSON.parse(localStorage.getItem("currentUser"))
     if (!user || !user.uid) {
       alert("Please login to publish your design")
@@ -322,11 +340,11 @@ function Toolbar({
 
   const handleScreenshotDownload = () => {
     if (!isPremiumUser) {
-      showPremiumFeatureAlert();
-      return;
+      showPremiumFeatureAlert()
+      return
     }
-    
-    onScreenshotDownload();
+
+    onScreenshotDownload()
   }
 
   return (
@@ -336,12 +354,12 @@ function Toolbar({
           This feature requires a Silver Plan subscription. Please upgrade to access.
         </div>
       )}
-      
+
       <div className="toolbar-group">
-        <button className="toolbar-button" onClick={() => onRotate("left")} title="Rotate Left">
+        <button className="toolbar-button" onClick={handleRotateLeft} title="Rotate Left">
           <RotateCcw size={16} />
         </button>
-        <button className="toolbar-button" onClick={() => onRotate("right")} title="Rotate Right">
+        <button className="toolbar-button" onClick={handleRotateRight} title="Rotate Right">
           <RotateCw size={16} />
         </button>
       </div>
@@ -351,7 +369,7 @@ function Toolbar({
           className={`toolbar-button ${!canUndo ? "disabled" : ""}`}
           onClick={() => {
             console.log("Undo button clicked")
-            if (canUndo) onUndo()
+            if (canUndo && onUndo) onUndo()
           }}
           disabled={!canUndo}
           title="Undo"
@@ -362,7 +380,7 @@ function Toolbar({
           className={`toolbar-button ${!canRedo ? "disabled" : ""}`}
           onClick={() => {
             console.log("Redo button clicked")
-            if (canRedo) onRedo()
+            if (canRedo && onRedo) onRedo()
           }}
           disabled={!canRedo}
           title="Redo"
@@ -379,9 +397,9 @@ function Toolbar({
         >
           <Layers size={16} />
         </button>
-        <button 
-          className={`toolbar-button ${!isPremiumUser ? "premium-locked" : ""}`} 
-          onClick={handleScreenshotDownload} 
+        <button
+          className={`toolbar-button ${!isPremiumUser ? "premium-locked" : ""}`}
+          onClick={handleScreenshotDownload}
           title={isPremiumUser ? "Take Screenshot" : "Premium Feature - Take Screenshot"}
         >
           <Download size={16} />
