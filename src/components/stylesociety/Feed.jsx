@@ -5,20 +5,23 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "../../assets/css/StyleSociety/Feed.css";
-import Dp from "../../assets/images/user-profile.png"; // Default avatar
+import Dp from "../../assets/images/user-profile.png"; 
 
 const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
   const [notifications, setNotifications] = useState([]);
   const [followed, setFollowed] = useState({});
   const [hiddenItems, setHiddenItems] = useState({});
   const [user, setUser] = useState(null);
+  
+  // Add this new state to track profile updates
+  const [profileUpdates, setProfileUpdates] = useState({});
 
   // Track logged-in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        await addFeed(currentUser.displayName || "Unknown User", currentUser.photoURL || Dp, currentUser.email);
+        await addFeed(currentUser.displayName || "Unknown User", currentUser.photoURL, currentUser.email);
         fetchFollowedUsers(currentUser.email);
       } else {
         setUser(null);
@@ -56,6 +59,45 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
 
     return () => unsubscribe();
   }, [user, followed]);
+  
+  // Enhanced profile update listener for feed users
+  useEffect(() => {
+    if (!notifications.length) return;
+    
+    // Create an array of email addresses from notifications
+    const emailsToWatch = notifications.map(item => item.email).filter(Boolean);
+    console.log("Watching profiles for emails:", emailsToWatch);
+    
+    // Set up listeners for each user
+    const unsubscribers = emailsToWatch.map(email => {
+      // Use the email as the document ID to match how profiles are stored
+      const userDocRef = doc(db, "users", email);
+      
+      return onSnapshot(userDocRef, (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const userData = docSnapshot.data();
+          console.log(`Profile update for ${email}:`, userData);
+          
+          setProfileUpdates(prev => ({
+            ...prev,
+            [email]: {
+              photoURL: userData.photoURL || null,
+              displayName: userData.displayName || userData.name || "Unknown User"
+            }
+          }));
+        } else {
+          console.log(`No document found for user ${email}`);
+        }
+      }, (error) => {
+        console.error(`Error listening to profile updates for ${email}:`, error);
+      });
+    });
+    
+    return () => {
+      // Clean up all listeners when component unmounts
+      unsubscribers.forEach(unsub => unsub());
+    };
+  }, [notifications]);
 
   // Add user to feed if not already present
   const addFeed = async (name, avatar, email) => {
@@ -125,26 +167,53 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
       <div className="Feed-header">
         <p>Your Feed</p>
       </div>
-      {notifications.map((item) =>
-        hiddenItems[item.id] ? null : (
-          <div key={item.id} className="Feed-item">
-            <img src={item.avatar || Dp} className="Feed-avatar" />
-            <div className="Feed-info">
-              <p className="Feed-title">{item.name}</p>
-            </div>
+      {notifications.length === 0 ? (
+        <div className="empty-feed-message">
+          <p>No new users to follow at this time</p>
+        </div>
+      ) : (
+        notifications.map((item) =>
+          hiddenItems[item.id] ? null : (
+            <div key={item.id} className="Feed-item">
+              {/* Debug data */}
+              {console.log("Rendering feed item:", item.email, {
+                profileUpdateAvailable: !!profileUpdates[item.email],
+                profilePhotoURL: profileUpdates[item.email]?.photoURL,
+                originalAvatar: item.avatar
+              })}
+              
+              <img 
+                src={
+                  (profileUpdates[item.email] && profileUpdates[item.email].photoURL) || 
+                  item.avatar 
+                } 
+                className="Feed-avatar"
+                alt={item.name || "User avatar"}
+                onError={(e) => {
+                  console.log("Image failed to load, using default");
+                  e.target.onerror = null; // Prevent infinite error loop
+                  e.target.src = Dp;
+                }}
+              />
+              <div className="Feed-info">
+                <p className="Feed-title">
+                  {(profileUpdates[item.email] && profileUpdates[item.email].displayName) || item.name}
+                </p>
+              </div>
 
-            <div className="Feed-actions">
-              <button
-                className={`followbtn ${followed[item.email] ? "following" : ""}`}
-                onClick={() => handleFollow(item.email, item.id)}
-              >
-                {followed[item.email] ? "Following" : "+ Follow"}
-              </button>
-              <button className="deletebtn" onClick={() => handleDelete(item.id)}>
-                🗑 Delete
-              </button>
+              <div className="Feed-actions">
+                <button
+                  className={`followbtn ${followed[item.email] ? "following" : ""}`}
+                  onClick={() => handleFollow(item.email, item.id)}
+                >
+                  {followed[item.email] ? "Following" : "+ Follow"}
+                </button>
+                <button className="deletebtn" onClick={() => handleDelete(item.id)}>
+                  🗑 Delete
+                </button>
+              </div>
             </div>
-          </div>
+          )
         )
       )}
     </div>
