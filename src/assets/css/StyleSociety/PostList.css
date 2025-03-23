@@ -245,6 +245,39 @@
   border-radius: 8px;
 }
 
+/* Loader Container */
+.post-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px; /* Adjust based on your layout */
+  text-align: center;
+}
+
+/* Spinning Loader */
+.post-loading-spinner {
+  width: 40px;
+  height: 40px;
+  color: #0a66c2;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+/* Keyframes for Loader Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Loading Text */
+.post-loading-container p {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .post-list {

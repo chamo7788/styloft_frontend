@@ -15,7 +15,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
   
   // Add this new state to track profile updates
   const [profileUpdates, setProfileUpdates] = useState({});
-
+  const [loading, setLoading] = useState(true); // <-- Added state for loader
   // Track logged-in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -55,6 +55,7 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
         .filter((item) => item.email !== user.email && !followed[item.email]);
 
       setNotifications(feedData);
+      setLoading(false); // <-- Set loading to false when data is loaded
     });
 
     return () => unsubscribe();
@@ -163,6 +164,12 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
   };
 
   return (
+    <div className="feds">
+       {loading ? ( 
+        <div className="feed-loader-container">
+          <div className="feed-loader"></div>
+        </div>
+      ) : (
     <div className="Feed-container">
       <div className="Feed-header">
         <p>Your Feed</p>
@@ -215,6 +222,8 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
             </div>
           )
         )
+      )}
+    </div>
       )}
     </div>
   );
