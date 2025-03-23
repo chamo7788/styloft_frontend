@@ -5,6 +5,8 @@ import CreatePost from "./CreatePost";
 import "../../assets/css/StyleSociety/AddPost.css";
 import Dp from "../../assets/images/s-societybackground.jpg"; // Default image in case user image is not available
 import { useNavigate } from "react-router-dom"; // Import useNavigate for routing
+import { auth, db } from "../../firebaseConfig"; // Import firebase configs
+import { doc, getDoc } from "firebase/firestore"; // Firestore functions
 
 const AddPost = ({ setPosts }) => {
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
@@ -12,10 +14,45 @@ const AddPost = ({ setPosts }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate(); // Initialize navigate for routing
 
-  // Fetch current user from localStorage
+  // Fetch current user data including the latest profile photo
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-    setCurrentUser(user); // Set user data from localStorage
+    const fetchUserData = async () => {
+      // First get basic user info from localStorage
+      const userFromStorage = JSON.parse(localStorage.getItem("currentUser"));
+      
+      if (userFromStorage && userFromStorage.uid) {
+        // Set initial user data from localStorage
+        setCurrentUser(userFromStorage);
+        
+        try {
+          // Then fetch the latest user data from Firestore to ensure we have the most recent photo
+          const userDocRef = doc(db, "users", userFromStorage.uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // Update the current user state with the latest data from Firestore
+            setCurrentUser(prevUser => ({
+              ...prevUser,
+              photoURL: userData.photoURL || prevUser.photoURL,
+              displayName: userData.displayName || prevUser.displayName
+            }));
+            
+            // Update localStorage with the latest user data
+            localStorage.setItem("currentUser", JSON.stringify({
+              ...userFromStorage,
+              photoURL: userData.photoURL || userFromStorage.photoURL,
+              displayName: userData.displayName || userFromStorage.displayName
+            }));
+          }
+        } catch (error) {
+          console.error("Error fetching latest user data:", error);
+        }
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   const handleOpenCreatePost = () => {
@@ -73,5 +110,3 @@ const AddPost = ({ setPosts }) => {
 };
 
 export default AddPost;
-
-

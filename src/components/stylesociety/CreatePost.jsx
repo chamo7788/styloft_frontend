@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faImage, faSmile, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import EmojiPicker from "emoji-picker-react";
@@ -18,8 +18,35 @@ function CreatePost({ onClose, setPosts }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser"));
-    setCurrentUser(user);
+    const fetchUserData = async () => {
+      // First get user from localStorage for basic info
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      
+      if (user && user.uid) {
+        try {
+          // Then fetch the latest user data from Firestore to get the updated profile photo
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // Update the user object with the latest data from Firestore
+            setCurrentUser({
+              ...user,
+              photoURL: userData.photoURL || user.photoURL || Dp,
+              displayName: userData.displayName || user.displayName || "Anonymous"
+            });
+          } else {
+            setCurrentUser(user);
+          }
+        } catch (error) {
+          console.error("Error fetching updated user data:", error);
+          setCurrentUser(user);
+        }
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   const handlePostClick = async () => {
@@ -33,6 +60,7 @@ function CreatePost({ onClose, setPosts }) {
         createdAt: serverTimestamp(),
         userName: currentUser?.displayName || "Anonymous",
         userProfile: currentUser?.photoURL || Dp,
+        userId: currentUser?.uid, // Store user ID with post for easier querying
       };
 
       const docRef = await addDoc(collection(db, "posts"), newPost);
@@ -190,6 +218,3 @@ function CreatePost({ onClose, setPosts }) {
 }
 
 export default CreatePost;
-
-
-

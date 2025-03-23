@@ -1,185 +1,280 @@
 .purchase-history {
-    background-color: white;
+  background-color: white;
+ 
+  overflow: hidden;
+  margin: 1.5rem auto;
+  max-width: 1000px;
+  transition: box-shadow 0.3s ease;
+}
+
+.purchase-history:hover {
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.12);
+}
+
+.purchase-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+  position: relative;
+}
+
+.purchase-history-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 3px;
+  background-color: #6366f1;
+  transition: width 0.3s ease;
+}
+
+.purchase-history:hover .purchase-history-header::after {
+  width: 150px;
+}
+
+.purchase-history-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.purchase-history-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 1rem;
+  background-color: #6366f1;
+  border-radius: 2px;
+}
+
+.purchase-history-view-all {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: 1px solid transparent;
+  color: #6366f1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.purchase-history-view-all:hover {
+  background-color: rgba(99, 102, 241, 0.05);
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateY(-1px);
+}
+
+.purchase-history-content {
+  padding: 1.5rem;
+}
+
+.purchase-history table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+}
+
+.purchase-history th, 
+.purchase-history td {
+  text-align: left;
+  padding: 1rem 1.25rem;
+}
+
+.purchase-history th {
+  background-color: rgba(99, 102, 241, 0.03);
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+  position: relative;
+}
+
+.purchase-history th:first-child {
+  border-top-left-radius: 0.5rem;
+}
+
+.purchase-history th:last-child {
+  border-top-right-radius: 0.5rem;
+}
+
+.purchase-history tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.3s ease;
+}
+
+.purchase-history tbody tr:last-child {
+  border-bottom: none;
+}
+
+.purchase-history tbody tr:hover {
+  background-color: rgba(99, 102, 241, 0.03);
+  transform: translateX(4px);
+}
+
+.purchase-history td {
+  color: #6b7280;
+  border-bottom: 1px solid #f3f4f6;
+  transition: color 0.2s ease;
+}
+
+.purchase-history tbody tr:hover td {
+  color: #4b5563;
+}
+
+.purchase-history td:first-child {
+  font-weight: 500;
+  color: #111827;
+}
+
+.purchase-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.purchase-history-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: white;
+  border: 1px solid #f3f4f6;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.purchase-history-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.purchase-history-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.purchase-history-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.purchase-history-id {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.purchase-history-item:hover .purchase-history-id {
+  color: #6366f1;
+}
+
+.purchase-history-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.purchase-history-date {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Amount styling */
+.purchase-history td:nth-child(2) {
+  font-weight: 600;
+  color: #6366f1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Loading and error states */
+.purchase-history p {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.purchase-history p:first-of-type {
+  animation: pulse 1.5s infinite;
+  color: #6366f1;
+}
+
+/* Empty state styling */
+.purchase-history tbody tr:only-child td {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .purchase-history {
     border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
   }
   
   .purchase-history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  
-  .purchase-history-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-    margin: 0;
-  }
-  
-  .purchase-history-view-all {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: none;
-    border: none;
-    color: #6b7280;
-    font-size: 0.875rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-  }
-  
-  .purchase-history-view-all:hover {
-    background-color: #f3f4f6;
-    color: #111827;
+    padding: 1.25rem;
   }
   
   .purchase-history-content {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   
-  .purchase-history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .purchase-history th, 
+  .purchase-history td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
   }
   
-  .purchase-history-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border-radius: 0.375rem;
-    background-color: #f9fafb;
+  .purchase-history tbody tr:hover {
+    transform: none;
   }
-  
-  .purchase-history-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .purchase-history-main {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .purchase-history-title {
-    font-weight: 600;
-    color: #111827;
-    margin: 0;
-  }
-  
-  .purchase-history-id {
-    font-size: 0.75rem;
-    color: #6b7280;
-    margin: 0;
-  }
-  
-  .purchase-history-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
-  }
-  
-  .purchase-history-date {
-    font-size: 0.75rem;
-    color: #6b7280;
-    margin: 0;
-  }
-  
-  .purchase-history-status {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 9999px;
-    background-color: #f3f4f6;
-    color: #4b5563;
-    border: 1px solid #e5e7eb;
-  }
-  
-  .purchase-history-financials {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .purchase-history-amount,
-  .purchase-history-profit {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .amount-label,
-  .profit-label {
-    font-size: 0.75rem;
-    color: #6b7280;
-  }
-  
-  .amount-value {
-    font-weight: 600;
-    color: #111827;
-  }
-  
-  .profit-value {
-    font-weight: 600;
-    color: #10b981;
-  }
-  
-  .purchase-history-download {
-    background: none;
-    border: none;
-    color: #6b7280;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .purchase-history-download:hover {
-    background-color: #f3f4f6;
-    color: #111827;
-  }
-  
-  .purchase-history-total-profit {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
-  }
-  
-  .total-profit-label {
-    font-weight: 600;
-    color: #111827;
-  }
-  
-  .total-profit-value {
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: #10b981;
-  }
-  
-  @media (min-width: 640px) {
-    .purchase-history-item {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-  
-    .purchase-history-financials {
-      flex-shrink: 0;
-    }
-  }
-  
+}
+
+/* Hover effect for table rows */
+@keyframes highlightRow {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.purchase-history tbody tr:hover {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(99, 102, 241, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: highlightRow 1s ease-in-out;
+}

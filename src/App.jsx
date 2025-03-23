@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Home, StyleSociety, Login, Register, StyleStudio, Stylemarket,Subscription,DashBoard,RequestForm } from "./pages";
+import { Home, StyleSociety, Login, Register, StyleStudio, Stylemarket,Subscription,DashBoard} from "./pages";
 import { Navbar, Footer } from "./components";
 import { Provider } from "react-redux";  
 import { store } from "./redux/store";  
@@ -9,6 +9,8 @@ import { AddShopForm } from "./components/styleMarket/AddShopForm";
 import PaymentPage from "./components/Subscription/PaymentPage";
 import './assets/css/fonts.css';
 import FavoriteSubmissions from "./components/contest/FavoriteSubmissions";
+import GarmentRequestForm from "./components/RequestForm/GarmentRequestForm";
+
 
 function App() {
   const location = useLocation();
@@ -31,8 +33,8 @@ function App() {
         <Route path="/contest/:id/favorites" element={<FavoriteSubmissions />} />
         <Route path="/styleMarket/add-shop" element={<AddShopForm />} />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/request-form" element={<GarmentRequestForm />} />
         <Route path="/DashBoard" element={<DashBoard />} />
-        <Route path="/RequestForm" element={<RequestForm />} />
         <Route path="/sub-plans" element={<Subscription />} />
         <Route path="/payment/:planId" element={<PaymentPage />} />
         <Route path="/profile" element={<Profile />} />

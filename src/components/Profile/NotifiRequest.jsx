@@ -53,16 +53,16 @@ const NotifiRequest = () => {
     setShowDropdown(!showDropdown);
   };
 
+  // Add this function to handle navigation to the request form
+  const handleCreateRequest = () => {
+    navigate('/request-form');
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
   
-  // Function to handle the Create New Request button click
-  const handleCreateRequest = () => {
-    navigate('/request-form'); // Navigates to the request form page
-  };
-
   return (
     <div className="NotifiRequest">
       <div className="request-buttons">
@@ -94,7 +94,7 @@ const NotifiRequest = () => {
                     />
                     <span className="notification-garment">{notification.garmentLabel}</span>
                   </div>
-                  <p className="notification-text">{notification.requestText}</p>
+                  <p className="notification-text">Request: {notification.requestText}</p>
                   <span className="notification-date">{formatDate(notification.date)}</span>
                   <span className="notification-status">Status: {notification.status}</span>
                 </li>
