@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../firebaseConfig";
 import { 
-  collection, addDoc, doc, setDoc, query, where, getDocs, onSnapshot 
+  collection, addDoc, doc, setDoc, query, where, getDocs, onSnapshot, updateDoc, arrayUnion 
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "../../assets/css/StyleSociety/Feed.css";
@@ -133,20 +133,42 @@ const Feed = ({ updateFollowingCount, updateFollowerCount }) => {
     }, 3000);
 
     try {
-      const followingRef = doc(db, "users", user.email, "following", followedUserEmail);
-      const followerRef = doc(db, "users", followedUserEmail, "followers", user.email);
-
-      // Add to "following" collection of the logged-in user
-      await setDoc(followingRef, { email: followedUserEmail });
-
-      // Add to "followers" collection of the followed user
-      await setDoc(followerRef, { email: user.email });
-
-      console.log("✅ Followed:", followedUserEmail);
-
-      // Update counters
-      updateFollowingCount(user.email);
-      updateFollowerCount(followedUserEmail);
+      // Get the user document for both users
+      const currentUserDoc = doc(db, "users", user.uid);
+      
+      // Need to get the user ID from email
+      const followedUserQuery = query(collection(db, "users"), where("email", "==", followedUserEmail));
+      const followedUserSnapshot = await getDocs(followedUserQuery);
+      
+      if (!followedUserSnapshot.empty) {
+        const followedUserDoc = followedUserSnapshot.docs[0];
+        const followedUserId = followedUserDoc.id;
+        
+        // Add to current user's following array
+        await updateDoc(currentUserDoc, {
+          following: arrayUnion(followedUserId)
+        });
+        
+        // Add to followed user's followers array
+        await updateDoc(doc(db, "users", followedUserId), {
+          followers: arrayUnion(user.uid)
+        });
+        
+        console.log("✅ Followed:", followedUserEmail);
+        
+        // For backwards compatibility, also update the old structure
+        const followingRef = doc(db, "users", user.email, "following", followedUserEmail);
+        const followerRef = doc(db, "users", followedUserEmail, "followers", user.email);
+        
+        await setDoc(followingRef, { email: followedUserEmail });
+        await setDoc(followerRef, { email: user.email });
+        
+        // Update counters
+        updateFollowingCount(user.email);
+        updateFollowerCount(followedUserEmail);
+      } else {
+        console.error("Could not find user document for:", followedUserEmail);
+      }
     } catch (error) {
       console.error("❌ Error following user:", error);
     }
