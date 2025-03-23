@@ -54,7 +54,7 @@ export default function ContestContent() {
       setTimeLeft(calculateTimeLeft(new Date(contest?.deadline)))
     }, 1000)
     return () => clearInterval(timer)
-  }, [timeLeft, contest?.deadline])
+  }, [ contest?.deadline])
 
   // Fetch submissions
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function ContestContent() {
     fetchSubmissions()
   }, [id, isSubmitted])
 
-  // Fetch favorite submissions
+  // // Fetch favorite submissions
   useEffect(() => {
     // Only fetch favorites if the current user is the contest creator
     if (contest && currentUser && currentUser.uid === contest.createdBy) {
@@ -98,7 +98,7 @@ export default function ContestContent() {
       }
       fetchFavorites()
     }
-  }, [id, contest, currentUser])
+  }, [id, contest])
 
   useEffect(() => {
     if (contest) {
@@ -722,6 +722,7 @@ export default function ContestContent() {
           )}
         </div>
       </div>
+      {console.log('repeater----')}
 
       <div className="submission-gallery">
         <div className="gallery-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

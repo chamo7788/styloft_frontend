@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
 import "../../assets/css/contest/ContestContent.css"
-import { User, Clock, Award, X, Image, Star, Heart, ArrowLeft } from "lucide-react"
+import "../../assets/css/contest/favoriteSubmissions.css"
+import { User, Clock, Award, X, Image, Star, Heart, ArrowLeft, Crown } from "lucide-react"
 
 export default function FavoriteSubmissions() {
   const { id } = useParams()
@@ -11,6 +12,7 @@ export default function FavoriteSubmissions() {
   const [contest, setContest] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedSubmission, setSelectedSubmission] = useState(null)
+  const [winnerSubmissionId, setWinnerSubmissionId] = useState(null)
   
   const currentUser = JSON.parse(localStorage.getItem("currentUser"))
 
@@ -22,6 +24,7 @@ export default function FavoriteSubmissions() {
         if (!response.ok) throw new Error("Failed to fetch contest")
         const data = await response.json()
         setContest(data)
+        setWinnerSubmissionId(data.winner) // Store the current winner submission ID if any
       } catch (error) {
         console.error("Error fetching contest:", error)
         setError("Failed to load contest details")
@@ -35,16 +38,13 @@ export default function FavoriteSubmissions() {
     const fetchFavorites = async () => {
       setIsLoading(true);
       try {
-        console.log(`Fetching favorites from: http://localhost:3000/submission/contest/${id}/favorites`);
         const response = await fetch(`http://localhost:3000/submission/contest/${id}/favorites`);
         
         if (!response.ok) {
-          console.error(`Error response: ${response.status}`, response.statusText);
           throw new Error(`Failed to fetch favorite submissions: ${response.statusText}`);
         }
         
         const data = await response.json();
-        console.log('Favorites data received:', data);
         setFavoriteSubmissions(data);
       } catch (error) {
         console.error("Error fetching favorite submissions:", error);
@@ -56,6 +56,36 @@ export default function FavoriteSubmissions() {
     
     fetchFavorites();
   }, [id]);
+
+  // Handle winner selection
+  const handleSelectWinner = async (submissionId) => {
+    if (!isContestCreator) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3000/contest/${id}/winner`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ winnerId: submissionId })
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to set winner");
+      }
+      
+      const updatedContest = await response.json();
+      
+      // Update local winner state
+      setWinnerSubmissionId(submissionId);
+      
+      // Find submission info to display in alert
+      const selectedSubmission = favoriteSubmissions.find(sub => sub.id === submissionId);
+      alert(`${selectedSubmission.userName}'s submission has been selected as the winner!`);
+      
+    } catch (error) {
+      console.error("Error selecting winner:", error);
+      alert("Failed to select winner. Please try again.");
+    }
+  };
 
   const openModal = (submission) => {
     setSelectedSubmission(submission)
@@ -124,14 +154,6 @@ export default function FavoriteSubmissions() {
         <Link 
           to={`/contest/${id}`} 
           className="back-link"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            color: "#3b82f6",
-            textDecoration: "none",
-            marginTop: "10px"
-          }}
         >
           <ArrowLeft size={16} />
           <span>Back to Contest</span>
@@ -154,6 +176,12 @@ export default function FavoriteSubmissions() {
               <div key={submission.id} className="submission-card">
                 <div className="submission-image-container" onClick={() => openModal(submission)}>
                   <img src={submission.fileUrl || "/placeholder.svg"} alt="Submission" className="submission-image" />
+                  {winnerSubmissionId === submission.id && (
+                    <div className="winner-badge">
+                      <Crown size={16} />
+                      <span>Winner</span>
+                    </div>
+                  )}
                 </div>
                 <div className="submission-info">
                   <div className="submission-user">
@@ -165,6 +193,20 @@ export default function FavoriteSubmissions() {
                   <StarRating rating={submission.rating || 0} />
                   
                   {submission.message && <p className="submission-message">{submission.message}</p>}
+                  
+                  {/* Crown button for selecting winner */}
+                  {isContestCreator && (
+                    <button
+                      className={`crown-button ${winnerSubmissionId === submission.id ? 'selected' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectWinner(submission.id);
+                      }}
+                    >
+                      <Crown size={16} />
+                      <span>{winnerSubmissionId === submission.id ? "Selected as Winner" : "Select as Winner"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -183,6 +225,12 @@ export default function FavoriteSubmissions() {
               <div className="modal-info">
                 <h3>{selectedSubmission.userName}</h3>
                 {selectedSubmission.message && <p>{selectedSubmission.message}</p>}
+                {winnerSubmissionId === selectedSubmission.id && (
+                  <div className="winner-badge-modal">
+                    <Crown size={16} />
+                    <span>Contest Winner</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
