@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom"
 import "../../assets/css/contest/ContestContent.css"
 import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star, Heart, Trophy, DollarSign, Info } from "lucide-react"
 import SubmissionChatView from "./SubmissionChatView"
+import SubmissionForm from "./SubmissionForm";
+import SubmissionGallery from "./SubmissionGallery";
 
 export default function ContestContent() {
   const { id } = useParams()
@@ -586,7 +588,7 @@ export default function ContestContent() {
                     
                     return (
                       <div className="winner-content">
-                        <div className="winner-badge">
+                        <div className="Winner-Selected">
                           <Award size={36} color="#f59e0b" />
                           <h3>Winner Selected!</h3>
                         </div>
@@ -728,230 +730,40 @@ export default function ContestContent() {
           ) : (
             // Your existing submission form for regular users
             <>
-              {isSubmitted ? (
-                <div className="submission-success">
-                  <CheckCircle size={48} className="success-icon" />
-                  <h3>Submission Successful!</h3>
-                  <p>Your design has been submitted to the contest.</p>
-                </div>
-              ) : (
-                <>
-                  <h2 className="submission-title">Submit Your Design</h2>
-
-                  <div
-                    className={`upload-box ${isDragging ? "dragging" : ""} ${errorMessage ? "error" : ""}`}
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                    onClick={() => document.getElementById("file-upload").click()}
-                  >
-                    <input
-                      id="file-upload"
-                      type="file"
-                      onChange={handleImageUpload}
-                      className="file-input"
-                      accept="image/jpeg,image/png,image/jpg"
-                      style={{ display: "none" }}
-                    />
-
-                    {imagePreview ? (
-                      <div className="image-preview-container">
-                        <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="submission-image-preview" />
-                        <button
-                          className="remove-image-btn"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleClearForm()
-                          }}
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="upload-placeholder">
-                        <div className="upload-icon-container">
-                          <Upload size={24} className="upload-icon" />
-                        </div>
-                        <p className="upload-text">Drag and drop your design here</p>
-                        <p className="upload-subtext">or click to browse files</p>
-                        <p className="upload-formats">Supported formats: JPG, PNG</p>
-                      </div>
-                    )}
-
-                    {isUploading && (
-                      <div className="upload-overlay">
-                        <div className="upload-spinner"></div>
-                        <p>Uploading...</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {errorMessage && (
-                    <div className="error-message">
-                      <X size={16} />
-                      <span>{errorMessage}</span>
-                    </div>
-                  )}
-
-                  <div className="message-container">
-                    <label htmlFor="message" className="message-label">
-                      <MessageSquare size={16} />
-                      <span>Add a message with your submission</span>
-                    </label>
-                    <textarea
-                      id="message"
-                      className="message-input"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Describe your design or add any notes for the contest creator..."
-                    />
-                  </div>
-
-                  <div className="button-group">
-                    <button className="submit-btn" onClick={handleSubmit} disabled={isUploading || isDeadlinePassed}>
-                      {isUploading ? "Uploading..." : "Submit Design"}
-                    </button>
-                    <button className="clear-btn" onClick={handleClearForm}>
-                      Clear Form
-                    </button>
-                  </div>
-
-                  {isDeadlinePassed && (
-                    <div className="deadline-passed-message">
-                      <Clock size={16} />
-                      <span>This contest has ended and is no longer accepting submissions.</span>
-                    </div>
-                  )}
-                </>
-              )}
+              <SubmissionForm
+                isSubmitted={isSubmitted}
+                isDragging={isDragging}
+                errorMessage={errorMessage}
+                imagePreview={imagePreview}
+                isUploading={isUploading}
+                newMessage={newMessage}
+                isDeadlinePassed={isDeadlinePassed}
+                handleDragEnter={handleDragEnter}
+                handleDragLeave={handleDragLeave}
+                handleDragOver={handleDragOver}
+                handleDrop={handleDrop}
+                handleImageUpload={handleImageUpload}
+                handleClearForm={handleClearForm}
+                handleSubmit={handleSubmit}
+                setNewMessage={setNewMessage}
+              />
             </>
           )}
         </div>
       </div>
       {console.log('repeater----')}
 
-      <div className="submission-gallery">
-        <div className="gallery-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h2 className="gallery-title">
-            <Image size={20} />
-            <span>Submissions ({submissions.length})</span>
-          </h2>
-          
-          {isContestCreator && (
-            <Link 
-              to={`/contest/${id}/favorites`} 
-              className="favorites-button"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                background: "#3b82f6",
-                color: "white",
-                padding: "8px 16px",
-                borderRadius: "4px",
-                textDecoration: "none",
-                fontSize: "14px"
-              }}
-            >
-              <Heart size={16} />
-              <span>Favorites</span>
-            </Link>
-          )}
-        </div>
-
-        {submissions.length === 0 ? (
-          <div className="no-submissions">
-            <p>No submissions yet. Be the first to submit your design!</p>
-          </div>
-        ) : (
-          <div className="submission-cards">
-            {submissions.map((submission) => (
-              <div key={submission.id} className="submission-card">
-                <div className="submission-image-container" onClick={() => openModal(submission)}>
-                  <img src={submission.fileUrl || "/placeholder.svg"} alt="Submission" className="submission-image" />
-                  
-                  {/* Add winner badge if this is the winner */}
-                  {contest.winner === submission.id && (
-                    <div className="winner-badge-overlay">
-                      <Trophy size={24} color="#f59e0b" />
-                      <span>Winner</span>
-                    </div>
-                  )}
-                  
-                  {/* Add favorite button inside the image container instead of in the actions section */}
-                  {isContestCreator && (
-                    <button
-                      className="favorite-button"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent opening the modal
-                        handleToggleFavorite(submission.id);
-                      }}
-                    >
-                      <Heart 
-                        size={20} 
-                        fill={submission.favorite ? "#ef4444" : "none"} 
-                        color={submission.favorite ? "#ef4444" : "#666"} 
-                      />
-                      <span>{submission.favorite ? "Unfavorite" : "Favorite"}</span>
-                    </button>
-                  )}
-                </div>
-                <div className="submission-info">
-                  <div className="submission-user">
-                    <User size={16} className="user-icon" />
-                    <span>{submission.userName}</span>
-                  </div>
-                  
-                  {/* Star Rating Component */}
-                  <StarRating 
-                    rating={submission.rating || 0} 
-                    submissionId={submission.id} 
-                    readOnly={!isContestCreator} 
-                  />
-                  
-                  {submission.message && <p className="submission-message">{submission.message}</p>}
-
-                  <div className="submission-actions">
-                    {canChatWithSubmission(submission) && (
-                      <button
-                        className="chat-button"
-                        onClick={() => openChatModal(submission)}
-                      >
-                        <MessageSquare size={16} />
-                        <span>Chat</span>
-                      </button>
-                    )}
-                    
-                    {/* Add Set as Winner button for contest creator when deadline passed */}
-                    {isContestCreator && isDeadlinePassed && !contest.winner && (
-                      <button
-                        className="winner-button"
-                        onClick={() => handleSetWinner(submission.id)}
-                        style={{
-                          marginTop: "10px",
-                          padding: "5px 10px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          background: "#f59e0b",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <Trophy size={16} />
-                        <span>Set as Winner</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <SubmissionGallery
+        submissions={submissions}
+        contest={contest}
+        isContestCreator={isContestCreator}
+        isDeadlinePassed={isDeadlinePassed}
+        handleToggleFavorite={handleToggleFavorite}
+        openModal={openModal}
+        openChatModal={openChatModal}
+        handleSetWinner={handleSetWinner}
+        canChatWithSubmission={canChatWithSubmission}
+      />
 
       {isModalOpen && selectedSubmission && (
         <div className="modal-overlay" onClick={closeModal}>

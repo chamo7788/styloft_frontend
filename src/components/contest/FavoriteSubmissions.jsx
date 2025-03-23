@@ -146,7 +146,7 @@ export default function FavoriteSubmissions() {
   }
 
   return (
-    <div className="contest-content-page">
+    <div className="favorite-submission-page">
       <div className="contest-header">
         <h1 className="contest-header-title">
           {contest ? `${contest.title} - Favorites` : 'Favorite Submissions'}
@@ -197,7 +197,7 @@ export default function FavoriteSubmissions() {
                   {/* Crown button for selecting winner */}
                   {isContestCreator && (
                     <button
-                      className={`crown-button ${winnerSubmissionId === submission.id ? 'selected' : ''}`}
+                      className={`crown-icon ${winnerSubmissionId === submission.id ? 'selected' : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSelectWinner(submission.id);
