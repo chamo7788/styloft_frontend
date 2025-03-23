@@ -566,6 +566,7 @@ body {
 }
 
 .submission-image-container {
+  position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
@@ -851,4 +852,153 @@ body {
 
 .edit-form textarea.message-input {
   min-height: 120px;
+}
+
+
+/* Add this to your ContestContent.css file */
+
+/* Winner display styles */
+.winner-display {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.winner-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+.winner-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: #fffbeb;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border-left: 4px solid #f59e0b;
+}
+
+.winner-badge h3 {
+  color: #d97706;
+  font-weight: 600;
+  margin: 0;
+}
+
+.winner-image-container {
+  margin-bottom: 15px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.winner-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.winner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.winner-name,
+.winner-prize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4b5563;
+}
+
+.winner-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background-color: #f9fafb;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 5px;
+}
+
+.winner-message p {
+  margin: 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.select-winner-prompt,
+.pending-winner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  padding: 30px 20px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+}
+
+.winner-selection-help {
+  display: flex;
+  gap: 8px;
+  background-color: #e0f2fe;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-top: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+
+.submission-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Favorite button styles for heart icon in top right */
+.favorite-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.favorite-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.favorite-button span {
+  display: none;
+  /* Hide the text */
+}
+
+/* Make sure submission image container has position relative for absolute positioning */
+.submission-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
 }

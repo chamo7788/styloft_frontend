@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
 import "../../assets/css/contest/ContestContent.css"
-import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star, Heart } from "lucide-react"
+import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star, Heart, Trophy, DollarSign, Info } from "lucide-react"
 import SubmissionChatView from "./SubmissionChatView"
 
 export default function ContestContent() {
@@ -438,6 +438,39 @@ export default function ContestContent() {
     )
   }
 
+  const handleSetWinner = async (submissionId) => {
+    if (!currentUser || !isContestCreator || !isDeadlinePassed) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3000/contest/${id}/winner`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          winnerId: submissionId
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to set winner");
+      }
+      
+      const updatedContest = await response.json();
+      
+      // Update the contest state
+      setContest({
+        ...contest,
+        winner: submissionId
+      });
+      
+      alert("Winner successfully selected!");
+      
+    } catch (error) {
+      console.error("Error setting winner:", error);
+      setErrorMessage("Failed to set winner. Please try again.");
+    }
+  };
+
   if (!contest) {
     return (
       <div className="contest-loading">
@@ -535,8 +568,82 @@ export default function ContestContent() {
         </div>
 
         <div className="contest-right">
-          {isContestCreator ? (
-            // Contest Creator View - Edit Form
+          {isDeadlinePassed ? (
+            // Show Winner Display when contest has ended
+            <div className="winner-display">
+              <h2 className="winner-title">Contest Results</h2>
+              
+              {contest.winner ? (
+                <>
+                  {/* Find the winning submission */}
+                  {(() => {
+                    const winningSubmission = submissions.find(sub => sub.id === contest.winner);
+                    if (!winningSubmission) return (
+                      <div className="winner-loading">
+                        <p>Loading winner information...</p>
+                      </div>
+                    );
+                    
+                    return (
+                      <div className="winner-content">
+                        <div className="winner-badge">
+                          <Award size={36} color="#f59e0b" />
+                          <h3>Winner Selected!</h3>
+                        </div>
+                        
+                        <div className="winner-image-container">
+                          <img 
+                            src={winningSubmission.fileUrl || "/placeholder.svg"} 
+                            alt="Winning Design" 
+                            className="winner-image" 
+                          />
+                        </div>
+                        
+                        <div className="winner-info">
+                          <div className="winner-name">
+                            <Trophy size={18} color="#f59e0b" />
+                            <span>Congratulations to <strong>{winningSubmission.userName}</strong></span>
+                          </div>
+                          
+                          <div className="winner-prize">
+                            <DollarSign size={18} />
+                            <span>Prize: <strong>${contest.prize}</strong></span>
+                          </div>
+                          
+                          {winningSubmission.message && (
+                            <div className="winner-message">
+                              <MessageSquare size={16} />
+                              <p>"{winningSubmission.message}"</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </>
+              ) : isContestCreator ? (
+                // Contest creator can select a winner
+                <div className="select-winner-prompt">
+                  <Trophy size={24} />
+                  <h3>Select a Winner</h3>
+                  <p>The contest has ended. Please select a winning submission from the gallery below.</p>
+                  
+                  <div className="winner-selection-help">
+                    <Info size={16} />
+                    <p>Click on "Set as Winner" button on a submission card to declare the winner.</p>
+                  </div>
+                </div>
+              ) : (
+                // Regular users see this when no winner selected yet
+                <div className="pending-winner">
+                  <Clock size={24} />
+                  <h3>Contest Ended</h3>
+                  <p>This contest has ended. The contest creator will select a winner soon.</p>
+                </div>
+              )}
+            </div>
+          ) : isContestCreator ? (
+            // Your existing contest creator edit form
             <>
               <h2 className="submission-title">Edit Contest Details</h2>
               
@@ -619,7 +726,7 @@ export default function ContestContent() {
               </div>
             </>
           ) : (
-            // Regular User View - Submission Form (Keep your existing code)
+            // Your existing submission form for regular users
             <>
               {isSubmitted ? (
                 <div className="submission-success">
@@ -763,6 +870,32 @@ export default function ContestContent() {
               <div key={submission.id} className="submission-card">
                 <div className="submission-image-container" onClick={() => openModal(submission)}>
                   <img src={submission.fileUrl || "/placeholder.svg"} alt="Submission" className="submission-image" />
+                  
+                  {/* Add winner badge if this is the winner */}
+                  {contest.winner === submission.id && (
+                    <div className="winner-badge-overlay">
+                      <Trophy size={24} color="#f59e0b" />
+                      <span>Winner</span>
+                    </div>
+                  )}
+                  
+                  {/* Add favorite button inside the image container instead of in the actions section */}
+                  {isContestCreator && (
+                    <button
+                      className="favorite-button"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent opening the modal
+                        handleToggleFavorite(submission.id);
+                      }}
+                    >
+                      <Heart 
+                        size={20} 
+                        fill={submission.favorite ? "#ef4444" : "none"} 
+                        color={submission.favorite ? "#ef4444" : "#666"} 
+                      />
+                      <span>{submission.favorite ? "Unfavorite" : "Favorite"}</span>
+                    </button>
+                  )}
                 </div>
                 <div className="submission-info">
                   <div className="submission-user">
@@ -770,7 +903,7 @@ export default function ContestContent() {
                     <span>{submission.userName}</span>
                   </div>
                   
-                  {/* Add Star Rating Component */}
+                  {/* Star Rating Component */}
                   <StarRating 
                     rating={submission.rating || 0} 
                     submissionId={submission.id} 
@@ -779,68 +912,40 @@ export default function ContestContent() {
                   
                   {submission.message && <p className="submission-message">{submission.message}</p>}
 
-                  {canChatWithSubmission(submission) ? (
-                    <button
-                      className="chat-button"
-                      onClick={() => openChatModal(submission)}
-                      style={{
-                        marginTop: "10px",
-                        padding: "5px 10px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
-                        background: "#3b82f6",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <MessageSquare size={16} />
-                      <span>Chat</span>
-                    </button>
-                  ) : (
-                    <button
-                      className="chat-button-disabled"
-                      disabled
-                      style={{
-                        marginTop: "10px",
-                        padding: "5px 10px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
-                        background: "#e5e7eb",
-                        color: "#9ca3af",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "not-allowed",
-                      }}
-                    >
-                      <Lock size={16} />
-                      <span>{isContestCreator ? "Chat Unavailable" : "Chat Restricted"}</span>
-                    </button>
-                  )}
-                  {isContestCreator && (
-                    <button
-                      className="favorite-button"
-                      onClick={() => handleToggleFavorite(submission.id)}
-                      style={{
-                        marginTop: "10px",
-                        padding: "5px 10px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
-                        background: "#3b82f6",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Heart size={16} />
-                      <span>{submission.favorite ? "Unfavorite" : "Favorite"}</span>
-                    </button>
-                  )}
+                  <div className="submission-actions">
+                    {canChatWithSubmission(submission) && (
+                      <button
+                        className="chat-button"
+                        onClick={() => openChatModal(submission)}
+                      >
+                        <MessageSquare size={16} />
+                        <span>Chat</span>
+                      </button>
+                    )}
+                    
+                    {/* Add Set as Winner button for contest creator when deadline passed */}
+                    {isContestCreator && isDeadlinePassed && !contest.winner && (
+                      <button
+                        className="winner-button"
+                        onClick={() => handleSetWinner(submission.id)}
+                        style={{
+                          marginTop: "10px",
+                          padding: "5px 10px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          background: "#f59e0b",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <Trophy size={16} />
+                        <span>Set as Winner</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
