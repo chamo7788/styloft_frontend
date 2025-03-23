@@ -60,12 +60,13 @@
   
   .notifications-dropdown {
     position: absolute;
-    top: 100%;
-    right: 0;
-    width: 300px;
+    top: -45%;
+    right: 150px;
+    width: 260px;
+    height: 150px;
     max-height: 400px;
     overflow-y: auto;
-    background-color: white;
+    background-color: rgba(255, 254, 251, 0.79);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 1000;
@@ -86,14 +87,22 @@
     padding: 0;
     margin: 0;
   }
-  
+
   .notification-item {
     padding: 10px 0;
     border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+    border-radius: 4px;
   }
   
   .notification-item:last-child {
     border-bottom: none;
+  }
+
+  .notification-item:hover {
+    background-color: rgba(255, 227, 217, 0.768);
+    padding: 10px;
+    margin: 0 -10px;
   }
   
   .notification-header {
