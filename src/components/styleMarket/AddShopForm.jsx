@@ -9,6 +9,10 @@ export function AddShopForm() {
     description: "",
     price: "",
     image: "", // Image URL from Cloudinary
+    shippingAddress: "",
+    shippingZip: "",
+    state: "",
+    city:""
   });
 
   const [imagePreview, setImagePreview] = useState(null);
