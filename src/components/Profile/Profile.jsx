@@ -4,7 +4,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import "../../assets/css/Profile/profile.css";
 import { auth, db } from "../../firebaseConfig";
 import { updateProfile } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import NotifiRequest from "./NotifiRequest";
@@ -186,8 +186,8 @@ const Profile = () => {
               email: authUser.email || "",
               photoURL: authUser.photoURL || "",
               uid: authUser.uid,
-              followers: [],
-              following: [],
+              followers: [], // Make sure this is an array
+              following: [], // Make sure this is an array
               profession: "",
               aboutText: "",
             }
@@ -246,6 +246,33 @@ const Profile = () => {
       setCoverPhoto(defaultCoverPhoto)
     }
   }
+
+  // Add this function after the fetchUserProfile function
+
+  // Update follow counts
+  const updateFollowCounts = async () => {
+    if (!userId) return;
+    
+    try {
+      // Fetch the latest user data to get updated follower/following counts
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        // Update the state with latest follow counts
+        setFollowers(userData.followers || []);
+        setFollowing(userData.following || []);
+        
+        // If current user, check follow status
+        if (currentUserUid && userData.followers) {
+          setIsFollowing(userData.followers.includes(currentUserUid));
+        }
+      }
+    } catch (error) {
+      console.error("Error updating follow counts:", error);
+    }
+  };
 
   // Fetch user designs
   const fetchUserDesigns = async (uid) => {
@@ -498,6 +525,30 @@ const Profile = () => {
     // Navigate to profile
     window.location.href = `/profile/${userId}`
   }
+
+  // Real-time listener for follow status changes
+  useEffect(() => {
+    if (!userId) return;
+    
+    // Subscribe to changes in the user document
+    const userDocRef = doc(db, "users", userId);
+    const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const userData = docSnapshot.data();
+        // Update followers and following arrays
+        setFollowers(userData.followers || []);
+        setFollowing(userData.following || []);
+        
+        // Check if current user is following this profile
+        if (currentUserUid && userData.followers) {
+          setIsFollowing(userData.followers.includes(currentUserUid));
+        }
+      }
+    });
+    
+    // Clean up listener on unmount
+    return () => unsubscribe();
+  }, [userId, currentUserUid]);
 
   return (
     <>
