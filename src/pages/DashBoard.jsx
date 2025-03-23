@@ -4,7 +4,6 @@ import CollaborationRequests from "../components/DashBoard/collaboration-request
 import DesignOutfit from "../components/DashBoard/DesignOutfit";
 import EventAnnouncements from "../components/DashBoard/event-announcements";
 import OngoingChallenges from "../components/DashBoard/ongoing-challenges";
-import PastSubmissions from "../components/DashBoard/past-submissions";
 import PurchaseHistory from "../components/DashBoard/purchase-history";
 import SavedDesigns from "../components/DashBoard/saved-designs";
 import { AddShopForm } from "../components/styleMarket/AddShopForm";
@@ -50,7 +49,6 @@ export default function DashBoard() {
       <DesignOutfit />
       <EventAnnouncements />
       <OngoingChallenges />
-      <PastSubmissions />
       <PurchaseHistory />
       <SavedDesigns />
     </>

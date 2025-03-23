@@ -2,6 +2,7 @@ import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firest
 import { db } from "../../firebaseConfig";
 import { useState, useEffect } from "react";
 import { FaRegComment, FaTrash } from "react-icons/fa";
+import { Link } from "react-router-dom"; // Import Link for navigation
 import "../../assets/css/StyleSociety/CommentSection.css";
 
 function CommentSection({ post }) {
@@ -33,7 +34,6 @@ function CommentSection({ post }) {
       const postSnap = await getDoc(postRef);
       if (postSnap.exists()) {
         setComments(postSnap.data().comments || []);
-        console.log("Fetched comments:", postSnap.data().comments);
       }
     } catch (error) {
       console.error("Error fetching comments: ", error);
@@ -74,7 +74,6 @@ function CommentSection({ post }) {
       const postRef = doc(db, "posts", post.id);
       await updateDoc(postRef, { comments: arrayRemove(comment) });
 
-      // Remove comment from local state
       setComments((prev) => prev.filter((c) => c.timestamp !== comment.timestamp));
     } catch (error) {
       console.error("Error deleting comment: ", error);
@@ -103,7 +102,19 @@ function CommentSection({ post }) {
           <ul className="comment-list">
             {comments.map((c, index) => (
               <li key={index} className="comment-item">
-                <strong>{c.userName || c.userId}:</strong> {c.text}
+                <div className="comment-user">
+                  <Link to={`/profile/${c.userId}`} className="comment-user-link">
+                    <img
+                      src={c.profilePic || "../../assets/images/user-profile.png"} // Default image if no profile picture
+                      alt={c.userName || "User"}
+                      className="comment-user-img"
+                    />
+                  </Link>
+                  <strong>{c.userName || c.userId}:</strong>
+                </div>
+                <div className="comment-content">
+                  <p>{c.text}</p>
+                </div>
                 {c.userId === currentUserId && (
                   <FaTrash className="delete-icon" onClick={() => handleDeleteComment(c)} />
                 )}
