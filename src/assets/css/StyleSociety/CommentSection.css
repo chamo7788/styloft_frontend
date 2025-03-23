@@ -1,4 +1,3 @@
-/* Comment Section Component - LinkedIn Style */
 .comment-container {
   position: relative;
 }
@@ -104,7 +103,7 @@
 .comment-item {
   padding: 12px 16px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
@@ -113,20 +112,27 @@
   border-bottom: none;
 }
 
-.comment-content {
-  flex: 1;
-}
-
+/* Align profile picture, name, and comment text horizontally */
 .comment-user {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 10px;  /* Added space between profile picture and text */
+  margin-bottom: 8px;
+}
+
+.comment-user-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.comment-user-link:hover {
+  opacity: 0.8;
 }
 
 .comment-user-img {
-  width: 32px;
-  height: 32px;
+  width: 40px;  /* Set size of profile picture */
+  height: 40px;  /* Set size of profile picture */
   border-radius: 50%;
   object-fit: cover;
 }
@@ -137,13 +143,20 @@
   color: rgba(0, 0, 0, 0.9);
 }
 
+/* Comment Text Styling */
+.comment-content {
+  flex: 1;
+  margin-left: 5px; /* Added margin to separate comment text from profile details */
+  margin-top: -12px;
+}
+
 .comment-text {
   font-size: 14px;
   line-height: 1.4;
   color: rgba(0, 0, 0, 0.9);
-  margin-left: 40px;
 }
 
+/* Delete Icon */
 .delete-icon {
   color: rgba(0, 0, 0, 0.6);
   cursor: pointer;
@@ -192,4 +205,3 @@
     height: 28px;
   }
 }
-

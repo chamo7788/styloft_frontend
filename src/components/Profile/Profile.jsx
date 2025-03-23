@@ -14,6 +14,22 @@ import NotifiRequest from "./NotifiRequest";
 const defaultProfilePic = "../../assets/images/user-profile.png"
 const defaultCoverPhoto = "../../assets/images/profile-background.jpg"
 
+const StarRating = ({ rating, readOnly = true }) => {
+  return (
+    <div className="star-rating">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span 
+          key={star} 
+          className={star <= Math.round(rating) ? "star filled" : "star empty"}
+        >
+          ★
+        </span>
+      ))}
+      <span className="rating-value">{rating ? rating.toFixed(1) : "0"}</span>
+    </div>
+  );
+};
+
 const Profile = () => {
   // State variables
   const [profilePic, setProfilePic] = useState(defaultProfilePic)
@@ -622,6 +638,26 @@ const Profile = () => {
             </div>
           </div>
 
+        </div>
+      </div>
+{/*        <div className="Designs">
+         <div className="profile-sections">
+           <div className="about-section">
+             <h3>Designs</h3>
+             {designs.length > 0 ? ( 
+                designs.map((design) => (
+                 <div key={design.id} className="DesignCard" onClick={() => openModal(design.fileUrl)}>
+                   <img src={design.fileUrl} alt="Design" className="design-img" />
+                   <h3 className="DesignName">{design.description}</h3>
+                   <div className="DesignReview">
+                     <StarRating rating={design.rating || 0} />
+                     <p className="review-count">({design.reviewCount || 0} reviews)</p>
+                   </div>
+                 </div>
+               )) */}
+
+
+
           {/* Designs Section */}
           <div className="designs-section">
             <h3>{isCurrentUserProfile ? "My Designs" : "Designs"}</h3>
@@ -651,6 +687,7 @@ const Profile = () => {
                   </div>
                 ))}
               </div>
+
             ) : (
               <p className="empty-message">
                 {isCurrentUserProfile
@@ -659,8 +696,8 @@ const Profile = () => {
               </p>
             )}
           </div>
-        </div>
-      </div>
+{/*          </div> */}
+{/*        </div> */}
 
       {/* Crop Image Modal */}
       {selectedImage && (
