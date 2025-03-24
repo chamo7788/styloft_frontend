@@ -1,0 +1,148 @@
+
+.garment-form-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 50px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Garmentform-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.Garmentform-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.Garmentform-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.Garmentform-label {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.Garmentcustom-select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.Garmentselect-button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.Garmentdropdown-icon {
+  font-size: 14px;
+}
+
+.Garmentdropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.Garmentdropdown-search {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.Garmentdropdown-items {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.Garmentdropdown-item {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.Garmentdropdown-item:hover {
+  background-color: #f2f2f2;
+}
+
+.Garmentdropdown-item.selected {
+  background-color: #e0f7fa;
+}
+
+.Garmentdropdown-item-content {
+  display: flex;
+  align-items: center;
+}
+
+.garment-image {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.Garmentcheck-icon {
+  font-size: 18px;
+  margin-left: 10px;
+  color: green;
+}
+
+.Garmentform-group textarea {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.Garmentsubmit-button {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+.Garmentsubmit-button:hover {
+  background-color: #0056b3;
+}
+
+.Garmentview-requests-container {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+}

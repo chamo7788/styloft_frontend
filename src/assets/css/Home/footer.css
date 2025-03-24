@@ -1,0 +1,147 @@
+.footer-container {
+    background-color: #0c1a2c;
+    color: #fff;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    text-align: left;
+    z-index: 1000;
+}
+
+.footer-left {
+    flex: 1;
+    max-width: 300px;
+}
+
+.footer-logo img {
+    width: 200px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.footer-email,
+.footer-phone {
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-left: 50px;
+}
+
+.footer-social-icons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    margin-left: 50px;
+}
+
+.social-logo {
+    width: 30px;
+    height: auto;
+    filter: brightness(0) invert(1);
+    cursor: pointer;
+}
+
+.footer-middle {
+    flex: 1;
+    text-align: center;
+}
+
+.footer-middle ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-middle li {
+    margin-bottom: 8px;
+}
+
+.footer-middle a {
+    color: #ffffffbe;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-middle a:hover {
+    text-decoration: underline;
+}
+
+.footer-right {
+    flex: 1;
+    margin-top: 50px;
+}
+
+.footer-right h2 {
+    margin-left: 250px;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.highlight {
+    margin-left: 80px;
+    color: #4a8efc;
+}
+
+.footer-bottom {
+    text-align: center;
+    width: 100%;
+    margin-top: 20px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4a8efc;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.scroll-to-top.show {
+    display: flex;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-left,
+    .footer-middle,
+    .footer-right {
+        max-width: 100%;
+        margin-top: 20px;
+    }
+
+    .footer-right h2 {
+        margin-left: 0;
+    }
+
+    .highlight {
+        margin-left: 0;
+    }
+
+    .footer-email,
+    .footer-phone,
+    .footer-social-icons {
+        margin-left: 0;
+    }
+    .social-logo{
+        width: 20px;
+        margin-left: 30px;
+    }
+}

@@ -1,49 +1,95 @@
-import React, { useState } from "react";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, ShoppingBag, Minus, Plus } from 'lucide-react';
+import Buy from "./buy";
 import "../../assets/css/StyleMarket/buyNow.css";
-import defaultImage from "../../assets/images/default-placeholder.png"; // Ensure you have a fallback image
 
 const BuyNow = ({ product, onBack }) => {
   const [selectedSize, setSelectedSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const sizes = ["XS", "S", "M", "L", "XL"];
 
-  const productImage = product.image || defaultImage; // Use product image or default fallback
+  const [showOrderForm, setShowOrderForm] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    phone: "",
+    shippingAddress: "",
+    shippingCity: "",
+    shippingState: "",
+    shippingZip: "",
+    shippingCountry: ""
+  });
+
+  // Use product image or default fallback
+  const defaultImage = "https://www.imghippo.com/i/QMsd7261qms.jpg";
+  const productImage = product.image || defaultImage;
 
   const handleBuyNow = () => {
     console.log("Buying Now:", {
-      product: product.name,
+      product: product.description,
       size: selectedSize,
       quantity: quantity,
+      shippingAddress: formData.shippingAddress,
+      shippingCity: formData.shippingCity,
+      shippingState: formData.shippingState,
+      shippingZip: formData.shippingZip,
+      shippingCountry: formData.shippingCountry
     });
-
-    // Here, you can add checkout functionality or API call
+    setShowOrderForm(true);
   };
+
+  const handleQuantityChange = (newQuantity) => {
+    if (newQuantity >= 1) {
+      setQuantity(newQuantity);
+    }
+  };
+
+  if (showOrderForm) {
+    return (
+      <Buy
+        product={product}
+        selectedSize={selectedSize}
+        quantity={quantity}
+        formData={formData}
+        setFormData={setFormData}
+        setShowOrderForm={setShowOrderForm}
+      />
+    );
+  }
 
   return (
     <div className="buynow">
       <div className="buy-now-container">
-        <button className="back-button" onClick={onBack}>
-          <ArrowLeft className="icon" /> Back to Products
-        </button>
 
         <div className="buy-now-content">
           {/* Product Image */}
           <div className="product-image-container">
+            {!imageLoaded && (
+              <div className="image-placeholder">
+                <div className="spinner"></div>
+              </div>
+            )}
             <img
-              src={productImage}
+              src={productImage || "/placeholder.svg"}
               alt={product.name}
-              className="product-image"
+              className={`product-image ${imageLoaded ? "loaded" : ""}`}
+              onLoad={() => setImageLoaded(true)}
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = defaultImage; // Set default if error occurs
+                e.target.src = defaultImage;
+                setImageLoaded(true);
               }}
             />
           </div>
 
           {/* Product Info */}
           <div className="product-info">
-            <h1 className="product-title">{product.name}</h1>
+            <h1 className="product-title">{product.description}</h1>
             <p className="product-price">${product.price}</p>
 
             {/* Size Selection */}
@@ -55,6 +101,8 @@ const BuyNow = ({ product, onBack }) => {
                     key={size}
                     className={`size-button ${selectedSize === size ? "active" : ""}`}
                     onClick={() => setSelectedSize(size)}
+                    aria-label={`Select size ${size}`}
+                    aria-pressed={selectedSize === size}
                   >
                     {size}
                   </button>
@@ -67,23 +115,28 @@ const BuyNow = ({ product, onBack }) => {
               <h3>Quantity</h3>
               <div className="quantity-controls">
                 <button
-                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                  disabled={quantity <= 1}
+                  aria-label="Decrease quantity"
                 >
-                  -
+                  <Minus size={16} />
                 </button>
                 <input
                   type="number"
                   min="1"
                   value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e) => handleQuantityChange(Math.max(1, Number.parseInt(e.target.value) || 1))}
+                  aria-label="Quantity"
                 />
-                <button onClick={() => setQuantity((prev) => prev + 1)}>+</button>
+                <button onClick={() => handleQuantityChange(quantity + 1)} aria-label="Increase quantity">
+                  <Plus size={16} />
+                </button>
               </div>
             </div>
 
             {/* Buy Now Button */}
             <button className="buy-now-button" onClick={handleBuyNow}>
-              <ShoppingBag className="icon" /> Buy Now
+              <ShoppingBag size={18} /> Buy Now
             </button>
           </div>
         </div>

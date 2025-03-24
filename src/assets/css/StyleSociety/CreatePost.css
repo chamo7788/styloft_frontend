@@ -1,0 +1,428 @@
+/* Main Post Container */
+.createPost {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: #333;
+  z-index: 1000;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Background Overlay */
+.createPostBackground,
+.create-background-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Header Section */
+.topic {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #4a6fa5, #6a8caf);
+  padding: 16px 20px;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Close Button */
+.clossicon1 {
+  background: linear-gradient(to bottom, #ff5252, #e53935);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.clossicon1:hover {
+  background: linear-gradient(to bottom, #ff6b6b, #e53935);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Post Button */
+.PostButton {
+  background: linear-gradient(to bottom, #4361ee, #3a56d4);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.PostButton:hover {
+  background: linear-gradient(to bottom, #4d6ef5, #3a56d4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* User Profile Section */
+.createTop {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.createImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.createUserName {
+  position: relative;
+  top: -15px;
+  left: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  /* Removed problematic positioning */
+}
+
+/* Post Input Section */
+.createCenter {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.addPostInput {
+  top: -10px;
+  width: 100%;
+  min-height: 120px;
+  background: #f8f0fa;
+  color: #333;
+  border: 1px solid #e0d0e6;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 12px;
+  outline: none;
+  resize: none;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.addPostInput:focus {
+  border-color: #d4a6e3;
+  box-shadow: 0 0 0 2px rgba(212, 166, 227, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.addPostInput::placeholder {
+  color: #999;
+  font-size: 15px;
+}
+
+/* Uploaded Files Section */
+.uploadedFilesContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 20px 20px;
+}
+
+.filePreview1 {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.filePreview1:hover {
+  transform: scale(1.05);
+}
+
+.fileImage,
+.fileVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.filePreview1:hover .fileImage,
+.filePreview1:hover .fileVideo {
+  transform: scale(1.1);
+}
+
+/* Bottom Section with Icons */
+.createBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+}
+
+/* Icon Styles */
+.PIcon,
+.emojiIcon,
+.locationIcon {
+  font-size: 24px;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.PIcon {
+  color: #28a745;
+}
+
+.emojiIcon {
+  color: #f1c40f;
+}
+
+.locationIcon {
+  color: #e74c3c;
+}
+
+/* Hover Effects */
+.PIcon:hover,
+.emojiIcon:hover,
+.locationIcon:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.PIcon:hover {
+  background: #f0fff4;
+}
+
+.emojiIcon:hover {
+  background: #fffbeb;
+}
+
+.locationIcon:hover {
+  background: #fff5f5;
+}
+
+/* File Upload Button */
+.fileUploadButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Emoji Picker Container */
+.emojiPickerContainer {
+  position: absolute;
+  bottom: 70px;
+  right: 20px;
+  z-index: 1001;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .createPost {
+    width: 95%;
+  }
+
+  .topic {
+    padding: 14px 16px;
+  }
+
+  .header {
+    font-size: 16px;
+  }
+
+  .createTop {
+    padding: 15px;
+  }
+
+  .createCenter {
+    padding: 15px;
+  }
+
+  .addPostInput {
+    min-height: 100px;
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .filePreview1 {
+    width: 100px;
+    height: 100px;
+  }
+
+  .PIcon,
+  .emojiIcon,
+  .locationIcon {
+    font-size: 20px;
+    padding: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .createPost {
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    height: auto;
+    max-height: 90vh;
+    top: auto;
+    bottom: 0;
+    transform: translate(-50%, 0);
+    animation: modalSlideUp 0.3s ease-out;
+  }
+
+  @keyframes modalSlideUp {
+    from {
+      transform: translate(-50%, 100%);
+    }
+    to {
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .topic {
+    padding: 12px 15px;
+  }
+
+  .header {
+    font-size: 15px;
+  }
+
+  .clossicon1,
+  .PostButton {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .createTop {
+    padding: 12px;
+  }
+
+  .createImage {
+    width: 40px;
+    height: 40px;
+  }
+
+  .createUserName {
+    font-size: 15px;
+  }
+
+  .createCenter {
+    padding: 12px;
+  }
+
+  .addPostInput {
+    min-height: 80px;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .uploadedFilesContainer {
+    margin: 0 12px 12px;
+  }
+
+  .filePreview1 {
+    width: 80px;
+    height: 80px;
+  }
+
+  .createBottom {
+    padding: 12px;
+  }
+
+  .PIcon,
+  .emojiIcon,
+  .locationIcon {
+    font-size: 18px;
+    padding: 8px;
+  }
+
+  .emojiPickerContainer {
+    right: 10px;
+    bottom: 60px;
+    transform: scale(0.9);
+    transform-origin: bottom right;
+  }
+}
+

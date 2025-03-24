@@ -1,0 +1,207 @@
+.comment-container {
+  position: relative;
+}
+
+.comment-button-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: rgba(0, 0, 0, 0.6);
+  border: none;
+  background: none;
+}
+
+.comment-button-wrapper:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.comment-icon {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.comment-button-wrapper:hover .comment-icon {
+  transform: scale(1.1);
+}
+
+.comment-count {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Comment Section Expanded */
+.comment-section {
+  margin-top: 12px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comment-input-container {
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.comment-input-container input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.9);
+  transition: all 0.2s ease;
+}
+
+.comment-input-container input:focus {
+  outline: none;
+  border-color: #0a66c2;
+  box-shadow: 0 0 0 1px #0a66c2;
+}
+
+.comment-button {
+  margin-top: 8px;
+  padding: 6px 16px;
+  background-color: #0a66c2;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.comment-button:hover {
+  background-color: #004182;
+}
+
+/* Comment List */
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.comment-item {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+/* Align profile picture, name, and comment text horizontally */
+.comment-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;  /* Added space between profile picture and text */
+  margin-bottom: 8px;
+}
+
+.comment-user-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.comment-user-link:hover {
+  opacity: 0.8;
+}
+
+.comment-user-img {
+  width: 40px;  /* Set size of profile picture */
+  height: 40px;  /* Set size of profile picture */
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-user-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+/* Comment Text Styling */
+.comment-content {
+  flex: 1;
+  margin-left: 5px; /* Added margin to separate comment text from profile details */
+  margin-top: -12px;
+}
+
+.comment-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+/* Delete Icon */
+.delete-icon {
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.delete-icon:hover {
+  color: #d11124;
+  background-color: rgba(209, 17, 36, 0.08);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .comment-input-container {
+    padding: 12px;
+  }
+
+  .comment-item {
+    padding: 10px 12px;
+  }
+
+  .comment-button {
+    font-size: 13px;
+    padding: 5px 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .comment-input-container {
+    padding: 10px;
+  }
+
+  .comment-item {
+    padding: 8px 10px;
+  }
+
+  .comment-text {
+    font-size: 13px;
+    margin-left: 36px;
+  }
+
+  .comment-user-img {
+    width: 28px;
+    height: 28px;
+  }
+}

@@ -1,0 +1,130 @@
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import { useState, useEffect } from "react";
+import { FaRegComment, FaTrash } from "react-icons/fa";
+import { Link } from "react-router-dom"; // Import Link for navigation
+import "../../assets/css/StyleSociety/CommentSection.css";
+
+function CommentSection({ post }) {
+  const [name, setName] = useState("");
+  const [commentText, setCommentText] = useState("");
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user?.displayName) {
+      setName(user.displayName);
+      setCurrentUserId(user.uid);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showComments) {
+      fetchComments();
+    }
+  }, [showComments]);
+
+  const fetchComments = async () => {
+    if (!post?.id) return console.error("Post ID is missing in fetchComments!");
+
+    try {
+      const postRef = doc(db, "posts", post.id);
+      const postSnap = await getDoc(postRef);
+      if (postSnap.exists()) {
+        setComments(postSnap.data().comments || []);
+      }
+    } catch (error) {
+      console.error("Error fetching comments: ", error);
+    }
+  };
+
+  const toggleComments = () => {
+    setShowComments((prev) => !prev);
+  };
+
+  const handleComment = async () => {
+    if (!commentText.trim()) return alert("Comment cannot be empty!");
+    if (!post?.id) return console.error("Post ID is missing!");
+
+    const newComment = {
+      userId: currentUserId,
+      userName: name,
+      text: commentText,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      const postRef = doc(db, "posts", post.id);
+      await updateDoc(postRef, { comments: arrayUnion(newComment) });
+
+      setShowComments(true);
+      fetchComments();
+      setCommentText("");
+    } catch (error) {
+      console.error("Error adding comment: ", error);
+    }
+  };
+
+  const handleDeleteComment = async (comment) => {
+    if (!post?.id) return console.error("Post ID is missing!");
+
+    try {
+      const postRef = doc(db, "posts", post.id);
+      await updateDoc(postRef, { comments: arrayRemove(comment) });
+
+      setComments((prev) => prev.filter((c) => c.timestamp !== comment.timestamp));
+    } catch (error) {
+      console.error("Error deleting comment: ", error);
+    }
+  };
+
+  return (
+    <div className="comment-container">
+      <FaRegComment className="comment-icon" onClick={toggleComments} />
+
+      {showComments && (
+        <div className="comment-section">
+          <div className="comment-input-container">
+            <input
+              type="text"
+              placeholder="Add a comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleComment()}
+            />
+            <button onClick={handleComment} className="comment-button">
+              Comment
+            </button>
+          </div>
+
+          <ul className="comment-list">
+            {comments.map((c, index) => (
+              <li key={index} className="comment-item">
+                <div className="comment-user">
+                  <Link to={`/profile/${c.userId}`} className="comment-user-link">
+                    <img
+                      src={c.profilePic || "../../assets/images/user-profile.png"} // Default image if no profile picture
+                      alt={c.userName || "User"}
+                      className="comment-user-img"
+                    />
+                  </Link>
+                  <strong>{c.userName || c.userId}:</strong>
+                </div>
+                <div className="comment-content">
+                  <p>{c.text}</p>
+                </div>
+                {c.userId === currentUserId && (
+                  <FaTrash className="delete-icon" onClick={() => handleDeleteComment(c)} />
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default CommentSection;

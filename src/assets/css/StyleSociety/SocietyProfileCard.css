@@ -1,0 +1,111 @@
+.SocietyProfile-container {
+  position: absolute;
+  top: 965px;
+  width: 20%;
+  left: 40px;
+  max-width: 800px;
+  margin: 2px auto;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.SocietyProfile-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+  font-size: 1rem;
+  color: #333;
+}
+
+.society-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.2);
+  border-top: 4px solid #1e40af;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.SocietyProfile-header {
+  position: relative;
+}
+
+.SocietyProfileCover-photo {
+  width: 100%;
+  height: 180px;
+  background-color: #ccc;
+}
+
+.SocietyProfileCover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.SocietyProfile-details {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+}
+
+.SocietyProfile-pic-container {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fff;
+}
+
+.SocietyProfile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.SocietyProfile-info {
+  margin-top: 30px;
+}
+
+.SocietyProfile-info h3 {
+  margin-top: 10px;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.society-profession {
+  color: #666;
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.SocietyProfile-about-section {
+  margin-top: -40px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.566);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.SocietyProfile-about-content p {
+  color: #555;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.95rem;
+}
