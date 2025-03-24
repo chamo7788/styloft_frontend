@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react"
 import { X, ChevronLeft, ChevronRight, Shirt, PenIcon, Palette, Grid, Wand2, Sun, Save, Layers } from "lucide-react"
-import welcomeImage from "../../assets/images/StyleStudio/welcome.png"
+import welcomeImage from "../../assets/images/StyleStudio/Home.png"
+import ColorImage from "../../assets/images/StyleStudio/Color.png"
+import BodyImage from "../../assets/images/StyleStudio/Body-image.png"
+import PublishImaage from "../../assets/images/StyleStudio/Publish.png"
+import LayersImage from "../../assets/images/StyleStudio/Layers.png"
+import LightingImage from "../../assets/images/StyleStudio/Lighting.png"
+import LogoImage from "../../assets/images/StyleStudio/Logo-text.png"
 
 const UserGuide = ({ onClose, showOnStartup, setShowOnStartup }) => {
   const [currentStep, setCurrentStep] = useState(0)
@@ -17,7 +23,7 @@ const UserGuide = ({ onClose, showOnStartup, setShowOnStartup }) => {
     {
       title: "Choose Your Model",
       content:
-        "Start by selecting the garment type you want to design. Choose from shirts, trousers, shorts, or frocks.",
+        "Start by selecting the Model type you want to design. Choose from shirts, trousers, shorts, or frocks.",
       image: "/assets/images/StyleStudio/model-selection.png",
       icon: <Shirt size={24} />,
     },
@@ -25,49 +31,49 @@ const UserGuide = ({ onClose, showOnStartup, setShowOnStartup }) => {
       title: "Customize Colors",
       content:
         "Select different parts of your garment and apply colors. You can use the color picker or choose from suggested color palettes.",
-      image: "/assets/images/StyleStudio/color-customization.png",
+      image: ColorImage,
       icon: <Palette size={24} />,
     },
     {
       title: "Apply Textures & Patterns",
       content:
         "Add textures and patterns to your design. Upload your own images or use our pattern generator to create unique looks.",
-      image: "/assets/images/StyleStudio/textures.png",
+      image: BodyImage,
       icon: <Grid size={24} />,
     },
     {
       title: "Add Text & Logos",
       content:
         "Personalize your design with text and logos. Use the texture editor to position and customize these elements.",
-      image: "/assets/images/StyleStudio/text-logo.png",
+      image: LogoImage,
       icon: <PenIcon size={24} />,
     },
     {
       title: "Adjust Lighting",
       content:
         "Change the lighting to see how your design looks in different environments. Adjust intensity and direction for the perfect view.",
-      image: "/assets/images/StyleStudio/lighting.png",
+      image: LightingImage,
       icon: <Sun size={24} />,
     },
     {
       title: "Manage Layers",
       content:
         "Use the layer manager to organize and adjust the elements in your design. Reorder, hide, or lock layers as needed.",
-      image: "/assets/images/StyleStudio/layers.png",
+      image: LayersImage,
       icon: <Layers size={24} />,
     },
     {
       title: "Save & Share",
       content:
         "Save your designs to your account and publish them to your portfolio. You can also download screenshots of your creations.",
-      image: "/assets/images/StyleStudio/save-share.png",
+      image: PublishImaage,
       icon: <Save size={24} />,
     },
     {
       title: "You're Ready to Design!",
       content:
         "Now you know the basics of Style Studio. Explore and experiment to create amazing designs. Happy creating!",
-      image: "/assets/images/StyleStudio/ready.png",
+      image: welcomeImage,
       icon: <Wand2 size={24} />,
     },
   ]
