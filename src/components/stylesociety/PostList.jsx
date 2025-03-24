@@ -6,6 +6,7 @@ import CommentSection from "./CommentSection";
 import ShareButton from "./ShareButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV, faEdit, faSave, faThumbtack, faCopy, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Loader2 } from "lucide-react"; // Loader icon
 import "../../assets/css/StyleSociety/PostList.css";
 
 function PostList() {
@@ -13,6 +14,7 @@ function PostList() {
   const [menuOpen, setMenuOpen] = useState(null);
   const [editPostId, setEditPostId] = useState(null);
   const [editedText, setEditedText] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const postsQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"));
@@ -33,6 +35,7 @@ function PostList() {
 
       // Merging pinned posts at the top
       setPosts([...pinnedPosts, ...normalPosts]);
+      setIsLoading(false); // Stop loading once data is fetched
     });
 
     return () => unsubscribe();
@@ -84,6 +87,12 @@ function PostList() {
 
   return (
     <div className="post-set">
+      {isLoading ? (
+        <div className="post-loading-container">
+          <Loader2 className="post-loading-spinner" />
+          <p>Loading posts...</p>
+        </div>
+      ) : (
       <div className="post-list">
         {posts.map((post) => (
           <div key={post.id} className={`post ${post.postType === "pinned" ? "pinned" : ""}`}>
@@ -156,6 +165,7 @@ function PostList() {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

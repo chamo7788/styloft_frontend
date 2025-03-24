@@ -125,9 +125,9 @@ const Navbar = () => {
     { path: "/", label: "HOMEPAGE" },
     { path: "/stylestudio", label: "STYLE STUDIO" },
     { path: "/contest", label: "CONTEST" },
-    { path: "/inspire-zone", label: "INSPIRE ZONE" },
     { path: "/stylesociety", label: "STYLE SOCIETY" },
     { path: "/styleMarket", label: "STYLE MARKET" },
+    { path: "/sub-plans", label: "PLANS" },
   ];
 
   return (

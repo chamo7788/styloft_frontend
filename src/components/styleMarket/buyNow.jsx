@@ -1,15 +1,15 @@
-import { useState } from "react"
-import { ArrowLeft, ShoppingBag, Minus, Plus } from 'lucide-react'
-import Buy from "./buy"
-import "../../assets/css/StyleMarket/buyNow.css"
+import { useState } from "react";
+import { ArrowLeft, ShoppingBag, Minus, Plus } from 'lucide-react';
+import Buy from "./buy";
+import "../../assets/css/StyleMarket/buyNow.css";
 
 const BuyNow = ({ product, onBack }) => {
-  const [selectedSize, setSelectedSize] = useState("M")
-  const [quantity, setQuantity] = useState(1)
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const sizes = ["XS", "S", "M", "L", "XL"]
+  const [selectedSize, setSelectedSize] = useState("M");
+  const [quantity, setQuantity] = useState(1);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const sizes = ["XS", "S", "M", "L", "XL"];
 
-  const [showOrderForm, setShowOrderForm] = useState(false)
+  const [showOrderForm, setShowOrderForm] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -18,26 +18,36 @@ const BuyNow = ({ product, onBack }) => {
     city: "",
     zipCode: "",
     phone: "",
-  })
+    shippingAddress: "",
+    shippingCity: "",
+    shippingState: "",
+    shippingZip: "",
+    shippingCountry: ""
+  });
 
   // Use product image or default fallback
-  const defaultImage = "https://www.imghippo.com/i/QMsd7261qms.jpg"
-  const productImage = product.image || defaultImage
+  const defaultImage = "https://www.imghippo.com/i/QMsd7261qms.jpg";
+  const productImage = product.image || defaultImage;
 
   const handleBuyNow = () => {
     console.log("Buying Now:", {
-      product: product.name,
+      product: product.description,
       size: selectedSize,
       quantity: quantity,
-    })
-    setShowOrderForm(true)
-  }
+      shippingAddress: formData.shippingAddress,
+      shippingCity: formData.shippingCity,
+      shippingState: formData.shippingState,
+      shippingZip: formData.shippingZip,
+      shippingCountry: formData.shippingCountry
+    });
+    setShowOrderForm(true);
+  };
 
   const handleQuantityChange = (newQuantity) => {
     if (newQuantity >= 1) {
-      setQuantity(newQuantity)
+      setQuantity(newQuantity);
     }
-  }
+  };
 
   if (showOrderForm) {
     return (
@@ -49,15 +59,12 @@ const BuyNow = ({ product, onBack }) => {
         setFormData={setFormData}
         setShowOrderForm={setShowOrderForm}
       />
-    )
+    );
   }
 
   return (
     <div className="buynow">
       <div className="buy-now-container">
-        <button className="back-button" onClick={onBack}>
-          <ArrowLeft size={18} /> Back to Products
-        </button>
 
         <div className="buy-now-content">
           {/* Product Image */}
@@ -73,9 +80,9 @@ const BuyNow = ({ product, onBack }) => {
               className={`product-image ${imageLoaded ? "loaded" : ""}`}
               onLoad={() => setImageLoaded(true)}
               onError={(e) => {
-                e.target.onerror = null
-                e.target.src = defaultImage
-                setImageLoaded(true)
+                e.target.onerror = null;
+                e.target.src = defaultImage;
+                setImageLoaded(true);
               }}
             />
           </div>
@@ -135,7 +142,7 @@ const BuyNow = ({ product, onBack }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BuyNow
+export default BuyNow;

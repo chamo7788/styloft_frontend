@@ -1,4 +1,7 @@
-import { Shirt, PenIcon, SubscriptIcon, SaladIcon } from "lucide-react"
+import { PiShirtFolded, PiPantsLight } from "react-icons/pi";
+import { IoShirtOutline } from "react-icons/io5";
+import { GiLargeDress, GiUnderwearShorts } from "react-icons/gi";
+
 
 function ModelSelector({ selectedModel, onModelChange }) {
   return (
@@ -7,32 +10,39 @@ function ModelSelector({ selectedModel, onModelChange }) {
         className={`model-button ${selectedModel === "shirt" ? "model-button-selected" : ""}`}
         onClick={() => onModelChange("shirt")}
       >
-        <Shirt className="model-icon" />
-        <span>Shirt</span>
+        <IoShirtOutline className="model-icon" />
+        <span>T-Shirt</span>
       </button>
       <button
         className={`model-button ${selectedModel === "trouser" ? "model-button-selected" : ""}`}
         onClick={() => onModelChange("trouser")}
       >
-        <PenIcon className="model-icon" />
+        <PiPantsLight className="model-icon" />
         <span>Trouser</span>
       </button>
       <button
         className={`model-button ${selectedModel === "short" ? "model-button-selected" : ""}`}
         onClick={() => onModelChange("short")}
       >
-        <SubscriptIcon className="model-icon" />
+        <GiUnderwearShorts className="model-icon" />
         <span>Short</span>
       </button>
       <button
         className={`model-button ${selectedModel === "frock" ? "model-button-selected" : ""}`}
         onClick={() => onModelChange("frock")}
       >
-        <SaladIcon className="model-icon" />
+        <GiLargeDress className="model-icon" />
         <span>Frock</span>
       </button>
+      <button
+        className={`model-button ${selectedModel === "Tshirt" ? "model-button-selected" : ""}`}
+        onClick={() => onModelChange("Tshirt")}
+      >
+        <PiShirtFolded className="model-icon" />
+        <span>Shirt</span>
+      </button>
     </div>
-  )
+  );
 }
 
 export default ModelSelector

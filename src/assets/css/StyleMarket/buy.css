@@ -6,6 +6,16 @@
   justify-content: center;
   padding: var(--spacing-xl);
   background-color: var(--background);
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .buy .buy-page-container {
@@ -15,6 +25,25 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
+  animation: slideUp 0.5s ease-out forwards;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.buy .buy-page-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
 }
 
 .buy .buy-page-form {
@@ -31,12 +60,38 @@
   justify-content: center;
   margin: 0 auto var(--spacing-lg);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(79, 70, 229, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+  }
 }
 
 .buy .icon {
   color: white;
   width: 24px;
   height: 24px;
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+
+@keyframes floatAnimation {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .buy .page-title {
@@ -46,6 +101,26 @@
   text-align: center;
   margin-bottom: var(--spacing-xl);
   letter-spacing: -0.025em;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.buy .page-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+.buy .buy-page-container:hover .page-title::after {
+  width: 100px;
 }
 
 .buy .product-details {
@@ -54,6 +129,15 @@
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
   border: 1px solid var(--border);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  animation: fadeIn 0.5s ease-out forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.buy .product-details:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .buy .product-name {
@@ -76,6 +160,13 @@
   margin-bottom: var(--spacing-xs);
   display: flex;
   justify-content: space-between;
+  transition: transform var(--transition-normal);
+}
+
+.buy .product-details:hover .product-price,
+.buy .product-details:hover .product-size,
+.buy .product-details:hover .product-quantity {
+  transform: translateX(3px);
 }
 
 .buy .total-amount {
@@ -87,6 +178,12 @@
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
+  transition: transform var(--transition-normal), color var(--transition-normal);
+}
+
+.buy .product-details:hover .total-amount {
+  transform: scale(1.02);
+  color: var(--primary-dark);
 }
 
 .buy .section h3 {
@@ -110,6 +207,27 @@
 
 .buy .form-group {
   margin-bottom: var(--spacing-lg);
+  animation: slideUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.buy .form-group:nth-child(1) {
+  animation-delay: 0.3s;
+}
+.buy .form-group:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.buy .form-group:nth-child(3) {
+  animation-delay: 0.5s;
+}
+.buy .form-group:nth-child(4) {
+  animation-delay: 0.6s;
+}
+.buy .form-group:nth-child(5) {
+  animation-delay: 0.7s;
+}
+.buy .form-group:nth-child(6) {
+  animation-delay: 0.8s;
 }
 
 .buy .form-group label {
@@ -118,6 +236,31 @@
   font-weight: 500;
   color: var(--text-secondary);
   margin-bottom: var(--spacing-xs);
+  transition: color var(--transition-normal), transform var(--transition-normal);
+  position: relative;
+  padding-left: var(--spacing-sm);
+}
+
+.buy .form-group label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0.8em;
+  background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+  border-radius: var(--radius-full);
+  transition: height var(--transition-normal);
+}
+
+.buy .form-group:hover label {
+  color: var(--primary);
+  transform: translateX(3px);
+}
+
+.buy .form-group:hover label::before {
+  height: 1.2em;
 }
 
 .buy .form-group input,
@@ -127,8 +270,15 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   font-size: 1rem;
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  transition: all var(--transition-normal);
   background-color: var(--card-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.buy .form-group input:hover,
+.buy .form-group select:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.1);
 }
 
 .buy .form-group input:focus,
@@ -136,6 +286,7 @@
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  transform: translateY(-2px);
 }
 
 .buy .form-group.row {
@@ -150,12 +301,21 @@
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-lg);
   background-color: var(--card-bg);
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  transition: all var(--transition-normal);
+  animation: slideUp 0.5s ease-out forwards;
+  animation-delay: 0.9s;
+  opacity: 0;
+}
+
+.buy .card-element-container:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.1);
 }
 
 .buy .card-element-container:focus-within {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  transform: translateY(-2px);
 }
 
 .buy .submit-button {
@@ -171,6 +331,10 @@
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  animation: slideUp 0.5s ease-out forwards;
+  animation-delay: 1s;
+  opacity: 0;
 }
 
 .buy .submit-button::after {
@@ -192,7 +356,7 @@
 .buy .submit-button:hover:not(:disabled) {
   background: linear-gradient(to right, var(--primary-dark), var(--primary));
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
 }
 
 .buy .submit-button:hover::after {
@@ -208,6 +372,9 @@
   display: flex;
   justify-content: space-between;
   margin-top: var(--spacing-xl);
+  animation: slideUp 0.5s ease-out forwards;
+  animation-delay: 1.1s;
+  opacity: 0;
 }
 
 .buy .back-button {
@@ -219,11 +386,29 @@
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.buy .back-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+  transition: left 0.7s ease;
 }
 
 .buy .back-button:hover {
   background-color: var(--border);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.buy .back-button:hover::after {
+  left: 100%;
 }
 
 .buy .error {
@@ -233,6 +418,27 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  animation: shakeAnimation 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shakeAnimation {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 @media (max-width: 768px) {
@@ -253,6 +459,10 @@
 
   .buy .page-title {
     font-size: 1.5rem;
+  }
+
+  .buy .product-details {
+    padding: var(--spacing-md);
   }
 }
 

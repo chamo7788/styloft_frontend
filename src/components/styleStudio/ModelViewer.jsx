@@ -1,3 +1,5 @@
+"use client"
+
 import { forwardRef, useRef, Suspense, memo, useImperativeHandle } from "react"
 import { Canvas } from "@react-three/fiber"
 import { PerspectiveCamera, Environment, OrbitControls } from "@react-three/drei"
@@ -66,9 +68,29 @@ const ModelViewer = forwardRef(
     useImperativeHandle(
       ref,
       () => ({
-        handleRotate,
+        handleRotate: (direction) => {
+          console.log("ModelViewer handleRotate called with direction:", direction)
+          if (!cameraRef.current) {
+            console.error("Camera ref is not available")
+            return
+          }
+
+          const currentPosition = new Vector3().copy(cameraRef.current.position)
+
+          if (direction === "left") {
+            cameraRef.current.position.x = currentPosition.z
+            cameraRef.current.position.z = -currentPosition.x
+          } else if (direction === "right") {
+            cameraRef.current.position.x = -currentPosition.z
+            cameraRef.current.position.z = currentPosition.x
+          } else if (direction === "reset") {
+            cameraRef.current.position.set(0, 0, 10)
+          }
+
+          cameraRef.current.lookAt(0, 0, 0)
+        },
       }),
-      [],
+      [cameraRef],
     )
 
     return (

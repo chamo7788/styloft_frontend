@@ -1,6 +1,6 @@
 .SocietyProfile-container {
   position: absolute;
-  top: 982px;
+  top: 965px;
   width: 20%;
   left: 40px;
   max-width: 800px;
@@ -10,6 +10,32 @@
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+}
+
+.SocietyProfile-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+  font-size: 1rem;
+  color: #333;
+}
+
+.society-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.2);
+  border-top: 4px solid #1e40af;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .SocietyProfile-header {
@@ -49,12 +75,11 @@
 .SocietyProfile-pic {
   width: 100%;
   height: 100%;
-  left: 20px;
   object-fit: cover;
 }
 
 .SocietyProfile-info {
-  margin-top: 30px; /* Make room for the profile pic above */
+  margin-top: 30px;
 }
 
 .SocietyProfile-info h3 {
@@ -70,7 +95,6 @@
   font-size: 0.9rem;
 }
 
-/* About section styles */
 .SocietyProfile-about-section {
   margin-top: -40px;
   padding: 15px;
@@ -79,107 +103,9 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.SocietyProfile-about-section h4 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 10px 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
-}
-
-.SocietyProfile-about-content {
-  padding: 5px 0;
-}
-
 .SocietyProfile-about-content p {
   color: #555;
   line-height: 1.5;
   margin: 0;
   font-size: 0.95rem;
 }
-
-/* Responsive Design for SocietyProfileCard */
-@media screen and (max-width: 1200px) {
-  .SocietyProfile-container {
-    width: 25%;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  .SocietyProfile-container {
-    width: 30%;
-    left: 20px;
-  }
-  
-  .SocietyProfile-info h3 {
-    font-size: 18px;
-  }
-  
-  .society-profession {
-    font-size: 0.85rem;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .SocietyProfile-container {
-    position: relative;
-    top: 850px;
-    width: 80%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 20px;
-  }
-  
-  .SocietyProfileCover-photo {
-    height: 150px;
-  }
-  
-  .SocietyProfile-pic-container {
-    width: 90px;
-    height: 90px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .SocietyProfile-container {
-    width: 95%;
-    top: 800px;
-  }
-  
-  .SocietyProfileCover-photo {
-    height: 120px;
-  }
-  
-  .SocietyProfile-pic-container {
-    width: 80px;
-    height: 80px;
-    top: -40px;
-  }
-  
-  .SocietyProfile-info {
-    margin-top: 25px;
-  }
-  
-  .SocietyProfile-info h3 {
-    font-size: 16px;
-  }
-  
-  .society-profession {
-    font-size: 0.8rem;
-  }
-  
-  .SocietyProfile-about-section {
-    margin-top: -30px;
-    padding: 10px;
-  }
-  
-  .SocietyProfile-about-section h4 {
-    font-size: 1rem;
-  }
-  
-  .SocietyProfile-about-content p {
-    font-size: 0.85rem;
-  }
-}
-
