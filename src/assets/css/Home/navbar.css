@@ -97,7 +97,7 @@
 
 .logo {
   height: var(--logo-size-mobile);
-  margin-left: -2.5rem;
+  margin: left -2.5rem;
   width: auto;
   transform: scale(1);
   transition: transform var(--transition-medium) ease;
@@ -110,6 +110,8 @@
 /* Mobile menu button */
 .mobile-menu-button {
   display: block;
+  margin-right: -250px;
+  margin-top: -15px;
 }
 
 .mobile-menu-button button {
@@ -211,7 +213,8 @@
 .profile-section {
   position: absolute;
   right: 30px;
-  margin-top: -1.8rem;
+  margin-top: -1.2rem;
+  margin-right: 10px;
 }
 
 .profile-button {
