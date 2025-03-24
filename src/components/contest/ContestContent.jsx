@@ -751,7 +751,6 @@ export default function ContestContent() {
           )}
         </div>
       </div>
-      {console.log('repeater----')}
 
       <SubmissionGallery
         submissions={submissions}

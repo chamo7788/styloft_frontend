@@ -360,7 +360,7 @@ const TextureEditor = forwardRef(
           }
         }
       }
-    }, [fabricCanvasRef.current, selectedPart, onCanvasObjectsChange])
+    }, [fabricCanvasRef.current])
 
     // Initialize canvas when component mounts or part changes
     useEffect(() => {
