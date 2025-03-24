@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import "../../../assets/css/Home/footer.css";
 import logo from "../../../assets/images/Styloft-white.png";
-import { FaFacebookF } from 'react-icons/fa';
-import { FaGoogle } from 'react-icons/fa';
-import { FaInstagram } from 'react-icons/fa';
+import { FaFacebookF, FaGoogle, FaInstagram } from "react-icons/fa";
 
 export default function Footer() {
     useEffect(() => {
@@ -40,27 +39,31 @@ export default function Footer() {
                     </a>
                 </div>
             </div>
+
             <div className="footer-middle">
                 <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#reviews">Reviews</a></li>
-                    <li><a href="#about">About</a></li>
+                    <li><NavLink to="/">Home</NavLink></li>
+                    <li><NavLink to="/features">Features</NavLink></li>
+                    <li><NavLink to="/pricing">Pricing</NavLink></li>
+                    <li><NavLink to="/reviews">Reviews</NavLink></li>
+                    <li><NavLink to="/about">About</NavLink></li>
                 </ul>
             </div>
+
             <div className="footer-right">
                 <h2>Create Your Fashion</h2>
                 <h2 className="highlight">Inspire the World!!</h2>
             </div>
+
             <div className="footer-bottom">
                 <p>2025© SE-Group-32 Styloft.live</p>
             </div>
+
             <button className="scroll-to-top" onClick={scrollToTop}>↑</button>
         </footer>
     );
 }
 
 function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
