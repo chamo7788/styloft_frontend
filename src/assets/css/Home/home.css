@@ -1277,3 +1277,115 @@ body {
 
 }
 
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+  /* Hero Section */
+  .hero-content {
+    margin-left: 0;
+    text-align: center;
+    padding: 0 var(--spacing-sm);
+  }
+
+  .hero-title {
+    font-size: 3rem;
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    align-items: center;
+  }
+
+  .button {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  /* About Section */
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .about-intro {
+    font-size: 1rem;
+    padding: 0 var(--spacing-sm);
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Style Section */
+  .style-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .style-card {
+    height: 350px;
+  }
+
+  /* CTA Section */
+  .cta-title {
+    font-size: 1.75rem;
+  }
+
+  .cta-description {
+    font-size: 1rem;
+    padding: 0 var(--spacing-sm);
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .cta-testimonial {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Hero Section */
+  .hero-content {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 4rem;
+  }
+
+  /* About Section */
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Style Section */
+  .style-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .feature-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .style-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hero-content {
+    margin-left: 0;
+    justify-content: center;
+  }
+}
+
