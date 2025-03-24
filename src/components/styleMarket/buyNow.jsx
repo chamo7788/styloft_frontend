@@ -55,9 +55,6 @@ const BuyNow = ({ product, onBack }) => {
   return (
     <div className="buynow">
       <div className="buy-now-container">
-        <button className="back-button" onClick={onBack}>
-          <ArrowLeft size={18} /> Back to Products
-        </button>
 
         <div className="buy-now-content">
           {/* Product Image */}

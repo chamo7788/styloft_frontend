@@ -14,7 +14,7 @@ export default function Stylesociety() {
 
   return (
     <div>
-      <TrendingCard />
+      
       <StyleSearchBar />
       <AddPost />
       <PostList />

@@ -38,7 +38,7 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <StyleSection />
-      <CreativeShowcase />
+
       <CTASection />
     </div>
   )
@@ -93,7 +93,7 @@ function HeroSection() {
             <div className="divider-accent"></div>
           </div>
 
-          <p className="hero-description">
+          <p className="hero-description" style={{ fontFamily: 'Montserrat, sans-serif' }}>
             Your all-in-one fashion design platform that empowers creators to design,
             collaborate, and showcase innovative fashion concepts in a vibrant community.
           </p>
@@ -374,7 +374,7 @@ function CreativeShowcase() {
     {
       title: "Trending Designs",
       description: "Explore the latest fashion trends and designs from our creative community.",
-      image: "/images/style-market.jpg",
+      image: Stylemarket,
       stats: [
         { label: "New Designs", value: "250+" },
         { label: "Trending Styles", value: "45" },
@@ -383,7 +383,7 @@ function CreativeShowcase() {
     {
       title: "Designer Spotlight",
       description: "Discover talented designers and their unique fashion creations.",
-      image: "/images/style-studio.jpg",
+      image: Stylemarket,
       stats: [
         { label: "Featured Designers", value: "120" },
         { label: "Countries", value: "35+" },
@@ -392,7 +392,7 @@ function CreativeShowcase() {
     {
       title: "Fashion Events",
       description: "Stay updated with upcoming fashion shows, exhibitions, and events.",
-      image: "/images/style-society.jpg",
+      image: Stylemarket,
       stats: [
         { label: "Upcoming Events", value: "18" },
         { label: "Past Events", value: "200+" },
@@ -509,11 +509,11 @@ function CTASection() {
         </p>
 
         <div className="cta-buttons">
-          <Link to="/signup" className="button primary-button">
+          <Link to="/register" className="button primary-button">
             <span className="button-text">Sign Up Now</span>
             <span className="button-icon">→</span>
           </Link>
-          <Link to="/signin" className="button outline-button white-outline">
+          <Link to="/login" className="button outline-button white-outline">
             <span className="button-text">Sign In</span>
           </Link>
         </div>

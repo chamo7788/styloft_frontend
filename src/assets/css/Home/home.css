@@ -473,18 +473,7 @@ body {
   position: relative;
 }
 
-.hero-title-animation::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 10px;
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  bottom: -10px;
-  left: 0;
-  transform: scaleX(0);
-  transform-origin: bottom right;
-  animation: underline 1.5s ease-out forwards 1s;
-}
+
 
 @keyframes underline {
   to {
