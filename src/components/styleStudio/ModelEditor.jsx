@@ -23,6 +23,7 @@ const models = {
   trouser: "/models/1861_trousers.glb",
   short: "/models/man_shorts.glb",
   frock: "/models/ladies_black_frock.glb",
+  Tshirt: "/models/white_shirt.glb",
 }
 
 const modelParts = {
@@ -30,6 +31,7 @@ const modelParts = {
   trouser: ["main", "pockets", "waistband"],
   short: ["main", "pockets"],
   frock: ["body", "sleeves", "collar"],
+  Tshirt: ["body", "collar", "sleeves"],
 }
 
 const modelSettings = {
@@ -37,6 +39,7 @@ const modelSettings = {
   trouser: { scale: 4, position: [0, -2.5, 0] },
   short: { scale: 4.5, position: [0, -3.3, 0] },
   frock: { scale: 3, position: [0, -4.2, 0] },
+  Tshirt: { scale: 0.05, position: [0, -6, 0] },
 }
 
 const uvMappings = {
@@ -58,6 +61,11 @@ const uvMappings = {
     body: { x: 0, y: 0, width: 1, height: 1 },
     sleeves: { x: 0, y: 0, width: 1, height: 0.4 },
     collar: { x: 0, y: 0, width: 1, height: 0.2 },
+  },
+  Tshirt: {
+    body: { x: 0, y: 0, width: 1, height: 1 },
+    collar: { x: 0, y: 0, width: 1, height: 0.2 },
+    sleeves: { x: 0, y: 0, width: 1, height: 0.4 },
   },
 }
 
