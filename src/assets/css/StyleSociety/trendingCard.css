@@ -2,95 +2,18 @@
 .trending-section {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e40af, #3b82f6);
-  background-size: 400% 400%;
+  background-color: #f8fafc;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding: 4rem 1rem;
-  animation: gradientFlow 15s ease infinite;
-}
-
-@keyframes gradientFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
 .trending-container {
   max-width: 1400px;
   margin: 0 auto;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.8s ease forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.trending-title {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  animation: titleReveal 1s ease forwards 0.3s;
-}
-
-@keyframes titleReveal {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.trending-title-gradient {
-  background: linear-gradient(to right, #bfdbfe, #dbeafe);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: none;
-  animation: shimmer 3s linear infinite;
-}
-
-@keyframes shimmer {
-  to {
-    background-position: 200% center;
-  }
-}
-
-.trending-subtitle {
-  font-size: 1.5rem;
-  font-weight: 500;
-  margin-bottom: 3rem;
-  color: #f3f4f6;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  max-width: 48rem;
-  margin-left: auto;
-  margin-right: auto;
-  opacity: 0;
-  animation: fadeIn 0.8s ease forwards 0.6s;
+  animation: fadeIn 0.5s ease;
 }
 
 @keyframes fadeIn {
@@ -102,10 +25,25 @@
   }
 }
 
+.trending-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #0f172a;
+}
+
+.trending-subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-bottom: 3rem;
+  color: #64748b;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .fashion-card-container {
   display: grid;
-  flex-wrap: wrap;
-  justify-content: center;
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   width: 100%;
@@ -115,13 +53,11 @@
 
 .fashion-card {
   position: relative;
-  width: 300px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   opacity: 0;
   transform: translateY(30px);
   animation: cardReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -140,8 +76,8 @@
 }
 
 .fashion-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .like-button-container {
@@ -152,20 +88,18 @@
 }
 
 .like-button {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(4px);
-  padding: 0.625rem;
+  background: white;
+  padding: 0.5rem;
   border-radius: 9999px;
   border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .like-button:hover {
-  background: #eff6ff;
-  transform: scale(1.1);
-  box-shadow: 0 6px 12px rgba(30, 64, 175, 0.2);
+  background: #f1f5f9;
+  transform: scale(1.05);
 }
 
 .like-button:active {
@@ -175,27 +109,12 @@
 .heart-icon {
   height: 1.25rem;
   width: 1.25rem;
-  color: #1e40af;
-  transition: transform 0.3s ease;
-}
-
-.like-button:hover .heart-icon {
-  transform: scale(1.1);
-  animation: heartBeat 0.3s ease;
-}
-
-@keyframes heartBeat {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
+  color: #ef4444;
 }
 
 .image-container {
   position: relative;
-  height: 300px;
+  height: 250px;
   overflow: hidden;
 }
 
@@ -203,11 +122,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s ease;
 }
 
 .fashion-card:hover .card-image {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .image-overlay {
@@ -252,66 +171,18 @@
   }
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-}
-
 .card-title {
   font-size: 1.25rem;
-  font-weight: 700;
-  color: #1f2937;
-  transition: color 0.3s ease;
-}
-
-.fashion-card:hover .card-title {
-  color: #1e40af;
-  animation: titlePop 0.3s ease;
-}
-
-@keyframes titlePop {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.sparkles-icon {
-  height: 1.25rem;
-  width: 1.25rem;
-  color: #3b82f6;
-  animation: sparkle 2s infinite;
-}
-
-@keyframes sparkle {
-  0%, 100% {
-    transform: scale(1) rotate(0);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2) rotate(15deg);
-    opacity: 0.8;
-  }
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
 }
 
 .card-tagline {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #2563eb;
-  margin-bottom: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.fashion-card:hover .card-tagline {
-  color: #1e40af;
-  transform: translateX(5px);
+  font-size: 1rem;
+  font-weight: 400;
+  color: #64748b;
+  margin-bottom: 1rem;
 }
 
 .card-footer {
@@ -320,13 +191,13 @@
   justify-content: space-between;
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #e2e8f0;
   position: relative;
   overflow: hidden;
 }
 
 .card-footer::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: 0;
@@ -343,8 +214,8 @@
 
 .designer-name {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #4b5563;
+  font-weight: 500;
+  color: #334155;
   transition: transform 0.3s ease;
 }
 
@@ -361,7 +232,7 @@
 .star-icon {
   height: 1rem;
   width: 1rem;
-  color: #3b82f6;
+  color: #f59e0b;
   transition: all 0.3s ease;
 }
 
@@ -371,7 +242,8 @@
 }
 
 @keyframes starPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -382,25 +254,19 @@
 }
 
 /* Responsive Design */
-@media screen and (max-width: 768px) {
-  .trending-title {
-    font-size: 2.5rem;
-  }
-
-  .trending-subtitle {
-    font-size: 1.25rem;
-  }
-
-  .trending-section {
-    padding: 3rem 1rem;
-  }
-
+@media screen and (max-width: 1200px) {
   .fashion-card-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 cards per row on medium screens */
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 900px) {
+  .fashion-card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 600px) {
   .trending-title {
     font-size: 2rem;
   }
@@ -409,12 +275,13 @@
     font-size: 1.125rem;
   }
 
-  .fashion-card {
-    width: 100%;
-    max-width: 320px;
+  .fashion-card-container {
+    grid-template-columns: 1fr;
   }
 
-  .fashion-card-container {
-    grid-template-columns: repeat(1, 1fr); /* 1 card per row on small screens */
+  .fashion-card {
+    max-width: 400px;
+    margin: 0 auto;
   }
 }
+
