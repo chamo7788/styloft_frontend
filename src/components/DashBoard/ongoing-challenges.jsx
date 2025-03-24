@@ -169,7 +169,7 @@ export default function OngoingChallenges() {
                 </div>
                 <div className="challenge-progress">
                   <div className="progress-info">
-                    <span>Progress</span>
+                    <span>Count Down</span>
                     <span>{calculateProgress(challenge.deadline)}%</span>
                   </div>
                   <div className="progress-bar-container">
