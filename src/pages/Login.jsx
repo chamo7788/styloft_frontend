@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebaseConfig";
-import "../assets/css/login.css";
+import "../../src/assets/css/login.css";
 
 export default function Login() {
     const emailRef = useRef(null);
