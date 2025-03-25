@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
-import "../../assets/css/contest/ContestContent.css"
 import "../../assets/css/contest/favoriteSubmissions.css"
 import { User, Clock, Award, X, Image, Star, Heart, ArrowLeft, Crown } from "lucide-react"
 
