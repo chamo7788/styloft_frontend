@@ -205,3 +205,5 @@ export function AddShopForm() {
     </div>
   );
 }
+
+export default AddShopForm;

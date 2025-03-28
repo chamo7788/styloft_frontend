@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef } from "react"
 import { Cloudinary } from "@cloudinary/url-gen"
 import { format } from "date-fns"
@@ -458,4 +456,6 @@ export function AddContestForm() {
     </div>
   )
 }
+
+export default AddContestForm;
 

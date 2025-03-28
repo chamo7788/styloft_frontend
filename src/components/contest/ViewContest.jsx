@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useRef, useState } from "react"
 import { Search, Plus, Award, Loader, Lock } from "lucide-react"
 import { Link } from "react-router-dom"

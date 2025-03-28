@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
 import { User, Send, ImageIcon, Clock } from "lucide-react"
 import "../../assets/css/contest/SubmissionChatView.css"
