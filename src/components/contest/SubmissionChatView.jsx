@@ -27,7 +27,7 @@ export default function SubmissionChatView({ submission, contest, isContestCreat
     try {
       setLoading(true)
       // Use the messages endpoint
-      const response = await fetch(`http://localhost:3000/messages/submission/${submission.id}`)
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/messages/submission/${submission.id}`)
 
       if (!response.ok) {
         throw new Error("Failed to fetch messages")
@@ -63,7 +63,7 @@ export default function SubmissionChatView({ submission, contest, isContestCreat
       console.log("To submission ID:", submission.id)
 
       // Use the messages endpoint
-      const response = await fetch(`http://localhost:3000/messages/submission/${submission.id}`, {
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/messages/submission/${submission.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

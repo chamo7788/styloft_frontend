@@ -22,7 +22,7 @@ export default function OngoingChallenges() {
       }
 
       // Fetch all contests
-      const response = await fetch("http://localhost:3000/contest")
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/contest")
 
       if (!response.ok) {
         throw new Error("Failed to fetch contests")

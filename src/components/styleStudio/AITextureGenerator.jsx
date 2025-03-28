@@ -19,7 +19,7 @@ const AITextureGenerator = ({ onTextureGenerated, selectedPart }) => {
     
     try {
       // Connect to your NestJS backend
-      const response = await fetch('http://localhost:3000/api/generate-texture', {
+      const response = await fetch('https://styloftbackendnew-production.up.railway.app/api/generate-texture', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: textPrompt })
@@ -32,7 +32,7 @@ const AITextureGenerator = ({ onTextureGenerated, selectedPart }) => {
       const data = await response.json()
       if (data.textureUrl) {
         // The backend returns a URL like /api/uploads/textures/filename.png
-        const fullTextureUrl = `http://localhost:3000${data.textureUrl}`
+        const fullTextureUrl = `https://styloftbackendnew-production.up.railway.app${data.textureUrl}`
         onTextureGenerated(fullTextureUrl)
       }
     } catch (error) {

@@ -19,7 +19,7 @@ const PurchaseHistory = () => {
       }
 
       // Fetch the purchase history from the backend API
-      const response = await fetch(`http://localhost:3000/payments/user-orders/${currentUser.uid}`);
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/payments/user-orders/${currentUser.uid}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch purchase history");

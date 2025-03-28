@@ -153,7 +153,7 @@ export function AddContestForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/contest", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/contest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

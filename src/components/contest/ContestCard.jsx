@@ -26,7 +26,7 @@ const ContestCards = ({ contests }) => {
     // Fetch submission counts from the backend
     const fetchSubmissionCounts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/submission/count-by-contest');
+        const response = await fetch('https://styloftbackendnew-production.up.railway.app/submission/count-by-contest');
         const data = await response.json();
         const counts = data.reduce((acc, item) => {
           acc[item.contestId] = item.count;
@@ -43,7 +43,7 @@ const ContestCards = ({ contests }) => {
     // Fetch designer counts from the backend
     const fetchDesignerCounts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/submission/designers-by-contest');
+        const response = await fetch('https://styloftbackendnew-production.up.railway.app/submission/designers-by-contest');
         const data = await response.json();
         const counts = data.reduce((acc, item) => {
           acc[item.contestId] = item.count;

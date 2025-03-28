@@ -284,7 +284,7 @@ const Profile = () => {
     setError(null)
 
     try {
-      const response = await axios.get(`http://localhost:3000/design/user/${uid}`)
+      const response = await axios.get(`https://styloftbackendnew-production.up.railway.app/design/user/${uid}`)
       setUserDesigns(response.data)
     } catch (err) {
       console.error("Error fetching user designs:", err)

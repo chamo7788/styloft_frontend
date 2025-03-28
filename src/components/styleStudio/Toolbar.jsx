@@ -101,7 +101,7 @@ function Toolbar({
     setError(null)
 
     try {
-      const response = await fetch("http://localhost:3000/design/user", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/design/user", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -165,11 +165,11 @@ function Toolbar({
 
       // If we have a current design ID, update that design
       if (currentDesignId) {
-        url = `http://localhost:3000/design/update/${currentDesignId}`
+        url = `https://styloftbackendnew-production.up.railway.app/design/update/${currentDesignId}`
         method = "PUT"
         console.log("Updating existing design:", currentDesignId)
       } else {
-        url = "http://localhost:3000/design/save"
+        url = "https://styloftbackendnew-production.up.railway.app/design/save"
         method = "POST"
         console.log("Creating new design")
       }
@@ -308,7 +308,7 @@ function Toolbar({
       }
 
       // Send to backend to publish as a design
-      const response = await fetch("http://localhost:3000/design/publish", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/design/publish", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

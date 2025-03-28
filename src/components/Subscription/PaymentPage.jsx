@@ -21,7 +21,7 @@ const CheckoutForm = ({ plan, buyerDetails, setBuyerDetails, setPaymentSuccessfu
   const user=JSON.parse(localStorage.getItem('currentUser'))
 
   useEffect(() => {
-    fetch("http://localhost:3000/payments/subscription", {
+    fetch("https://styloftbackendnew-production.up.railway.app/payments/subscription", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -46,7 +46,7 @@ export default function Register() {
       const user = userCredential.user;
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:3000/user/register", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName, lastName, email, password }),
@@ -73,7 +73,7 @@ export default function Register() {
       const user = result.user;
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:3000/user/google-signin", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/user/google-signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

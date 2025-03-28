@@ -60,7 +60,7 @@ const Navbar = () => {
       
       console.log("Fetching subscription for user:", userId);
       
-      const response = await fetch(`http://localhost:3000/payments/subscription-status/${userId}`);
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/payments/subscription-status/${userId}`);
       const data = await response.json();
       
       console.log("Subscription data:", data);
