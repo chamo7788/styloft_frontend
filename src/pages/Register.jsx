@@ -5,7 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import "../assets/css/register.css";
+import "../assets/css/Register.css";
 
 export default function Register() {
   const firstNameRef = useRef(null);
