@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { User, Send, ImageIcon, Clock } from "lucide-react"
-import "../../assets/css/contest/SubmissionChatView.css"
+import "/src/assets/css/contest/SubmissionChatView.css"
 
 export default function SubmissionChatView({ submission, contest, isContestCreator }) {
   const [messages, setMessages] = useState([])
