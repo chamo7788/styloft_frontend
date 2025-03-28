@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { Check, Award, Shield, Crown } from 'lucide-react'
-import "../../assets/css/Subscription/subscriptionPlans.css"
+import "../../assets/css/subscription/subscriptionPlans.css"
 
 const plans = [
   {
