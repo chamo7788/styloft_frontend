@@ -2,7 +2,7 @@ import { useState, useRef } from "react"
 import { Cloudinary } from "@cloudinary/url-gen"
 import { format } from "date-fns"
 import { CalendarIcon, Upload, ImageIcon, Trophy, Clock, AlertCircle } from "lucide-react"
-import "/src/assets/css/contest/addContest.css"
+import "@/assets/css/contest/addContest.css"
 
 export function AddContestForm() {
   const [formData, setFormData] = useState({

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trophy, Users, Star, ArrowRight } from "lucide-react";
-import "../../assets/css/contest/contest.css";
+import "@/assets/css/contest/contest.css";
 
 // Card Component
 const Card = ({ children }) => <div className="contest-card">{children}</div>;

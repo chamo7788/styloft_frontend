@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Search, Plus, Award, Loader, Lock } from "lucide-react"
 import { Link } from "react-router-dom"
-import "../../assets/css/contest/contest.css"
+import "@/assets/css/contest/contest.css"
 import ContestCards from "./ContestCard"
 
 const Button = ({ children, className, onClick, icon: Icon }) => (

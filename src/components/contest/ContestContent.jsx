@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
-import "/src/assets/css/contest/contestcontent.css"
+import "@/assets/css/contest/contestcontent.css"
 import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star, Heart, Trophy, DollarSign, Info } from "lucide-react"
 import SubmissionChatView from "./SubmissionChatView"
 import SubmissionForm from "./SubmissionForm";
