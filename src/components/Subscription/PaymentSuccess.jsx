@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { CheckCircle } from "lucide-react"
-import "../../assets/css/subscription/payment-success.css"
+import "../../assets/css/Subscription/payment-success.css"
 
 const PaymentSuccess = () => {
   return (
