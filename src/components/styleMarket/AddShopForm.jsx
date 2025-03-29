@@ -119,7 +119,7 @@ export function AddShopForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/shop", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/shop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -205,3 +205,5 @@ export function AddShopForm() {
     </div>
   );
 }
+
+export default AddShopForm;

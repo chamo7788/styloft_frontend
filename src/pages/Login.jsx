@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebaseConfig";
-import "../assets/css/login.css";
+import "../assets/css/Login.css";
 
 export default function Login() {
     const emailRef = useRef(null);
@@ -29,7 +29,7 @@ export default function Login() {
         const password = passRef.current.value;
 
         try {
-            const response = await fetch("http://localhost:3000/user/login", {
+            const response = await fetch("https://styloftbackendnew-production.up.railway.app/user/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
@@ -60,7 +60,7 @@ export default function Login() {
             const user = result.user;
             const idToken = await user.getIdToken();
 
-            const response = await fetch("http://localhost:3000/user/google-login", {
+            const response = await fetch("https://styloftbackendnew-production.up.railway.app/user/google-login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ idToken })

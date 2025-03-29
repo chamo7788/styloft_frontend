@@ -1,5 +1,3 @@
-"use client"
-
 import { forwardRef, useRef, Suspense, memo, useImperativeHandle } from "react"
 import { Canvas } from "@react-three/fiber"
 import { PerspectiveCamera, Environment, OrbitControls } from "@react-three/drei"

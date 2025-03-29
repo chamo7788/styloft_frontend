@@ -31,7 +31,7 @@ const DashBoard = () => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     if (user && user.uid) {
       try {
-        await fetch("http://localhost:3000/user/updateAbout", {
+        await fetch("https://styloftbackendnew-production.up.railway.app/user/updateAbout", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

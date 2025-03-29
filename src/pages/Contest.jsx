@@ -1,14 +1,12 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import ViewContest from "../components/contest/ViewContest";
-import { AddContestForm } from "../components/contest/AddContest";
-import ContestContent from "../components/contest/ContestContent";
+import { ViewContest, AddContest, ContestContent } from "../components/contest";
 
 export default function Contest() {
     return (
         <Routes>
             <Route path="/" element={<ViewContest />} />
-            <Route path="add-contest" element={<AddContestForm />} />
+            <Route path="add-contest" element={<AddContest />} />
             <Route path=":id" element={<ContestContent />} />
         </Routes>
     );

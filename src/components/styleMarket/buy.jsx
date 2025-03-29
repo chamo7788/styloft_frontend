@@ -24,7 +24,7 @@ const CheckoutForm = ({ formData, setFormData, amount, setPaymentSuccessful, pro
     }
 
     if (!clientSecret) {  // Prevent duplicate API calls
-      fetch("http://localhost:3000/payments/shop", {
+      fetch("https://styloftbackendnew-production.up.railway.app/payments/shop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
