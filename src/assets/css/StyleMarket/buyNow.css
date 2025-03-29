@@ -1,12 +1,21 @@
 /* BuyNow Component */
 .buynow .buy-now-container {
-  max-width: 1000px;
+  max-width: 100%;
+  max-height: 500px;
   margin: var(--spacing-2xl) auto;
   background-color: var(--card-bg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   padding: var(--spacing-lg);
+  animation: fadeInUp 0.8s ease-out forwards;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.buynow .buy-now-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
 }
 
 .buynow .back-button {
@@ -19,7 +28,7 @@
   font-weight: 500;
   cursor: pointer;
   padding: var(--spacing-md) 0;
-  transition: color var(--transition-normal);
+  transition: all var(--transition-normal);
 }
 
 .buynow .back-button:hover {
@@ -32,6 +41,16 @@
   grid-template-columns: 1fr;
   gap: var(--spacing-xl);
   padding: var(--spacing-md) 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (min-width: 768px) {
@@ -47,6 +66,12 @@
   box-shadow: var(--shadow-md);
   aspect-ratio: 1 / 1;
   position: relative;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.buynow .product-image-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
 }
 
 .buynow .image-placeholder {
@@ -86,6 +111,7 @@
 
 .buynow .product-image.loaded {
   opacity: 1;
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 .buynow .product-image:hover {
@@ -96,6 +122,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .buynow .product-title {
@@ -105,6 +143,23 @@
   margin: 0;
   line-height: 1.2;
   letter-spacing: -0.025em;
+  position: relative;
+  display: inline-block;
+}
+
+.buynow .product-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), transparent);
+  transition: width var(--transition-normal);
+}
+
+.buynow .product-info:hover .product-title::after {
+  width: 100%;
 }
 
 .buynow .product-price {
@@ -112,6 +167,12 @@
   font-weight: 700;
   color: var(--primary);
   margin: 0;
+  transition: transform var(--transition-normal);
+}
+
+.buynow .product-info:hover .product-price {
+  transform: scale(1.05);
+  text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
 }
 
 .buynow .size-selection h3,
@@ -120,6 +181,25 @@
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: var(--spacing-sm);
+  position: relative;
+  display: inline-block;
+}
+
+.buynow .size-selection h3::after,
+.buynow .quantity-selection h3::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--primary), transparent);
+  transition: width var(--transition-normal);
+}
+
+.buynow .size-selection:hover h3::after,
+.buynow .quantity-selection:hover h3::after {
+  width: 100%;
 }
 
 .buynow .size-options {
@@ -139,17 +219,21 @@
   border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all var(--transition-bounce);
 }
 
 .buynow .size-button:hover {
   border-color: var(--primary-light);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
 }
 
 .buynow .size-button.active {
   background-color: var(--primary);
   color: white;
   border-color: var(--primary);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
 }
 
 .buynow .quantity-controls {
@@ -175,6 +259,8 @@
   background-color: var(--primary);
   color: white;
   border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .buynow .quantity-controls button:disabled {
@@ -190,6 +276,13 @@
   border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 500;
+  transition: all var(--transition-normal);
+}
+
+.buynow .quantity-controls input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
 }
 
 .buynow .buy-now-button {
@@ -209,6 +302,7 @@
   margin-top: var(--spacing-lg);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
 .buynow .buy-now-button::after {
@@ -230,7 +324,7 @@
 .buynow .buy-now-button:hover {
   background: linear-gradient(to right, var(--primary), var(--primary-dark));
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
 }
 
 .buynow .buy-now-button:hover::after {

@@ -8,7 +8,9 @@ import Contest from "./pages/Contest";
 import { AddShopForm } from "./components/styleMarket/AddShopForm";
 import PaymentPage from "./components/Subscription/PaymentPage";
 import './assets/css/fonts.css';
+import FavoriteSubmissions from "./components/contest/FavoriteSubmissions";
 import GarmentRequestForm from "./components/RequestForm/GarmentRequestForm";
+
 
 function App() {
   const location = useLocation();
@@ -28,6 +30,7 @@ function App() {
         <Route path="/stylestudio" element={<StyleStudio />} />
         <Route path="/styleMarket" element={<Stylemarket />} />
         <Route path="/contest/*" element={<Contest />} />
+        <Route path="/contest/:id/favorites" element={<FavoriteSubmissions />} />
         <Route path="/styleMarket/add-shop" element={<AddShopForm />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/request-form" element={<GarmentRequestForm />} />

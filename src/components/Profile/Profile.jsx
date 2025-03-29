@@ -9,10 +9,13 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import NotifiRequest from "./NotifiRequest";
 
+// Import default images properly
+import defaultProfilePicImg from "../../assets/images/user-profile.png";
+import defaultCoverPhotoImg from "../../assets/images/profile-background.jpg";
 
-// Default images
-const defaultProfilePic = "../../assets/images/user-profile.png"
-const defaultCoverPhoto = "../../assets/images/profile-background.jpg"
+// Set default images with imported assets
+const defaultProfilePic = defaultProfilePicImg;
+const defaultCoverPhoto = defaultCoverPhotoImg;
 
 const StarRating = ({ rating, readOnly = true }) => {
   return (
@@ -160,9 +163,10 @@ const Profile = () => {
 
         // Handle cover photo - make sure we have a fallback
         if (userData.coverPhotoURL && userData.coverPhotoURL !== "") {
-          setCoverPhoto(userData.coverPhotoURL)
+          setCoverPhoto(userData.coverPhotoURL);
         } else {
-          setCoverPhoto(defaultCoverPhoto)
+          console.log("No cover photo found, using default");
+          setCoverPhoto(defaultCoverPhoto);
         }
 
         // Set followers/following
@@ -558,13 +562,13 @@ const Profile = () => {
           {/* Cover Photo */}
           <div className="cover-photo">
             <img
-              src={coverPhoto || "/placeholder.svg"}
+              src={coverPhoto || defaultCoverPhoto}
               alt="Cover"
               className="cover-img"
               onError={(e) => {
-                console.log("Error loading cover photo, using default")
-                e.target.onerror = null // Prevent infinite error loop
-                e.target.src = defaultCoverPhoto
+                console.log("Error loading cover photo, using default");
+                e.target.onerror = null; // Prevent infinite error loop
+                e.target.src = defaultCoverPhoto;
               }}
             />
             {isCurrentUserProfile && (
