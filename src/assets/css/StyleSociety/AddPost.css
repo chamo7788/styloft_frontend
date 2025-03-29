@@ -1,8 +1,8 @@
 /* Add Post Container - LinkedIn Style */
 .add-post-container {
   position: relative;
-  width: 36%;
-  top: 10px;
+  width: 37%;
+  top: -10px;
   max-width: 600px;
   margin: 20px auto 20px 31%;
   background-color: #fff;
