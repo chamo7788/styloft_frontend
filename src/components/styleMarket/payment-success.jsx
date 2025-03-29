@@ -121,7 +121,7 @@ const PaymentSuccess = ({ orderDetails, onContinueShopping, onViewOrder }) => {
               <span>#{Math.floor(100000 + Math.random() * 900000)}</span>
             </div>
             <div className="detail-row animate-item">
-              <span>Product:</span>
+              <span>Owner Name:</span>
               <span>{orderDetails.productName}</span>
             </div>
             <div className="detail-row animate-item">
