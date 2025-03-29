@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
-import "../../assets/css/contest/ContestContent.css"
+import "@/assets/css/contest/contestContent.css"
 import { User, Clock, Award, Upload, X, CheckCircle, Image, MessageSquare, Calendar, Lock, Star, Heart, Trophy, DollarSign, Info } from "lucide-react"
 import SubmissionChatView from "./SubmissionChatView"
 import SubmissionForm from "./SubmissionForm";
@@ -37,7 +37,7 @@ export default function ContestContent() {
   useEffect(() => {
     const fetchContest = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/contest/${id}`)
+        const response = await fetch(`https://styloftbackendnew-production.up.railway.app/contest/${id}`)
         if (!response.ok) throw new Error("Failed to fetch contest")
         const data = await response.json()
         setContest(data)
@@ -62,7 +62,7 @@ export default function ContestContent() {
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/submission/contest/${id}`)
+        const response = await fetch(`https://styloftbackendnew-production.up.railway.app/submission/contest/${id}`)
         if (!response.ok) throw new Error("Failed to fetch submissions")
         const data = await response.json()
 
@@ -88,7 +88,7 @@ export default function ContestContent() {
       const fetchFavorites = async () => {
         setIsFavoriteLoading(true)
         try {
-          const response = await fetch(`http://localhost:3000/submission/contest/${id}/favorites`)
+          const response = await fetch(`https://styloftbackendnew-production.up.railway.app/submission/contest/${id}/favorites`)
           if (!response.ok) throw new Error("Failed to fetch favorite submissions")
           const data = await response.json()
           setFavoriteSubmissions(data)
@@ -226,7 +226,7 @@ export default function ContestContent() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/submission/submit", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/submission/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData),
@@ -297,7 +297,7 @@ export default function ContestContent() {
       }
 
       // Send PATCH request to update the contest
-      const response = await fetch(`http://localhost:3000/contest/${id}`, {
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/contest/${id}`, {
         method: "PATCH", // Use PATCH instead of PUT as it's more appropriate for partial updates
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData)
@@ -342,7 +342,7 @@ export default function ContestContent() {
     if (!currentUser || !isContestCreator) return
     
     try {
-      const response = await fetch(`http://localhost:3000/submission/${submissionId}/rate`, {
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/submission/${submissionId}/rate`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -374,7 +374,7 @@ export default function ContestContent() {
     
     try {
       console.log(`Toggling favorite for submission ${submissionId}`);
-      const response = await fetch(`http://localhost:3000/submission/${submissionId}/favorite`, {
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/submission/${submissionId}/favorite`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" }
       })
@@ -444,7 +444,7 @@ export default function ContestContent() {
     if (!currentUser || !isContestCreator || !isDeadlinePassed) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/contest/${id}/winner`, {
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/contest/${id}/winner`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

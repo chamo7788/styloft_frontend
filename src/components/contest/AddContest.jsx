@@ -1,10 +1,8 @@
-"use client"
-
 import { useState, useRef } from "react"
 import { Cloudinary } from "@cloudinary/url-gen"
 import { format } from "date-fns"
 import { CalendarIcon, Upload, ImageIcon, Trophy, Clock, AlertCircle } from "lucide-react"
-import "../../assets/css/contest/addContest.css"
+import "@/assets/css/contest/addContest.css"
 
 export function AddContestForm() {
   const [formData, setFormData] = useState({
@@ -155,7 +153,7 @@ export function AddContestForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/contest", {
+      const response = await fetch("https://styloftbackendnew-production.up.railway.app/contest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -458,4 +456,6 @@ export function AddContestForm() {
     </div>
   )
 }
+
+export default AddContestForm;
 

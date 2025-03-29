@@ -1,11 +1,13 @@
 import { useState } from "react"
-import DashBoardProfile from "../components/DashBoard/DashBoardProfile"
-import CollaborationRequests from "../components/DashBoard/collaboration-requests"
-import DesignOutfit from "../components/DashBoard/DesignOutfit"
-import OngoingChallenges from "../components/DashBoard/ongoing-challenges"
-import PurchaseHistory from "../components/DashBoard/purchase-history"
-import SavedDesigns from "../components/DashBoard/saved-designs"
-import { AddShopForm } from "../components/styleMarket/AddShopForm"
+import { 
+  DashBoardProfile, 
+  CollaborationRequests, 
+  DesignOutfit, 
+  OngoingChallenges, 
+  PurchaseHistory, 
+  SavedDesigns 
+} from "../components/DashBoard"
+import { AddShopForm } from "../components/styleMarket"
 import "../assets/css/DashBoard/dashboard.css"
 
 export default function DashBoard() {

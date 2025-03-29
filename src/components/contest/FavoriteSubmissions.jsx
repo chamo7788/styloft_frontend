@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
-import "../../assets/css/contest/ContestContent.css"
-import "../../assets/css/contest/favoriteSubmissions.css"
+import "@/assets/css/contest/favoriteSubmissions.css"
 import { User, Clock, Award, X, Image, Star, Heart, ArrowLeft, Crown } from "lucide-react"
 
 export default function FavoriteSubmissions() {
@@ -20,7 +19,7 @@ export default function FavoriteSubmissions() {
   useEffect(() => {
     const fetchContest = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/contest/${id}`)
+        const response = await fetch(`https://styloftbackendnew-production.up.railway.app/contest/${id}`)
         if (!response.ok) throw new Error("Failed to fetch contest")
         const data = await response.json()
         setContest(data)
@@ -38,7 +37,7 @@ export default function FavoriteSubmissions() {
     const fetchFavorites = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3000/submission/contest/${id}/favorites`);
+        const response = await fetch(`https://styloftbackendnew-production.up.railway.app/submission/contest/${id}/favorites`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch favorite submissions: ${response.statusText}`);
@@ -62,7 +61,7 @@ export default function FavoriteSubmissions() {
     if (!isContestCreator) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/contest/${id}/winner`, {
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/contest/${id}/winner`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ winnerId: submissionId })

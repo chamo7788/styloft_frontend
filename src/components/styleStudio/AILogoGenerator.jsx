@@ -16,7 +16,7 @@ const AILogoGenerator = ({ onLogoGenerated }) => {
     
     try {
       // Connect to your NestJS backend
-      const response = await fetch('http://localhost:3000/api/generate-logo', {
+      const response = await fetch('https://styloftbackendnew-production.up.railway.app/api/generate-logo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: logoPrompt })
@@ -30,7 +30,7 @@ const AILogoGenerator = ({ onLogoGenerated }) => {
       
       // Process the returned URLs to include the full domain
       if (data.logoUrls && data.logoUrls.length > 0) {
-        const fullLogoUrls = data.logoUrls.map(url => `http://localhost:3000${url}`)
+        const fullLogoUrls = data.logoUrls.map(url => `https://styloftbackendnew-production.up.railway.app${url}`)
         setGeneratedLogos(fullLogoUrls)
       }
     } catch (error) {

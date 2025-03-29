@@ -1,20 +1,17 @@
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import CreatePost from "../components/stylesociety/CreatePost";
-import PostList from "../components/stylesociety/PostList";
-import AddPost from "../components/stylesociety/AddPost";
-import Feed from "../components/stylesociety/Feed";
-import SocietyProfileCard from "../components/stylesociety/SocietyProfileCard";
-import StyleSearchBar from "../components/stylesociety/StyleSearchBar";
-import { TrendingCard } from "../components/stylesociety/TrendingCard";
-
+import {
+  AddPost,
+  PostList,
+  Feed,
+  SocietyProfileCard,
+  StyleSearchBar,
+  TrendingCard
+} from "../components/stylesociety";
 
 export default function Stylesociety() {
-
-
   return (
     <div>
-      
       <StyleSearchBar />
       <AddPost />
       <PostList />

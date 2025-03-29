@@ -64,7 +64,7 @@ const StyleMarket = () => {
       params.append('sort', sortOption)
       
       // Make the fetch request with params
-      const response = await fetch(`http://localhost:3000/shop?${params.toString()}`)
+      const response = await fetch(`https://styloftbackendnew-production.up.railway.app/shop?${params.toString()}`)
       const data = await response.json()
       dispatch(setProducts(data))
     } catch (error) {

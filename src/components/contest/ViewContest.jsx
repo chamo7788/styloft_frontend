@@ -1,9 +1,7 @@
-"use client"
-
 import { useEffect, useRef, useState } from "react"
 import { Search, Plus, Award, Loader, Lock } from "lucide-react"
 import { Link } from "react-router-dom"
-import "../../assets/css/contest/contest.css"
+import "@/assets/css/contest/contest.css"
 import ContestCards from "./ContestCard"
 
 const Button = ({ children, className, onClick, icon: Icon }) => (
@@ -60,7 +58,7 @@ const DesignContestPage = () => {
   const fetchContests = async (query = "") => {
     setIsLoading(true)
     try {
-      const url = query ? `http://localhost:3000/contest/search?query=${query}` : "http://localhost:3000/contest"
+      const url = query ? `https://styloftbackendnew-production.up.railway.app/contest/search?query=${query}` : "https://styloftbackendnew-production.up.railway.app/contest"
       const response = await fetch(url)
       if (!response.ok) {
         throw new Error("Failed to fetch contests")
