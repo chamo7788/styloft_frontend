@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faCalendarAlt, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import CreatePost from "./CreatePost";
 import "../../assets/css/StyleSociety/AddPost.css";
-import Dp from "../../assets/images/s-societybackground.jpg"; // Default image in case user image is not available
+import Dp from "../../assets/images/user-profile.png";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for routing
 import { auth, db } from "../../firebaseConfig"; // Import firebase configs
 import { doc, getDoc } from "firebase/firestore"; // Firestore functions
