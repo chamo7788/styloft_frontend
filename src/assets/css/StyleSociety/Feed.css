@@ -1,6 +1,6 @@
 .Feed-container {
   position: absolute;
-  top: 965px;
+  top: 136px;
   left: 75%;
   width: 300px;
   max-width: 90%;
@@ -198,82 +198,5 @@
   .Feed-container {
     left: 70%;
     width: 280px;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  .Feed-container {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 100%;
-    max-width: 500px;
-    margin: 20px auto;
-    height: auto;
-    max-height: 500px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .Feed-container {
-    max-width: 90%;
-    padding: 15px;
-    margin: 15px auto;
-  }
-  
-  .Feed-header {
-    font-size: 18px;
-  }
-  
-  .Feed-item {
-    height: auto;
-    min-height: 80px;
-    padding: 10px;
-  }
-  
-  .Feed-title {
-    top: -38px;
-    left: 42px;
-    font-size: 13px;
-  }
-  
-  .followbtn, .deletebtn {
-    padding: 4px 10px;
-    font-size: 12px;
-    top: -32px;
-    left: 45px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .Feed-container {
-    padding: 12px;
-  }
-  
-  .Feed-header {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  .Feed-avatar {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .Feed-title {
-    top: -36px;
-    left: 40px;
-    font-size: 12px;
-  }
-  
-  .followbtn, .deletebtn {
-    padding: 3px 8px;
-    font-size: 11px;
-    top: -30px;
-    left: 40px;
-  }
-  
-  .deletebtn {
-    margin-left: 4px;
   }
 }
