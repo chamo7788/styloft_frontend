@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../assets/css/StyleSociety/SocietyProfileCard.css";
+import "@/assets/css/StyleSociety/SocietyProfileCard.css";
 import defaultProfilePic from "../../assets/images/user-profile.png";
 import defaultCoverPhoto from "../../assets/images/profile-background.jpg";
 import { doc, getDoc } from "firebase/firestore";
